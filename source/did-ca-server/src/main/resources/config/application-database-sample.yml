@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://invalid-url:5432/yourdb
+    username: yourusername
+    password: yourpassword
+    initialize: false
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    enabled: false
+    fail-on-error: false

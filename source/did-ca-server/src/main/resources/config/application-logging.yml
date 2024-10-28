@@ -1,0 +1,6 @@
+logging:
+  group:
+    cas:
+      - org.omnione.did
+  level:
+    cas: debug
