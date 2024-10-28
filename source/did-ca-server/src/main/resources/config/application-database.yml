@@ -1,0 +1,20 @@
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
+    enabled: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url:
+    username:
+    password:
+
+  jpa:
+    open-in-view: true
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        format_sql: false

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+  <changeSet id="init-user_pii" author="jhkim6557">
+    <createTable tableName="user_pii">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="user_id" type="varchar(50)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="pii" type="varchar(64)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="created_at" type="timestamp" defaultValue="NOW()">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="updated_at" type="timestamp">
+        <constraints nullable="true" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

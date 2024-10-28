@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: cas
+  profiles:
+    active: sample
+    group:
+        dev:
+          - logging
+          - spring-docs
+          - database
+          - wallet
+          - cas
+        sample:
+          - logging
+          - spring-docs
+          - database-sample
+          - wallet
+          - cas
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      fail-on-empty-beans: false
+
+server:
+  port: 8094
+
+tas:
+  url: http://127.0.0.1:8090/tas
