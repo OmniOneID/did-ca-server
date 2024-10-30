@@ -17,11 +17,12 @@ did-ca-server
 ├── dependencies-license.md
 ├── MAINTAINERS.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
 │   └── api
-│       └── CA_API_ko.md
+│       └── CAS_API_ko.md
 │   └── errorCode
 │       └── CA_ErrorCode.md
 │   └── installation
@@ -39,7 +40,6 @@ did-ca-server
             └── did-crypto-sdk-server-1.0.0.jar
             └── did-datamodel-sdk-server-1.0.0.jar
             └── did-wallet-sdk-server-1.0.0.jar
-        ├── sample
         └── src
         └── build.gradle
         └── README.md
@@ -68,7 +68,6 @@ did-ca-server
 | ┖ did-ca-server                  | CA 서버 소스 코드 및 빌드 파일          |
 | &nbsp;&nbsp;&nbsp;┖ gradle       | Gradle 빌드 설정 및 스크립트             |
 | &nbsp;&nbsp;&nbsp;┖ libs         | 외부 라이브러리 및 종속성                |
-| &nbsp;&nbsp;&nbsp;┖ sample       | 샘플 파일                                |
 | &nbsp;&nbsp;&nbsp;┖ src          | 주요 소스 코드 디렉터리                  |
 | &nbsp;&nbsp;&nbsp;┖ build.gradle | Gradle 빌드 설정 파일                    |
 | &nbsp;&nbsp;&nbsp;┖ README.md    | 소스 코드 개요 및 지침                   |
