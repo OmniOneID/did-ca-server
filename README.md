@@ -17,6 +17,7 @@ did-ca-server
 ├── dependencies-license.md
 ├── MAINTAINERS.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
@@ -26,10 +27,11 @@ did-ca-server
 │       └── CA_ErrorCode.md
 │   └── installation
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
+│       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
 │   └── db
 │       └── OpenDID_TableDefinition_CAS.md
 └── source
-    └── cas
+    └── did-ca-server
         ├── gradle
         ├── libs
             └── did-sdk-common-1.0.0.jar
@@ -38,7 +40,6 @@ did-ca-server
             └── did-crypto-sdk-server-1.0.0.jar
             └── did-datamodel-sdk-server-1.0.0.jar
             └── did-wallet-sdk-server-1.0.0.jar
-        ├── sample
         └── src
         └── build.gradle
         └── README.md
@@ -64,13 +65,12 @@ Below is a description of each folder and file in the directory:
 | ┖ installation          | Installation and setup instructions             |
 | ┖ db                    | Database ERD,  Table Specifications             |
 | source                  | Server source code project                      |
-| ┖ cas                   | CA Server source code and build files           |
-|   ┖ gradle              | Gradle build configurations and scripts         |
-|   ┖ libs                | External libraries and dependencies             |
-|   ┖ sample              | Sample files                                    |
-|   ┖ src                 | Main source code directory                      |
-|   ┖ build.gradle        | Gradle build configuration file                 |
-|   ┖ README.md           | Overview and instructions for the source code   |
+| ┖ did-ca-server         | CA Server source code and build files           |
+| &nbsp;&nbsp;&nbsp;┖ gradle              | Gradle build configurations and scripts         |
+| &nbsp;&nbsp;&nbsp;┖ libs                | External libraries and dependencies             |
+| &nbsp;&nbsp;&nbsp;┖ src                 | Main source code directory                      |
+| &nbsp;&nbsp;&nbsp;┖ build.gradle        | Gradle build configuration file                 |
+| &nbsp;&nbsp;&nbsp;┖ README.md           | Overview and instructions for the source code   |
 
 <br/>
 
@@ -79,7 +79,7 @@ Below is a description of each folder and file in the directory:
 
 Libraries used in this project are organized into two main categories:
 
-1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/cas/libs). They include:
+1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/did-ca-server/libs). They include:
 
    - `did-sdk-common-1.0.0.jar`
    - `did-blockchain-sdk-server-1.0.0.jar`
@@ -88,7 +88,7 @@ Libraries used in this project are organized into two main categories:
    - `did-datamodel-sdk-server-1.0.0.jar`
    - `did-wallet-sdk-server-1.0.0.jar`
 
-2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/cas/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
+2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/did-ca-server/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
 
 ## Installation And Operation Guide
 
