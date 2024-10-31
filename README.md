@@ -40,7 +40,6 @@ did-ca-server
             └── did-crypto-sdk-server-1.0.0.jar
             └── did-datamodel-sdk-server-1.0.0.jar
             └── did-wallet-sdk-server-1.0.0.jar
-        ├── sample
         └── src
         └── build.gradle
         └── README.md
