@@ -23,7 +23,8 @@ package org.omnione.did.base.constants;
 public class UrlConstant {
 
     public static class Cas {
-        public static final String V1 = "/cas/api/v1";
+        public static final String AGENT_V1 = "/cas/api/v1";
+        public static final String ADMIN_V1 = "/cas/admin/v1";
         public static final String REQUEST_WALLET_TOKEN_DATA = "/request-wallet-tokendata";
         public static final String REQUEST_ATTESTED_APPINFO = "/request-attested-appinfo";
         public static final String SAVE_USER_INFO = "/save-user-info";

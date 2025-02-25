@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.omnione.did.base.config;
+package org.omnione.did.cas.v1.common.dto.agent;
 
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Configuration;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * The OpenFeignConfig class provides configuration for OpenFeign clients.
- * This class enables Feign clients for the specified base package, allowing for easy
- * communication with external services defined by Feign interfaces.
+ * The EnrollEntityReqDto class is a data transfer object that represents the request to enroll an entity.
  */
-@Configuration
-@EnableFeignClients("org.omnione.did.cas.v1.agent.api")
-public class OpenFeignConfig {
 
+@Getter
+@Setter
+@Builder
+public class EnrollEntityReqDto {
 }

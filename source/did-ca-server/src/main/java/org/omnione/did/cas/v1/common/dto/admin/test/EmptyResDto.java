@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.cas.v1.common.dto.admin.test;
 
-package org.omnione.did.base.config;
-
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Configuration;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * The OpenFeignConfig class provides configuration for OpenFeign clients.
- * This class enables Feign clients for the specified base package, allowing for easy
- * communication with external services defined by Feign interfaces.
+ * Represents an empty response DTO.
+ * This class is used to indicate a successful operation with no specific data to return.
+ * In JSON format, this would be represented as an empty object (e.g., {}).
  */
-@Configuration
-@EnableFeignClients("org.omnione.did.cas.v1.agent.api")
-public class OpenFeignConfig {
-
+@Getter
+@Setter
+@AllArgsConstructor
+@ToString
+@Builder
+public class EmptyResDto {
 }

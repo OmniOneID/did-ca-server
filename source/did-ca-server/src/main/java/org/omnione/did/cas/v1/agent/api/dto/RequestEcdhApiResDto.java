@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.omnione.did.base.config;
+package org.omnione.did.cas.v1.agent.api.dto;
 
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Configuration;
+import lombok.*;
+import org.omnione.did.base.datamodel.data.AccEcdh;
 
 /**
- * The OpenFeignConfig class provides configuration for OpenFeign clients.
- * This class enables Feign clients for the specified base package, allowing for easy
- * communication with external services defined by Feign interfaces.
+ * The RequestEcdhApiResDto class is a data transfer object that represents the response to requesting an ECDH key pair.
+ * It contains the transaction ID and the ECDH key pair.
  */
-@Configuration
-@EnableFeignClients("org.omnione.did.cas.v1.agent.api")
-public class OpenFeignConfig {
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
+public class RequestEcdhApiResDto {
+    private String txId;
+    private AccEcdh accEcdh;
 }

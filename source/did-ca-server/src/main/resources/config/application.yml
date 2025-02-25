@@ -2,7 +2,7 @@ spring:
   application:
     name: cas
   profiles:
-    active: sample
+    active: dev
     group:
         dev:
           - logging
@@ -26,3 +26,13 @@ server:
 
 tas:
   url: http://127.0.0.1:8090/tas
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+      base-path: "/cas/health"
+  endpoint:
+    health:
+      show-details: "always"
