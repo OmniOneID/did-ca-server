@@ -10,6 +10,7 @@ spring:
           - database
           - wallet
           - cas
+          - blockchain
         sample:
           - logging
           - spring-docs

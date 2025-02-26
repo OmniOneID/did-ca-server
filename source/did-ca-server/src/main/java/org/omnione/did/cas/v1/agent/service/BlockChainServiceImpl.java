@@ -18,9 +18,11 @@ package org.omnione.did.cas.v1.agent.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.ContractApi;
+import org.omnione.did.ContractFactory;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseBlockChainUtil;
+import org.omnione.did.base.property.BlockchainProperty;
 import org.omnione.did.data.model.did.DidDocAndStatus;
 import org.omnione.did.data.model.did.DidDocument;
 import org.springframework.context.annotation.Profile;
@@ -35,6 +37,34 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Profile("!repository")
 public class BlockChainServiceImpl implements StorageService {
+
+    private ContractApi contractApiInstance = null;
+    private final BlockchainProperty blockchainProperty;
+
+    /**
+     * Initializes the blockchain connection.
+     *
+     * @return a ContractApi instance.
+     */
+    public ContractApi initBlockChain() {
+        return ContractFactory.FABRIC.create(blockchainProperty.getFilePath());
+    }
+
+    /**
+     * Resets the ContractApi instance.
+     * Use this method to reinitialize the blockchain connection.
+     */
+    public ContractApi getContractApiInstance() {
+        if (contractApiInstance == null) {
+            synchronized (BlockChainServiceImpl.class) {
+                if (contractApiInstance == null) {
+                    contractApiInstance = initBlockChain();
+                }
+            }
+        }
+        return contractApiInstance;
+    }
+
     /**
      * Register the given DID Document with the blockchain.
      *
@@ -43,7 +73,9 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
         try {
-            DidDocAndStatus didDocAndStatus = BaseBlockChainUtil.findDidDocument(didKeyUrl);
+            ContractApi contractApi = getContractApiInstance();
+            DidDocAndStatus didDocAndStatus = (DidDocAndStatus) contractApi.getDidDoc(didKeyUrl);
+
             return didDocAndStatus.getDocument();
         } catch (Exception e) {
             log.error("Failed to find DID Document: " + e.getMessage());
