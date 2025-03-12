@@ -67,6 +67,12 @@ public enum ErrorCode {
     FAILED_TO_ISSUE_CERTIFICATE_VC("SCRVCFA00804", "Failed to process the 'issue_certificate-vc' API request.", 500),
     FAILED_TO_REQUEST_CERTIFICATE_VC("SCRVCFA00805", "Failed to process the 'request-certificate-vc' API request.", 500),
 
+    //Admin-related errors (900~999)
+    ADMIN_INFO_NOT_FOUND("SCRVCFA00900", "Failed to find admin: admin is not registered.", 400),
+    ADMIN_ALREADY_EXISTS("SCRVCFA00901", "Failed to register admin: admin is already registered.", 400),
+
+    //TAS-related errors (1000 ~ 1099)
+    CAS_INFO_NOT_FOUND("SCRVCFA01000", "CAS is not registered.", 500)
     ;
 
     private final String code;
