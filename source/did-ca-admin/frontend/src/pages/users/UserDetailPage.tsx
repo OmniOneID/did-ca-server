@@ -4,19 +4,19 @@ import { useNavigate, useParams } from 'react-router';
 import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
-import { getAdminInfo } from '../../apis/admin-api';
+import { getUserInfo } from '../../apis/user-api';
 import { formatErrorMessage } from '../../utils/error-handler';
 
 type Props = {}
 
-type AdminFormData = {
-    loginId: string;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
+type UserFormData = {
+    userId: string;
+    pii: string;
+    createdAt?: string;
+    updatedAt?: string;
 };
 
-const AdminDetailPage = (props: Props) => {
+const UserDetailPage = (props: Props) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dialogs = useDialogs();
@@ -24,9 +24,9 @@ const AdminDetailPage = (props: Props) => {
 
     const numericId = id ? parseInt(id, 10) : null;
     const [isLoading, setIsLoading] = useState<boolean>(true); 
-    const [formData, serFormData] = useState<AdminFormData>({
-        loginId: '',
-        role: '',
+    const [formData, serFormData] = useState<UserFormData>({
+        userId: '',
+        pii: '',
         createdAt: '',
         updatedAt: '',
     });
@@ -47,21 +47,20 @@ const AdminDetailPage = (props: Props) => {
             setIsLoading(true);
 
             try {
-                const { data } = await getAdminInfo(numericId);
+                const { data } = await getUserInfo(numericId);
                 serFormData({
-                    loginId: data.loginId,
-                    role: data.role,
+                    userId: data.userId,
+                    pii: data.pii,
                     createdAt: data.createdAt,
                     updatedAt: data.updatedAt,
                 });
                 setIsLoading(false);
             } catch (err) {
-                  console.error('Failed to fetch Admin information:', err);
+                  console.error('Failed to fetch User information:', err);
                   setIsLoading(false);
-                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch Admin") } });
+                  navigate('/error', { state: { message: formatErrorMessage(err, "Failed to fetch User information") } });
             }
         };
-
         fetchData();
     }, [numericId]);
 
@@ -69,23 +68,23 @@ const AdminDetailPage = (props: Props) => {
         <>
             <FullscreenLoader open={isLoading} />
             <Box sx={{ p: 3 }}>
-                <Typography variant="h4">Admin Detail Information</Typography>
+                <Typography variant="h4">User Detail Information</Typography>
                 <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
                     <TextField 
                         fullWidth
                         label="ID" 
                         variant="standard"
                         margin="normal" 
-                        value={formData.loginId || ''} 
+                        value={formData.userId || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
                     <TextField 
                         fullWidth
-                        label="Role" 
+                        label="PII" 
                         variant="standard"
                         margin="normal" 
-                        value={formData.role || ''} 
+                        value={formData.pii || ''} 
                         slotProps={{ input: { readOnly: true } }} 
                     />
 
@@ -109,13 +108,10 @@ const AdminDetailPage = (props: Props) => {
                         />
                     )}
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/admin-management')}>
+                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+                        <Button variant="contained" color="secondary" onClick={() => navigate('/user-management')}>
                             Back
                         </Button>
-                        {/* <Button variant="contained" color="primary" onClick={() => navigate('/list-settings/vc-schema/vc-shema-edit/' + numericId)}>
-                            Edit
-                        </Button> */}
                     </Box>
                 </Box>
             </Box>
@@ -123,4 +119,4 @@ const AdminDetailPage = (props: Props) => {
     )
 }
 
-export default AdminDetailPage
+export default UserDetailPage

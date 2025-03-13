@@ -84,11 +84,18 @@ export default function SignIn() {
     }
   };
 
+  function SubTitle() {
+    return <p style={{ fontSize: '14px', marginBottom: 16 }}>Welcome to OpenDID CA Admin Console</p>;
+  }
+
   return (
     <>
       <SignInPage
         providers={[{ id: 'credentials', name: 'Credentials' }]}
         signIn={handleSignIn}
+        slots={{
+          subtitle: SubTitle,
+        }}
         slotProps={{
           emailField: {
             defaultValue: rememberMe ? localStorage.getItem('email') ?? '' : '',

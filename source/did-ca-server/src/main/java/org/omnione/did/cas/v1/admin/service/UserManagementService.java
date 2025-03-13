@@ -19,20 +19,28 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.domain.Admin;
+import org.omnione.did.base.db.repository.UserPiiRepository;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.cas.v1.admin.dto.admin.AdminDto;
-import org.omnione.did.cas.v1.admin.dto.admin.RequestAdminLoginReqDto;
-import org.omnione.did.cas.v1.common.service.query.AdminQueryService;
+import org.omnione.did.cas.v1.admin.dto.user.UserPiiDto;
+import org.omnione.did.cas.v1.common.service.query.UserPiiQueryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class SessionService {
-    private final AdminQueryService adminQueryService;
+public class UserManagementService {
+    private final UserPiiQueryService userPiiQueryService;
 
-    public AdminDto requestAdminLogin(RequestAdminLoginReqDto requestAdminLoginReqDto) {
-        Admin admin = adminQueryService.findByLoginIdAndLoginPassword(requestAdminLoginReqDto.getLoginId(), requestAdminLoginReqDto.getLoginPassword());
-        return AdminDto.fromAdmin(admin);
+    public Page<UserPiiDto> searchUsers(String searchKey, String searchValue, Pageable pageable) {
+        return userPiiQueryService.searchUserPiiList(searchKey, searchValue, pageable);
+    }
+
+    public UserPiiDto findById(Long id) {
+        return UserPiiDto.fromUserPii(userPiiQueryService.findById(id));
     }
 }

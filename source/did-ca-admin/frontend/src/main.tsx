@@ -10,6 +10,9 @@ import CaManagementPage from './pages/ca-service/CaManagementPage';
 import CaRegistrationPage from './pages/ca-service/CaRegistrationPage';
 import AdminDetailPage from './pages/admins/AdminDetailPage';
 import AdminRegisterPage from './pages/admins/AdminRegisterPage';
+import UserManagementPage from './pages/users/UserManagementPage';
+import UserDetailPage from './pages/users/UserDetailPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
 
 const router = createBrowserRouter([
   {
@@ -20,12 +23,24 @@ const router = createBrowserRouter([
         Component: Layout,
         children: [
           {
+            path: '/',
+            Component: DashboardPage
+          },
+          {
             path: '/ca-registration',
             Component: CaRegistrationPage,
           },
           {
             path: '/ca-management',
             Component: CaManagementPage,
+          },
+          {
+            path: '/user-management/:id',
+            Component: UserDetailPage,
+          },
+          {
+            path: '/user-management',
+            Component: UserManagementPage,
           },
           {
             path: 'admin-management/admin-registration',
