@@ -1,8 +1,8 @@
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
-import { Box, Button, FormControl, FormHelperText, IconButton, InputLabel, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, IconButton, InputLabel, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomConfirmDialog from '../../components/dialog/CustomConfirmDialog';
@@ -156,6 +156,18 @@ const AdminRegisterPage = (props: Props) => {
         });
     };
 
+    const handleCancel = async () => {
+        const result = await dialogs.open(CustomConfirmDialog, {
+            title: 'Confirmation',
+            message: 'Are you sure you want to cancel admin registration?',
+            isModal: true,
+        });
+
+        if (result) {
+            navigate('/admin-management');
+        }
+    };
+
     useEffect(() => {
         const isModified = Object.entries(formData).some(([key, value]) => {
             if (key === 'role') return false;
@@ -165,13 +177,40 @@ const AdminRegisterPage = (props: Props) => {
         setIsButtonDisabled(!isModified);
     }, [formData]);
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(3),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+        
+    const StyledSubTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+
+    const StyledDescription = useMemo(() => styled(Box)(({ theme }) => ({
+        maxWidth: 500, 
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(0),
+    })), []);
+
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
+
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4">Admin Registration</Typography>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-                
+            <Typography variant="h4">Admin Management</Typography>
+            <StyledContainer>
+                <StyledSubTitle>Admin Registration</StyledSubTitle>
+                <StyledInputArea>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
@@ -187,7 +226,7 @@ const AdminRegisterPage = (props: Props) => {
                             sx={{minWidth: 250}}
                         />
                         <Button 
-                            variant="contained" 
+                            variant="outlined" 
                             onClick={handleCheckDuplicateLoginId}
                             disabled={!formData.loginId}
                             sx={{ 
@@ -239,14 +278,12 @@ const AdminRegisterPage = (props: Props) => {
                     />
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/list-settings/allowed-ca')}>
-                            Back
-                        </Button>
-                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isButtonDisabled}>Register</Button>
+                        <Button variant="contained" color="secondary" onClick={handleReset}>Reset</Button>
+                        <Button variant="outlined" color="primary" onClick={handleCancel}>Cancel</Button>
                     </Box>
-                </Box>
-            </Box>
+                </StyledInputArea>
+            </StyledContainer>
         </>
     )
 }

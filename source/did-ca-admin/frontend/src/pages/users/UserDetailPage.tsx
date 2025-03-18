@@ -1,7 +1,7 @@
 import { useDialogs } from '@toolpad/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router';
-import { Box, Button, Popover, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, Popover, styled, TextField, Typography, useTheme } from '@mui/material';
 import CustomDialog from '../../components/dialog/CustomDialog';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { getUserInfo } from '../../apis/user-api';
@@ -64,12 +64,34 @@ const UserDetailPage = (props: Props) => {
         fetchData();
     }, [numericId]);
 
+    const StyledContainer = useMemo(() => styled(Box)(({ theme }) => ({
+        width: 500,
+        margin: 'auto',
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(3),
+        border: 'none',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#ffffff',
+        boxShadow: '0px 4px 8px 0px #0000001A',
+    })), []);
+    
+    const StyledTitle = useMemo(() => styled(Typography)({
+        textAlign: 'left',
+        fontSize: '24px',
+        fontWeight: 700,
+    }), []);
+    
+    const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
+        marginTop: theme.spacing(2),
+    })), []);
+
     return (
         <>
             <FullscreenLoader open={isLoading} />
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4">User Detail Information</Typography>
-                <Box sx={{ maxWidth: 500, margin: 'auto', mt: 2, p: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+            <Typography variant="h4">User Management</Typography>
+            <StyledContainer>
+                <StyledTitle>User Detail Information</StyledTitle>
+                <StyledInputArea>
                     <TextField 
                         fullWidth
                         label="ID" 
@@ -109,12 +131,10 @@ const UserDetailPage = (props: Props) => {
                     )}
 
                      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/user-management')}>
-                            Back
-                        </Button>
+                        <Button variant="outlined" color="secondary" onClick={() => navigate('/user-management')}>Back</Button>
                     </Box>
-                </Box>
-            </Box>
+                </StyledInputArea>
+            </StyledContainer>
         </>
     )
 }

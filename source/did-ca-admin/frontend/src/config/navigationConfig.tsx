@@ -7,23 +7,26 @@ import PersonIcon from '@mui/icons-material/Person';
 
 export const getNavigationByStatus = (serverStatus: string | null): Navigation=> {
   if (serverStatus !== 'ACTIVATE') {
-    return [{ segment: 'ca-registration', title: 'CAS Registration', icon: <StorageIcon /> }];
+    return [
+      {kind: 'divider'},
+      { segment: 'ca-registration', title: 'CAS Registration', icon: <StorageIcon /> },
+      {kind: 'divider'},
+    ];
   } 
   return [
+    {kind: 'divider'},
     { 
       segment: 'ca-management', 
-      title: 'CA Management', 
-      icon: <StorageIcon />,
+      title: 'CA Management',
     },
     { 
       segment: 'user-management', 
-      title: 'User Management', 
-      icon: <PersonIcon />,
+      title: 'User Management',
     },
     {
       segment: 'admin-management',
-      title: 'Admin Management', 
-      icon: <SupervisorAccountIcon />,
+      title: 'Admin Management',
     },
+    {kind: 'divider'},
   ];
 };

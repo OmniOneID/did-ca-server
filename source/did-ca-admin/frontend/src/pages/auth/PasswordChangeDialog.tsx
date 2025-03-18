@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 interface PasswordResetDialogProps {
@@ -31,7 +31,7 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
     let tempErrors: ErrorState = {};
 
     if (!oldPassword.trim()) {
-      tempErrors.oldPassword = "Please enter a current password.";
+      tempErrors.oldPassword = "Please enter your current password.";
     } 
     
     if (!newPassword.trim()) {
@@ -58,9 +58,13 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Reset Password</DialogTitle>
-      <DialogContent>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ maxWidth: 500, margin: "0 auto" }}>
+      <Box sx={{ px: 2 }}>
+        <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>Reset Password</DialogTitle>
+        <Box sx={{ height: "1px", backgroundColor: "var(--G40, #BFBFBF)", width: "100%", mt: 1 }} />
+      </Box>
+
+      <DialogContent sx={{ px: 2 }}>
         <TextField
           fullWidth
           label="Current Password"
@@ -84,11 +88,12 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
           helperText={errors.newPassword}
         />
       </DialogContent>
-      <DialogActions>
-        <Button variant="contained" onClick={onClose} color="secondary">
+
+      <DialogActions sx={{ px: 2, pt: 0, display: "flex", gap: 2, mt: 0 }}>
+        <Button variant="outlined" onClick={onClose} color="primary" sx={{ flexGrow: 1, height: "48px" }}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleConfirm} color="primary" disabled={isButtonDisabled}>
+        <Button variant="contained" onClick={handleConfirm} color="primary" disabled={isButtonDisabled} sx={{ flexGrow: 1, height: "48px" }}>
           Update
         </Button>
       </DialogActions>

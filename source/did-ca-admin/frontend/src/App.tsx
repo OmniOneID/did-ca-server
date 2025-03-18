@@ -9,6 +9,8 @@ import { getCaInfo } from './apis/ca-api';
 import { getNavigationByStatus } from './config/navigationConfig';
 import { formatErrorMessage } from './utils/error-handler';
 import LoadingOverlay from './components/loading/LoadingOverlay';
+import customTheme from './theme';
+import { CssBaseline, GlobalStyles } from '@mui/material';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -88,7 +90,9 @@ function AppContent() {
           navigation={navigation}
           session={session}
           authentication={{ signIn, signOut }}
+          theme={customTheme}
         >
+          <CssBaseline />
           <Outlet />
         </ReactRouterAppProvider>
       </DialogsProvider>
@@ -99,6 +103,7 @@ function AppContent() {
 export default function App() {
   return (
     <ServerStatusProvider>
+      <GlobalStyles styles={{ body: { padding: "10px" } }} />
       <AppContent />
     </ServerStatusProvider>
   );
