@@ -24,13 +24,14 @@ import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.enums.EccCurveType;
 import org.omnione.did.base.datamodel.enums.SymmetricCipherType;
+import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.db.domain.CertificateVc;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.CasProperty;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.base.util.RandomUtil;
+import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.cas.v1.agent.api.dto.ConfirmEnrollEntityApiReqDto;
 import org.omnione.did.cas.v1.agent.api.dto.ConfirmEnrollEntityApiResDto;
 import org.omnione.did.cas.v1.agent.api.dto.ProposeEnrollEntityApiReqDto;
@@ -64,7 +65,7 @@ public class EnrollEntityService {
     private final CertificateVcQueryService certificateVcQueryService;
     private final DidDocService didDocService;
     private final SignatureService signatureService;
-    private final CasProperty casProperty;
+    private final CasQueryService casQueryService;
 
     /**
      * Enroll entity.
@@ -77,9 +78,12 @@ public class EnrollEntityService {
         try {
             log.debug("=== Starting Enroll Entity ===");
 
+            // Retrieve CAS.
+            Cas existedCas = casQueryService.findCas();
+
             // Retrieve CAS DID Document.
             log.debug("\t--> Retrieve CAS DID Document");
-            DidDocument casDidDocument = didDocService.getDidDocument(casProperty.getDid());
+            DidDocument casDidDocument = didDocService.getDidDocument(existedCas.getDid());
 
             // Send propose-enroll-entity.
             log.debug("\t--> Send propose-enroll-entity");

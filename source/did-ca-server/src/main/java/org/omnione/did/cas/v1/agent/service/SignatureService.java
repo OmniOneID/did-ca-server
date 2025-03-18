@@ -21,11 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
+import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.CasProperty;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.did.Proof;
@@ -44,7 +45,7 @@ import java.util.Map;
 public class SignatureService {
     private final DidDocService didDocService;
     private final FileWalletService fileWalletService;
-    private final CasProperty casProperty;
+    private final CasQueryService casQueryService;
 
     /**
      * Sign the given data set and generate a proof.
@@ -61,8 +62,11 @@ public class SignatureService {
             // Serialize and sort data set.
             String serializedJson = JsonUtil.serializeAndSort(dataSet);
 
+            // Retrieve CAS.
+            Cas existedCas = casQueryService.findCas();
+
             // Retrieve CAS DID Document.
-            DidDocument casDidDocument = didDocService.getDidDocument(casProperty.getDid());
+            DidDocument casDidDocument = didDocService.getDidDocument(existedCas.getDid());
 
             // Sign data.
             String proofValue = signData(casDidDocument, serializedJson, ProofPurpose.fromDisplayName(originProof.getProofPurpose()));

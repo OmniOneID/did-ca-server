@@ -27,13 +27,14 @@ import org.omnione.did.base.datamodel.data.WalletTokenData;
 import org.omnione.did.base.datamodel.data.WalletTokenSeed;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.datamodel.enums.ProofType;
+import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.db.domain.UserPii;
 import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.property.CasProperty;
 import org.omnione.did.base.util.BaseCryptoUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.crypto.enums.DigestType;
 import org.omnione.did.crypto.enums.MultiBaseType;
@@ -59,10 +60,10 @@ import java.util.Optional;
 @Slf4j
 @Profile("!sample")
 public class CasServiceImpl implements CasService {
-    private final CasProperty casProperty;
     private final SignatureService signatureService;
     private final DidDocService didDocService;
     private final UserPiiRepository userPiiRepository;
+    private final CasQueryService casQueryService;
 
     /**
      * Request a wallet token using the given wallet token seed.
@@ -204,14 +205,17 @@ public class CasServiceImpl implements CasService {
      * @return the created data set
      */
     private Map<String, Object> createDataSet(Object object, String sha256Pii) {
+        // Retrieve CAS.
+        Cas existedCas = casQueryService.findCas();
+
         Map<String, Object> dataSet = new HashMap<>();
         dataSet.put(object instanceof WalletTokenSeed ? "seed" : "appId", object);
         if (sha256Pii != null) {
             dataSet.put("sha256_pii", sha256Pii);
         }
-        dataSet.put("provider", getProvider());
+        dataSet.put("provider", getProvider(existedCas));
         dataSet.put("nonce", generateNonce());
-        dataSet.put("proof", preGenerateProof());
+        dataSet.put("proof", preGenerateProof(existedCas));
         return dataSet;
     }
 
@@ -240,10 +244,10 @@ public class CasServiceImpl implements CasService {
      *
      * @return the generated nonce
      */
-    private Provider getProvider() {
+    private Provider getProvider(Cas cas) {
         Provider provider = new Provider();
-        provider.setCertVcRef(casProperty.getCertificateVc());
-        provider.setDid(casProperty.getDid());
+        provider.setCertVcRef(cas.getCertificateUrl());
+        provider.setDid(cas.getDid());
         return provider;
     }
 
@@ -261,8 +265,8 @@ public class CasServiceImpl implements CasService {
      *
      * @return the pre-generated proof
      */
-    private Proof preGenerateProof() {
-        DidDocument casDidDocument = didDocService.getDidDocument(casProperty.getDid());
+    private Proof preGenerateProof(Cas cas) {
+        DidDocument casDidDocument = didDocService.getDidDocument(cas.getDid());
         Proof proof = new Proof();
         proof.setType(ProofType.SECP_256R1_SIGNATURE_2018.toString());
         proof.setCreated(DateTimeUtil.getCurrentUTCTimeString());

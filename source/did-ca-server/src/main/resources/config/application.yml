@@ -2,21 +2,19 @@ spring:
   application:
     name: cas
   profiles:
-    active: dev
+    active: sample
     group:
         dev:
           - logging
           - spring-docs
           - database
           - wallet
-          - cas
           - blockchain
         sample:
           - logging
           - spring-docs
           - database-sample
           - wallet
-          - cas
   jackson:
     default-property-inclusion: non_null
     serialization:

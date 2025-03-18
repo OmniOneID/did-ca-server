@@ -4,7 +4,7 @@ spring:
     enabled: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5431/cas
+    url: jdbc:postgresql://127.0.0.1:5430/cas
     username: omn
     password: omn
 

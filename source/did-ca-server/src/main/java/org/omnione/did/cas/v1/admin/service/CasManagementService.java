@@ -22,12 +22,10 @@ import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.db.constant.CasStatus;
 import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.cas.v1.admin.dto.admin.GetCasInfoReqDto;
-import org.omnione.did.cas.v1.common.service.query.CasQueryService;
+import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.cas.v1.agent.service.StorageService;
 import org.omnione.did.data.model.did.DidDocument;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Transactional
 @RequiredArgsConstructor
