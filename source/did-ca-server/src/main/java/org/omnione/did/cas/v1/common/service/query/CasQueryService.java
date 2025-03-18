@@ -37,10 +37,10 @@ public class CasQueryService {
             return casRepository.findTop1ByOrderByIdAsc()
                     .orElseThrow(() -> new OpenDidException(ErrorCode.CAS_INFO_NOT_FOUND));
         } catch (OpenDidException e) {
-            log.error("TAS not found : {}", e.getMessage());
+            log.error("CAS not found : {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected error occurred while finding TAS : {}", e.getMessage());
+            log.error("Unexpected error occurred while finding CAS : {}", e.getMessage());
             throw new OpenDidException(ErrorCode.CAS_INFO_NOT_FOUND);
         }
     }

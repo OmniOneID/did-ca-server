@@ -36,7 +36,6 @@ public class CasManagementService {
     private final CasQueryService casQueryService;
     private final StorageService storageService;
 
-    @RequestMapping(value = "/ca/info", method = RequestMethod.GET)
     public GetCasInfoReqDto getCasInfo() {
         Cas existingCas = casQueryService.findCas();
 

@@ -1,4 +1,4 @@
-package org.omnione.did.cas.v1.common.dto.admin.test;
+package org.omnione.did.cas.v1.admin.dto.cas;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

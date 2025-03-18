@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.cas.v1.common.dto.admin.test;
+package org.omnione.did.cas.v1.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

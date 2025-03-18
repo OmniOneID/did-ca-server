@@ -25,7 +25,7 @@ import org.omnione.did.cas.v1.admin.dto.admin.ResetPasswordByRootReqDto;
 import org.omnione.did.cas.v1.admin.dto.admin.ResetPasswordReqDto;
 import org.omnione.did.cas.v1.admin.dto.admin.VerifyAdminIdUniqueResDto;
 import org.omnione.did.cas.v1.admin.service.AdminManagementService;
-import org.omnione.did.cas.v1.common.dto.admin.test.EmptyResDto;
+import org.omnione.did.cas.v1.common.dto.EmptyResDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;

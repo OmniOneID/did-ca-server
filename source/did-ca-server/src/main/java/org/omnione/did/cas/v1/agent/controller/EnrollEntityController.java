@@ -18,8 +18,8 @@ package org.omnione.did.cas.v1.agent.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.cas.v1.common.dto.agent.EnrollEntityReqDto;
-import org.omnione.did.cas.v1.common.dto.agent.EnrollEntityResDto;
+import org.omnione.did.cas.v1.agent.dto.EnrollEntityReqDto;
+import org.omnione.did.cas.v1.agent.dto.EnrollEntityResDto;
 import org.omnione.did.cas.v1.agent.service.EnrollEntityService;
 import org.omnione.did.cas.v1.agent.service.VcService;
 import org.springframework.web.bind.annotation.GetMapping;

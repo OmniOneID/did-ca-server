@@ -47,7 +47,7 @@ import org.omnione.did.data.model.did.Proof;
 import org.omnione.did.data.model.enums.did.ProofType;
 import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.omnione.did.cas.v1.agent.api.EnrollFeign;
-import org.omnione.did.cas.v1.common.dto.agent.EnrollEntityResDto;
+import org.omnione.did.cas.v1.agent.dto.EnrollEntityResDto;
 import org.springframework.stereotype.Service;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;

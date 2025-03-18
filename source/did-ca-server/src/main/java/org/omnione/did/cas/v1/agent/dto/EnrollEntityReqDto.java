@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.common.dto.agent;
+package org.omnione.did.cas.v1.agent.dto;
 
 import lombok.Builder;
 import lombok.Getter;

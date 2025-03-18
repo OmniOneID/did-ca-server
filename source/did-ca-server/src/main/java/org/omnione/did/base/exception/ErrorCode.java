@@ -71,7 +71,7 @@ public enum ErrorCode {
     ADMIN_INFO_NOT_FOUND("SCRVCFA00900", "Failed to find admin: admin is not registered.", 400),
     ADMIN_ALREADY_EXISTS("SCRVCFA00901", "Failed to register admin: admin is already registered.", 400),
 
-    //TAS-related errors (1000 ~ 1099)
+    //CAS-related errors (1000 ~ 1099)
     CAS_INFO_NOT_FOUND("SCRVCFA01000", "CAS is not registered.", 500)
     ;
 

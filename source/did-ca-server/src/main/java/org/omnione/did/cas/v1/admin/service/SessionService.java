@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.domain.Admin;
 import org.omnione.did.cas.v1.admin.dto.admin.AdminDto;
 import org.omnione.did.cas.v1.admin.dto.admin.RequestAdminLoginReqDto;
-import org.omnione.did.cas.v1.common.service.query.AdminQueryService;
+import org.omnione.did.cas.v1.admin.service.query.AdminQueryService;
 import org.springframework.stereotype.Service;
 
 @Service
