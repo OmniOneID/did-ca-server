@@ -1,2 +1,2 @@
-id,did,name,status
-1,did:omn:cas,Cas,ACTIVATE
+id,did,name,status,server_url,certificate_url
+1,did:omn:cas,Cas,ACTIVATE,http://127.0.0.1:8094/cas,http://127.0.0.1:8094/cas/api/v1/certificate-vc
