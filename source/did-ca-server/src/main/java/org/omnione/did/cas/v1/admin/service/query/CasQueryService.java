@@ -45,4 +45,7 @@ public class CasQueryService {
         }
     }
 
+    public Cas findCasOrNull() {
+        return casRepository.findTop1ByOrderByIdAsc().orElse(null);
+    }
 }
