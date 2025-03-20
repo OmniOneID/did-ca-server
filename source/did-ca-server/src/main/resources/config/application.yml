@@ -30,7 +30,11 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health"
+        include:
+          - "health"
+          - "shutdown"
   endpoint:
     health:
       show-details: "never"
+    shutdown:
+      enabled: true
