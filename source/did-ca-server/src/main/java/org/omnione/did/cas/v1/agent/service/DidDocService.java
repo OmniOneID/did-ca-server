@@ -17,6 +17,7 @@
 package org.omnione.did.cas.v1.agent.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
@@ -111,6 +112,22 @@ public class DidDocService {
     private void refreshAllDidDocuments() {
         for (String did : didDocCache.getAllDids()) {
             updateDidDocument(did);
+        }
+    }
+
+    @PreDestroy
+    public void shutdownScheduler() {
+        log.info("Shutting down DID Document scheduler...");
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                log.warn("Scheduler did not terminate in time, forcing shutdown...");
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            log.error("Scheduler shutdown interrupted", e);
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 }
