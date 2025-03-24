@@ -3,7 +3,7 @@ import { ReactRouterAppProvider } from '@toolpad/core/react-router';
 import { DialogsProvider } from '@toolpad/core/useDialogs';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router';
-import { SessionContext } from './context/SessionContext';
+import { ExtendedSession, SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
 import { getCaInfo } from './apis/ca-api';
 import { getNavigationByStatus } from './config/navigationConfig';
@@ -18,14 +18,14 @@ function AppContent() {
   const { serverStatus, setServerStatus, setCasInfo } = useServerStatus();
   const [isLoading, setIsLoading] = useState(true);
 
-  const [session, setSessionState] = useState<Session | null>(() => {
+  const [session, setSessionState] = useState<ExtendedSession | null>(() => {
     const storedSession = localStorage.getItem('session');
     return storedSession ? JSON.parse(storedSession) : null;
   });
 
   const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
-  const setSession = useCallback((newSession: Session | null) => {
+  const setSession = useCallback((newSession: ExtendedSession | null) => {
     setSessionState(newSession);
     if (newSession) {
       localStorage.setItem('session', JSON.stringify(newSession));
