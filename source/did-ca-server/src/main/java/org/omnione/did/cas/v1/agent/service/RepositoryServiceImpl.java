@@ -54,7 +54,6 @@ public class RepositoryServiceImpl implements StorageService {
      */
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
-        try {
             String did = DidUtil.extractDid(didKeyUrl);
 
             DidDocApiResDto didDocApiResDto = repositoryFeign.getDid(did);
@@ -65,9 +64,5 @@ public class RepositoryServiceImpl implements StorageService {
             DidManager didManager = BaseCoreDidUtil.parseDidDoc(didDocJson);
 
             return didManager.getDocument();
-        } catch (Exception e) {
-            log.error("Failed to find DID document.", e);
-            throw new OpenDidException(ErrorCode.DID_DOCUMENT_RETRIEVAL_FAILED);
-        }
     }
 }

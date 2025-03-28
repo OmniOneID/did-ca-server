@@ -55,7 +55,6 @@ public class SignatureService {
      * @throws OpenDidException if the signature generation fails
      */
     public Proof signData(Map<String, Object> dataSet) {
-        try {
             // Retrieve Origin Proof object.
             Proof originProof = (Proof)dataSet.get("proof");
 
@@ -79,9 +78,6 @@ public class SignatureService {
             proof.setProofPurpose(originProof.getProofPurpose());
             proof.setProofValue(proofValue);
             return proof;
-        } catch (Exception e) {
-            throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
-        }
     }
 
     /**
@@ -126,33 +122,30 @@ public class SignatureService {
      * @throws OpenDidException if the signature generation fails
      */
     public EcdhReqData signEcdhReq(DidDocument walletDidDocument, EcdhReqData signatureObject) {
-        try {
-            // Serialize and sort data set.
-            String serializedJson = JsonUtil.serializeAndSort(signatureObject);
 
-            // Sign data.
-            String proofValue = signData(walletDidDocument, serializedJson, ProofPurpose.fromDisplayName(signatureObject.getProof().getProofPurpose()));
+        // Serialize and sort data set.
+        String serializedJson = JsonUtil.serializeAndSort(signatureObject);
 
-            // Generate proof.
-            Proof proof = new Proof();
-            proof.setType(signatureObject.getProof().getType());
-            proof.setCreated(signatureObject.getProof().getCreated());
-            proof.setVerificationMethod(signatureObject.getProof().getVerificationMethod());
-            proof.setProofPurpose(signatureObject.getProof().getProofPurpose());
-            proof.setProofValue(proofValue);
+        // Sign data.
+        String proofValue = signData(walletDidDocument, serializedJson, ProofPurpose.fromDisplayName(signatureObject.getProof().getProofPurpose()));
 
-            return EcdhReqData.builder()
-                    .client(walletDidDocument.getId())
-                    .clientNonce(signatureObject.getClientNonce())
-                    .curve(signatureObject.getCurve())
-                    .publicKey(signatureObject.getPublicKey())
-                    .candidate(signatureObject.getCandidate())
-                    .proof(proof)
-                    .build();
-        } catch (Exception e) {
-            log.error("Error occurred while signing ECDH request: {}", e.getMessage());
-            throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
-        }
+        // Generate proof.
+        Proof proof = new Proof();
+        proof.setType(signatureObject.getProof().getType());
+        proof.setCreated(signatureObject.getProof().getCreated());
+        proof.setVerificationMethod(signatureObject.getProof().getVerificationMethod());
+        proof.setProofPurpose(signatureObject.getProof().getProofPurpose());
+        proof.setProofValue(proofValue);
+
+        return EcdhReqData.builder()
+                .client(walletDidDocument.getId())
+                .clientNonce(signatureObject.getClientNonce())
+                .curve(signatureObject.getCurve())
+                .publicKey(signatureObject.getPublicKey())
+                .candidate(signatureObject.getCandidate())
+                .proof(proof)
+                .build();
+
     }
 
     /**
@@ -163,29 +156,26 @@ public class SignatureService {
      * @throws OpenDidException if the signature generation fails
      */
     public DidAuth signDidAuth(DidDocument casDidDocument, DidAuth signatureObject) {
-        try {
-            // Serialize and sort data set.
-            String serializedJson = JsonUtil.serializeAndSort(signatureObject);
 
-            // Sign data.
-            String proofValue = signData(casDidDocument, serializedJson, ProofPurpose.fromDisplayName(signatureObject.getProof().getProofPurpose()));
+        // Serialize and sort data set.
+        String serializedJson = JsonUtil.serializeAndSort(signatureObject);
 
-            // Generate proof.
-            Proof proof = new Proof();
-            proof.setType(signatureObject.getProof().getType());
-            proof.setCreated(signatureObject.getProof().getCreated());
-            proof.setVerificationMethod(signatureObject.getProof().getVerificationMethod());
-            proof.setProofPurpose(signatureObject.getProof().getProofPurpose());
-            proof.setProofValue(proofValue);
+        // Sign data.
+        String proofValue = signData(casDidDocument, serializedJson, ProofPurpose.fromDisplayName(signatureObject.getProof().getProofPurpose()));
 
-            return DidAuth.builder()
-                    .authNonce(signatureObject.getAuthNonce())
-                    .did(casDidDocument.getId())
-                    .proof(proof)
-                    .build();
-        } catch (Exception e) {
-            log.error("Error occurred while signing DID Auth: {}", e.getMessage());
-            throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
-        }
+        // Generate proof.
+        Proof proof = new Proof();
+        proof.setType(signatureObject.getProof().getType());
+        proof.setCreated(signatureObject.getProof().getCreated());
+        proof.setVerificationMethod(signatureObject.getProof().getVerificationMethod());
+        proof.setProofPurpose(signatureObject.getProof().getProofPurpose());
+        proof.setProofValue(proofValue);
+
+        return DidAuth.builder()
+                .authNonce(signatureObject.getAuthNonce())
+                .did(casDidDocument.getId())
+                .proof(proof)
+                .build();
+
     }
 }

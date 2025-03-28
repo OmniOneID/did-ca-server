@@ -50,7 +50,7 @@ public class BaseWalletUtil {
         try {
             WalletManagerInterface walletManager = WalletManagerFactory.getWalletManager(WalletManagerFactory.WalletManagerType.FILE);
             walletManager.create(walletFilePath, password.toCharArray(), WalletEncryptType.AES_256_CBC_PKCS5Padding);
-        } catch (Exception e) {
+        } catch (WalletException e) {
             log.error("Failed to create wallet: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.WALLET_CONNECTION_FAILED);
         }
