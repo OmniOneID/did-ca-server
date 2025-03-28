@@ -41,7 +41,7 @@ Below is a description of each folder and file in the `src` directory:
 | Name                   | Description                                       |
 | ---------------------- | ------------------------------------------------- |
 | public                 | Static assets served as-is from the root path `/` |
-| src/apis               | API client modules for TA Admin features          |
+| src/apis               | API client modules for CA Admin features          |
 | src/assets             | Static assets used in the application             |
 | src/components         | Reusable UI components                            |
 | src/config             | Application configuration settings                |
