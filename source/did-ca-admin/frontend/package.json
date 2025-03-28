@@ -1,7 +1,13 @@
 {
-  "name": "core-vite-auth",
-  "version": "0.1.0",
+  "name": "opendid-ca-admin",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OmniOneID/did-ca-server"
+  },
+  "homepage": "https://github.com/OmniOneID/did-ca-server", 
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
