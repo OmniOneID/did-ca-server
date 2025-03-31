@@ -27,7 +27,7 @@ configurations {
 ext {
     set('springCloudVersion', "2023.0.1")
     set("skipFrontendBuild", System.getProperty("skipFrontendBuild"))
-    set("frontendResourceDir", "${project.projectDir}/../did-ta-admin/frontend")
+    set("frontendResourceDir", "${project.projectDir}/../did-ca-admin/frontend")
     set("backendResourceDir", "${projectDir}/src/main/resources/static")
 }
 
