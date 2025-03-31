@@ -15,7 +15,7 @@ puppeteer:
         fullPage: false
 ---
 
-Open DID CA Admin Console Guide
+Open DID CA Admin Operation Guide
 ==
 
 - Date: 2025-03-31
