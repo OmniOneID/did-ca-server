@@ -18,7 +18,7 @@ This document defines the structure of the database tables used in the CA server
 
 ### 1.1 ERD
 
-Access the [ERD](https://www.erdcloud.com/d/rSvd7yt6oFpuEaq7C) site to view the diagram, which visually represents the relationships between the tables in the CA server database, including key attributes, primary keys, and foreign key relationships.
+Access the [ERD](https://www.erdcloud.com/d/5tR4y8YGnkSzeheBN) site to view the diagram, which visually represents the relationships between the tables in the CA server database, including key attributes, primary keys, and foreign key relationships.
 
 ## 2. Table Definition
 
