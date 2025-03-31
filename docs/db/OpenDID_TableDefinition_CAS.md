@@ -1,7 +1,7 @@
 # Open DID CAS Database Table Definition
 
-- Date: 2024-09-04
-- Version: v1.0.2
+- Date: 2025-03-31
+- Version: v1.0.1 (dev)
 
 ## Contents
 - [1. Overview](#1-overview)
@@ -9,6 +9,8 @@
 - [2. Table Definition](#2-table-definition)
   - [2.1. User PII](#21-user-pii)
   - [2.2. Certificate VC](#22-certificate-vc)
+  - [2.3. CAS](#23-cas)
+  - [2.4. Admin](#24-admin)
 
 ## 1. Overview
 
@@ -42,3 +44,36 @@ This table stores Certificate VC (Verifiable Credential) information.
 |      | vc                 | TEXT       |        | NO       | N/A      | vc                                |
 |      | created_at         | TIMESTAMP  |        | NO       | now()    | created date                      |
 |      | updated_at         | TIMESTAMP  |        | YES      | N/A      | updated date                      |
+
+### 2.3. CAS
+
+This table stores information about CA server.
+
+| Key | Column Name     | Data Type | Length | Nullable | Default | Description             |
+| --- | --------------- | --------- | ------ | -------- | ------- | ----------------------- |
+| PK  | id              | BIGINT    |        | NO       | N/A     | id                      |
+|     | did             | VARCHAR   | 200    | NO       | N/A     | did                     |
+|     | name            | VARCHAR   | 200    | NO       | N/A     | name                    |
+|     | status          | VARCHAR   | 50     | NO       | N/A     | cas status              |
+|     | server_url      | VARCHAR   | 2000   | YES      | N/A     | URL of the CAS server   |
+|     | certificate_url | VARCHAR   | 2000   | YES      | N/A     | URL for CAS certificate |
+|     | created_at      | TIMESTAMP |        | NO       | now()   | created date            |
+|     | updated_at      | TIMESTAMP |        | YES      | N/A     | updated date            |
+
+### 2.4. Admin
+
+This table stores information about administrator accounts.
+
+| Key | Column Name            | Data Type | Length | Nullable | Default | Description                        |
+| --- | ---------------------- | --------- | ------ | -------- | ------- | ---------------------------------- |
+| PK  | id                     | BIGINT    |        | NO       | N/A     | id                                 |
+|     | login_id               | VARCHAR   | 50     | NO       | N/A     | login ID                           |
+|     | login_password         | VARCHAR   | 64     | NO       | N/A     | hashed login password              |
+|     | name                   | VARCHAR   | 200    | YES      | N/A     | administrator name                 |
+|     | email                  | VARCHAR   | 100    | YES      | N/A     | email address                      |
+|     | email_verified         | BOOLEAN   |        | YES      | false   | whether email is verified          |
+|     | require_password_reset | BOOLEAN   |        | NO       | true    | whether password reset is required |
+|     | role                   | VARCHAR   | 50     | NO       | N/A     | administrator role                 |
+|     | created_by             | VARCHAR   | 50     | NO       | N/A     | creator's login ID                 |
+|     | created_at             | TIMESTAMP |        | NO       | now()   | created date                       |
+|     | updated_at             | TIMESTAMP |        | YES      | N/A     | updated date                       |
