@@ -83,7 +83,7 @@ export default function SignIn() {
     }
   };
 
-  const Title = () => <p style={{ fontWeight: 700, fontSize: '32px', lineHeight: '150%', margin: 0 }}>CA Admin Console Login</p>;
+  const Title = () => <p style={{ fontWeight: 700, fontSize: '32px', lineHeight: '150%', margin: 0 }}>CA Admin Login</p>;
   const SubTitle = () => <p style={{ fontSize: '14px', marginBottom: 16, marginTop: 8 }}>Welcome, please sign in to continue</p>;
 
   return (
