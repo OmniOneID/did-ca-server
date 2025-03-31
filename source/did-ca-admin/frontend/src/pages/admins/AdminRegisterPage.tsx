@@ -214,7 +214,7 @@ const AdminRegisterPage = (props: Props) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <TextField 
                             fullWidth
-                            label="ID" 
+                            label="ID *" 
                             variant="outlined"
                             margin="normal" 
                             size="medium"
@@ -240,7 +240,7 @@ const AdminRegisterPage = (props: Props) => {
                     </Box>
 
                     <FormControl fullWidth margin="normal">
-                        <InputLabel>Role</InputLabel>
+                        <InputLabel>Role *</InputLabel>
                         <Select 
                             value={formData.role} 
                             onChange={() => {}}
@@ -253,7 +253,7 @@ const AdminRegisterPage = (props: Props) => {
 
                     <TextField 
                         fullWidth
-                        label="Password"
+                        label="Password *"
                         type="password" 
                         variant="outlined"
                         margin="normal" 
@@ -266,7 +266,7 @@ const AdminRegisterPage = (props: Props) => {
 
                     <TextField 
                         fullWidth
-                        label="Re-enter Password"
+                        label="Re-enter Password *"
                         type="password"
                         variant="outlined"
                         margin="normal" 
