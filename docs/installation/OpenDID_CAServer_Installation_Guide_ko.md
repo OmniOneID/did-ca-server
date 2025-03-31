@@ -15,7 +15,7 @@ puppeteer:
         fullPage: false
 ---
 
-# Open DID CA Server Installation And Operation Guide
+# Open DID CA Server Installation Guide
 
 - Date: 2025-03-31
 - Version: v1.0.0
