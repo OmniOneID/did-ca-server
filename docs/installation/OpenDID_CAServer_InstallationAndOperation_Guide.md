@@ -15,36 +15,36 @@ puppeteer:
         fullPage: false
 ---
 
-Open DID CAS Server Installation And Operation Guide
-==
+# Open DID CA Server Installation And Operation Guide
 
-- Date: 2024-09-02
+- Date: 2025-03-31
 - Version: v1.0.0
 
-Table of Contents
-==
+## Table of Contents
 
 - [1. Introduction](#1-introduction)
   - [1.1. Overview](#11-overview)
-  - [1.2. CAS Server Definition](#12-cas-server-definition)
+  - [1.2. CA Server Definition](#12-ca-server-definition)
   - [1.3. System Requirements](#13-system-requirements)
 - [2. Prerequisites](#2-prerequisites)
   - [2.1. Git Installation](#21-git-installation)
   - [2.2. PostgreSQL Installation](#22-postgresql-installation)
+  - [2.3. Node.js Installation](#23-nodejs-installation)
 - [3. Cloning Source Code from GitHub](#3-cloning-source-code-from-github)
   - [3.1. Source Code Cloning](#31-source-code-cloning)
   - [3.2. Directory Structure](#32-directory-structure)
-- [4. Server Startup Methods](#4-server-startup-methods)
-  - [4.1. Running with IntelliJ IDEA (Gradle Support)](#41-running-with-intellij-idea-gradle-support)
-    - [4.1.1. IntelliJ IDEA Installation and Setup](#411-intellij-idea-installation-and-setup)
-    - [4.1.2. Opening Project in IntelliJ](#412-opening-project-in-intellij)
-    - [4.1.3. Gradle Build](#413-gradle-build)
-    - [4.1.4. Server Startup](#414-server-startup)
-    - [4.1.5. Database Installation](#415-database-installation)
-    - [4.1.6. Server Configuration](#416-server-configuration)
-  - [4.2. Running via Console Commands](#42-running-via-console-commands)
+- [4. Server Deployment Methods](#4-server-deployment-methods)
+  - [4.1. Running with IDE (Gradle and React Project Execution)](#41-running-with-ide-gradle-and-react-project-execution)
+    - [4.1.1. Running Backend (Spring Boot) with IntelliJ IDEA](#411-running-backend-spring-boot-with-intellij-idea)
+      - [4.1.1.1. IntelliJ IDEA Installation](#4111-intellij-idea-installation)
+      - [4.1.1.2. Opening the Project](#4112-opening-the-project)
+      - [4.1.1.3. Gradle Build](#4113-gradle-build)
+      - [4.1.1.4. Server Execution](#4114-server-execution)
+      - [4.1.1.5. Database Installation](#4115-database-installation)
+      - [4.1.1.6. Server Configuration](#4116-server-configuration)
+  - [4.2. Running with Console Commands](#42-running-with-console-commands)
     - [4.2.1. Gradle Build Commands](#421-gradle-build-commands)
-    - [4.2.2. Server Startup Method](#422-server-startup-method)
+    - [4.2.2. Server Execution Method](#422-server-execution-method)
     - [4.2.3. Database Installation](#423-database-installation)
     - [4.2.4. Server Configuration Method](#424-server-configuration-method)
   - [4.3. Running with Docker](#43-running-with-docker)
@@ -53,7 +53,7 @@ Table of Contents
     - [5.1.1. Spring Basic Configuration](#511-spring-basic-configuration)
     - [5.1.2. Jackson Basic Configuration](#512-jackson-basic-configuration)
     - [5.1.3. Server Configuration](#513-server-configuration)
-    - [5.1.5. TAS Configuration](#515-tas-configuration)
+    - [5.1.4. TA(Trust Agent) Configuration](#514-tatrust-agent-configuration)
   - [5.2. database.yml](#52-databaseyml)
     - [5.2.1. Spring Liquibase Configuration](#521-spring-liquibase-configuration)
     - [5.2.2. Datasource Configuration](#522-datasource-configuration)
@@ -70,33 +70,35 @@ Table of Contents
     - [6.1.1. `sample` Profile](#611-sample-profile)
     - [6.1.2. `dev` Profile](#612-dev-profile)
   - [6.2. Profile Configuration Methods](#62-profile-configuration-methods)
-    - [6.2.1. When Running Server Using IDE](#621-when-running-server-using-ide)
-    - [6.2.2. When Running Server Using Console Commands](#622-when-running-server-using-console-commands)
-    - [6.2.3. When Running Server Using Docker](#623-when-running-server-using-docker)
+    - [6.2.1. When Running Server with IDE](#621-when-running-server-using-ide)
+    - [6.2.2. When Running Server with Console Commands](#622-when-running-server-using-console-commands)
+    - [6.2.3. When Running Server with Docker](#623-when-running-server-using-docker)
 - [7. Building and Running with Docker](#7-building-and-running-with-docker)
-  - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#71-docker-image-build-method-based-on-dockerfile)
-  - [7.2. Running Docker Image](#72-running-docker-image)
+  - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#731-docker-composeyml-file-description)
+  - [7.2.  Running Docker Image](#72-running-docker-image)
   - [7.3. Running with Docker Compose](#73-running-with-docker-compose)
     - [7.3.1. `docker-compose.yml` File Description](#731-docker-composeyml-file-description)
     - [7.3.2. Container Execution and Management](#732-container-execution-and-management)
     - [7.3.3. Server Configuration Method](#733-server-configuration-method)
-- [8. Installing Docker PostgreSQL](#8-installing-docker-postgresql)
-  - [8.1. PostgreSQL Installation Using Docker Compose](#81-postgresql-installation-using-docker-compose)
-  - [8.2. Running PostgreSQL Container](#82-running-postgresql-container)
-    
+- [8. Installing PostgreSQL with Docker](#8-installing-docker-postgresql)
+  - [8.1. PostgreSQL Installation using Docker Compose](#81-postgresql-installation-using-docker-compose)
+  - [8.2. PostgreSQL Container Execution](#82-running-postgresql-container)
 
 # 1. Introduction
 
 ## 1.1. Overview
-This document provides a guide for installing and running the CAS (Certified App Service) server. It explains the installation process, configuration methods, and startup procedures of the CAS server step by step, guiding users to efficiently install and operate it.
+This document provides a guide for the installation, configuration, and operation of the Open DID CA (Certified App) Server. The CA (Certified App) Server consists of a Spring Boot-based backend and a React-based Admin console frontend, which can be deployed together through Gradle build. The installation process, environment configuration, Docker execution method, and profile settings are explained step by step to guide users in efficiently installing and running the server.
 
-For the complete installation guide of OpenDID, please refer to the [Open DID Installation Guide].
+- For a complete guide on installing OpenDID, please refer to the [Open DID Installation Guide].
+- For the Admin console guide, please refer to the [Open DID Admin Console Guide].
 
 <br/>
 
-## 1.2. CAS Server Definition
+## 1.2. CA Server Definition
 
-The CAS server is an authorized app service server, playing the role of certifying authorized apps for use within Open DID.
+The CA server is an authorization app server that certifies authorized apps for use within Open DID.
+
+Throughout all documents in the server, "Certified App Server" (abbreviated as "" or "CA-Server") is used interchangeably depending on the context and usage method. These all refer to the same system.
 
 <br/>
 
@@ -110,11 +112,11 @@ The CAS server is an authorized app service server, playing the role of certifyi
 
 # 2. Prerequisites
 
-This chapter guides you through the necessary preparations before installing the components of the Open DID project.
+This chapter guides you through the prerequisites needed before installing the components of the Open DID project.
 
 ## 2.1. Git Installation
 
-`Git` is a distributed version control system that tracks changes in source code and supports collaboration among multiple developers. Git is essential for managing and versioning the source code of the Open DID project.
+`Git` is a distributed version control system that tracks changes to source code and supports collaboration between multiple developers. Git is essential for managing the source code of the Open DID project and for version control.
 
 After successful installation, you can verify the Git version using the following command:
 
@@ -128,27 +130,45 @@ git --version
 <br/>
 
 ## 2.2. PostgreSQL Installation
-To run the CAS server, a database installation is required, and Open DID uses PostgreSQL.
+To run the CA server, a database installation is required, and Open DID uses PostgreSQL.
 
 > **Reference Links**
-- [PostgreSQL Installation Guide Document](https://www.postgresql.org/download/)
-- [8. Installing Docker PostgreSQL](#8-installing-docker-postgresql)
+- [PostgreSQL Installation Guide Documentation](https://www.postgresql.org/download/)
+- [8. Installing PostgreSQL with Docker](#8-installing-postgresql-with-docker)
 
 <br/>
 
+## 2.3. Node.js Installation
+To run the React-based Issuer Admin Console, `Node.js` and `npm` are required.
+
+npm (Node Package Manager) is used to install and manage dependencies needed for frontend development.
+
+After installation is complete, you can verify that it was installed correctly using the following commands:
+
+```bash
+node --version
+npm --version
+```
+
+> **Reference Links**  
+> - [Node.js Official Download Page](https://nodejs.org/)  
+> - LTS (Long Term Support) version is recommended.  
+
+> ✅ Installation Verification Tip  
+> When you enter the `node -v` and `npm -v` commands and version information is displayed, it means the installation was successful.
 
 # 3. Cloning Source Code from GitHub
 
 ## 3.1. Source Code Cloning
 
-The `git clone` command is used to clone source code from a remote repository hosted on GitHub to your local computer. This command allows you to work with the entire project's source code and related files locally. After cloning, you can proceed with necessary work within the repository, and changes can be pushed back to the remote repository.
+The `git clone` command is used to copy source code from a repository hosted on GitHub to your local computer. With this command, you can work with the entire project's source code and related files locally. After cloning, you can proceed with necessary operations within the repository and push changes back to the remote repository.
 
-Open a terminal and run the following commands to copy the CAS server repository to your local computer:
+Open a terminal and run the following commands to copy the CA server repository to your local computer.
 ```bash
 # Clone the repository from Git storage
 git clone https://github.com/OmniOneID/did-ca-server.git
 
-# Move to the cloned repository
+# Navigate to the cloned repository
 cd did-ca-server
 ```
 
@@ -173,6 +193,9 @@ did-ca-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       └── Open DID CA Admin Console Guide.md
+│       └── Open DID CA Admin Console Guide_ko.md
 │   └── api
 │       └── CAS_API_ko.md
 │   └── errorCode
@@ -196,110 +219,113 @@ did-ca-server
         └── src
         └── build.gradle
         └── README.md
+    └── did-ca-admin
 ```
 
-| Name                    | Description                                         |
-| ----------------------- | --------------------------------------------------- |
-| CHANGELOG.md            | Version changes of the project                      |
-| CODE_OF_CONDUCT.md      | Code of conduct for contributors                    |
-| CONTRIBUTING.md         | Contribution guidelines and procedures              |
-| LICENSE                 | License                                             |
-| dependencies-license.md | License information for project dependencies        |
-| MAINTAINERS.md          | Guidelines for project maintainers                  |
-| RELEASE-PROCESS.md      | Procedure for releasing new versions                |
-| SECURITY.md             | Security policy and vulnerability reporting method  |
-| docs                    | Documentation                                       |
-| ┖ api                   | API guide documents                                 |
-| ┖ errorCode             | Error codes and troubleshooting guide               |
-| ┖ installation          | Installation and setup guide                        |
-| ┖ db                    | Database ERD, table specifications                  |
-| source                  | Source code                                         |
-| ┖ did-ca-server         | CAS server source code and build files              |
-| ┖ gradle                | Gradle build settings and scripts                   |
-| ┖ libs                  | External libraries and dependencies                 |
-| ┖ sample                | Sample files                                        |
-| ┖ src                   | Main source code directory                          |
-| ┖ build.gradle          | Gradle build configuration file                     |
-| ┖ README.md             | Source code overview and guide                      |
+| Name                    | Description                              |
+| ----------------------- | ---------------------------------------- |
+| CHANGELOG.md            | Version history of the project           |
+| CODE_OF_CONDUCT.md      | Code of conduct for contributors         |
+| CONTRIBUTING.md         | Contribution guidelines and procedures   |
+| LICENSE                 | License information                      |
+| dependencies-license.md | License information for project dependencies |
+| MAINTAINERS.md          | Guidelines for project maintainers       |
+| RELEASE-PROCESS.md      | Procedures for releasing new versions    |
+| SECURITY.md             | Security policies and vulnerability reporting procedures |
+| docs                    | Documentation                            |
+| ┖ admin                 | Admin guide documents                    |
+| ┖ api                   | API guide documents                      |
+| ┖ errorCode             | Error codes and troubleshooting guides   |
+| ┖ installation          | Installation and configuration guides    |
+| ┖ db                    | Database ERD, table specifications       |
+| source                  | Source code                              |
+| ┖ did-ca-server         | CA server source code and build files    |
+| ┖ gradle                | Gradle build settings and scripts        |
+| ┖ libs                  | External libraries and dependencies      |
+| ┖ sample                | Sample files                             |
+| ┖ src                   | Main source code directory               |
+| ┖ build.gradle          | Gradle build configuration file          |
+| ┖ README.md             | Source code overview and guide           |
 
 <br/>
 
+# 4. Server Deployment Methods
+This chapter guides you through three methods for deploying the server.
 
-# 4. Server Startup Methods
-This chapter guides you through three methods to start the server.
+The project source is located under the `source` directory, and you need to configure the source from that directory according to each deployment method.
 
-The project source is located under the `source` directory, and you need to load and configure the source from this directory according to each startup method.
+1. **Using an IDE**: You can open the project in an integrated development environment (IDE), configure the run settings, and directly execute the server. This method is useful for quickly testing code changes during development.
 
-1. **Using an IDE**: You can open the project in an Integrated Development Environment (IDE), set up the run configuration, and directly run the server. This method is useful for quickly testing code changes during development.
+2. **Using console commands after building**: You can build the project and then run the generated JAR file using console commands (`java -jar`). This method is commonly used for deploying the server or running it in a production environment.
 
-2. **Using console commands after building**: You can build the project and then run the server by executing the generated JAR file with a console command (`java -jar`). This method is mainly used when deploying the server or running it in a production environment.
-
-3. **Building with Docker**: You can build the server as a Docker image and run it as a Docker container. This method has the advantage of maintaining consistency across environments and facilitates deployment and scaling.
+3. **Building with Docker**: You can build the server as a Docker image and run it as a Docker container. This method offers the advantage of maintaining consistency across environments and facilitates deployment and scaling.
    
-## 4.1. Running with IntelliJ IDEA (Gradle Support)
+## 4.1. Running with IDE (Gradle and React Project Execution)
 
-IntelliJ IDEA is a widely used Integrated Development Environment (IDE) for Java development, supporting build tools like Gradle, which makes project setup and dependency management very convenient. Open DID's server is built using Gradle, so you can easily set up the project and run the server in IntelliJ IDEA.
+The Open DID project consists of a backend (Spring Boot-based) and a frontend (React-based), which can be developed and executed in IntelliJ IDEA and VS Code, respectively.
 
-### 4.1.1. IntelliJ IDEA Installation and Setup
-1. Install IntelliJ. (Refer to the link below for installation method)
+### 4.1.1. Running Backend (Spring Boot) with IntelliJ IDEA
 
-> **Reference Links**
-> - [IntelliJ IDEA Download](https://www.jetbrains.com/idea/download/)
+IntelliJ IDEA is a widely used IDE for Java development and is well-compatible with Gradle-based projects. Since the Open DID server uses Gradle, it can be easily run in IntelliJ.
 
-### 4.1.2. Opening Project in IntelliJ
-- Run IntelliJ and select `File -> New -> Project from Existing Sources`. When the file selection window appears, select the 'source/did-ca-server' folder from the repository cloned in [3.1. Source Code Cloning](#31-source-code-cloning).
-- When you open the project, the build.gradle file is automatically recognized.
-- Gradle automatically downloads the necessary dependency files, wait for this process to complete.
+#### 4.1.1.1. IntelliJ IDEA Installation
 
-### 4.1.3. Gradle Build
-- Run `Tasks -> build -> build` in the `Gradle` tab of IntelliJ IDEA. 
-- When the build is successfully completed, the project is ready to run.
+- [IntelliJ IDEA Download](https://www.jetbrains.com/idea/download/)
 
-### 4.1.4. Server Startup
-- Select and run Tasks -> application -> bootRun in the Gradle tab of IntelliJ IDEA.
-- Gradle automatically builds and runs the server.
-- Check the console log for the message "Started [ApplicationName] in [time] seconds" to confirm that the server has started normally.
-- If the server starts normally, navigate to http://localhost:8094/swagger-ui/index.html in your browser to verify that the API documentation is properly displayed through Swagger UI.
+#### 4.1.1.2. Opening the Project
 
-> **Note**
-> - The CAS server is initially set to the sample profile.
-> - When set to the sample profile, the server runs ignoring essential settings (e.g., database). For more details, please refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage) chapter.
+- Select `File -> New -> Project from Existing Sources`  
+- Select the `source/did-issuer-server` directory  
+- The `build.gradle` file will be automatically recognized, and the necessary dependencies will be automatically downloaded
 
+#### 4.1.1.3. Gradle Build
 
-### 4.1.5. Database Installation
-The CAS server stores data necessary for operation in a database, so a database must be installed to operate the server. Open DID's server uses PostgreSQL database. There are several ways to install PostgreSQL server, but installation using Docker is the easiest and most convenient. Please refer to [2.2. PostgreSQL Installation](#22-postgresql-installation) chapter for PostgreSQL installation methods.
+- Run `Tasks -> build -> build` in the `Gradle` tab
 
+#### 4.1.1.4. Server Execution
+
+- Run `Tasks -> application -> bootRun`  
+- When the console displays the message `"Started [ApplicationName] in [time] seconds"`, the server is running normally
+
+> ⚠️ The default `sample` profile is used for execution. It runs for testing purposes without a database.  
+> For more details, refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
+
+#### 4.1.1.5. Database Installation
+
+- Use PostgreSQL (Docker installation recommended)  
+- For detailed installation methods, refer to [2.2. PostgreSQL Installation](#22-postgresql-installation)
 <br/>
 
-### 4.1.6. Server Configuration
-- The server needs to be configured according to the deployment environment, ensuring stable operation. For example, database connection information, port number, email integration information, and other components should be adjusted to fit each environment.
-- The server's configuration files are located in the `src/main/resource/config` path.
+#### 4.1.1.6. Server Configuration
+- The server must be configured according to the deployment environment to ensure stable operation. For example, database connection information, port numbers, email integration information, and other configuration elements must be adjusted for each environment.
+- The server configuration files are located in the `src/main/resource/config` path.
 - For detailed configuration methods, please refer to [5. Configuration Guide](#5-configuration-guide).
 
 <br/>
 
-## 4.2. Running via Console Commands
+## 4.2. Running with Console Commands
 
 This section guides you on how to run the Open DID server using console commands. It explains the process of building the project using Gradle and running the server using the generated JAR file.
+- When building with Gradle, the frontend (Admin Console) is automatically built together and included as static resources.
 
 ### 4.2.1. Gradle Build Commands
 
-- Use gradlew to build the source:
+- Use gradlew to build the source.
   ```shell
-    # Move to the source folder of the cloned repository
+    # Navigate to the source folder of the cloned repository
     cd source/did-ca-server
 
     # Grant execution permission to Gradle Wrapper
     chmod 755 ./gradlew
 
-    # Clean build the project (delete previous build files and build anew)
+    # Clean build the project (delete previous build files and build again)
     ./gradlew clean build
   ```
-  
-  > Note
-  > - gradlew is short for Gradle Wrapper, a script used to run Gradle in the project. Even if Gradle is not installed locally, it automatically downloads and runs the version of Gradle specified in the project. This allows developers to build the project in the same environment regardless of whether Gradle is installed or not.
+  > Note: If frontend build is not needed (e.g., testing only the backend or already having frontend build results), you can add the following option to skip the frontend build. 
+  > - `./gradlew clean build -DskipFrontendBuild=true`
 
-- Move to the built folder and check that the JAR file has been created.
+
+- Navigate to the built folder and verify that the JAR file has been created.
     ```shell
       cd build/libs
       ls
@@ -308,29 +334,29 @@ This section guides you on how to run the Open DID server using console commands
 
 <br/>
 
-### 4.2.2. Server Startup Method
-Use the built JAR file to start the server:
+### 4.2.2. Server Execution Method
+Use the built JAR file to run the server:
 
 ```bash
 java -jar did-ca-server-1.0.0.jar
 ```
 
-- If the server starts normally, navigate to http://localhost:8094/swagger-ui/index.html in your browser to verify that the API documentation is properly displayed through Swagger UI.
+- When the server is running normally, navigate to http://localhost:8094/swagger-ui/index.html in your browser to verify that the Swagger UI API documentation is correctly displayed.
 
 > **Note**
-> - The CAS server is initially set to the sample profile.
-> - When set to the sample profile, the server runs ignoring essential settings (e.g., database). For more details, please refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage) chapter.
+> - The CA server is initially configured with the sample profile.
+> - When configured with the sample profile, the server runs ignoring essential configurations (e.g., database). For more details, please refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage) chapter.
 
 <br/>
 
 ### 4.2.3. Database Installation
-The CAS server stores data necessary for operation in a database, so a database must be installed to operate the server. Open DID's server uses PostgreSQL database. There are several ways to install PostgreSQL server, but installation using Docker is the easiest and most convenient. Please refer to [2.2. PostgreSQL Installation](#22-postgresql-installation) chapter for PostgreSQL installation methods.
+The CA server stores operational data in a database, so a database must be installed to operate the server. Open DID servers use the PostgreSQL database. There are various ways to install the PostgreSQL server, but installation using Docker is the most convenient and easy. For PostgreSQL installation methods, please refer to [2.2. PostgreSQL Installation](#22-postgresql-installation) chapter.
 
 <br/>
 
 ### 4.2.4. Server Configuration Method
-- The server needs to be configured according to the deployment environment, ensuring stable operation. For example, database connection information, port number, email integration information, and other components should be adjusted to fit each environment.
-- The server's configuration files are located in the `src/main/resource/config` path.
+- The server must be configured according to the deployment environment to ensure stable operation. For example, database connection information, port numbers, email integration information, and other configuration elements must be adjusted for each environment.
+- The server configuration files are located in the `src/main/resource/config` path.
 - For detailed configuration methods, please refer to [5. Configuration Guide](#5-configuration-guide).
 
 <br/>
@@ -340,55 +366,54 @@ The CAS server stores data necessary for operation in a database, so a database 
 
 <br/>
 
-
 # 5. Configuration Guide
 
-This chapter provides guidance on each configuration value included in all server configuration files. Each setting is an important element that controls the server's behavior and environment, and appropriate settings are necessary for stable server operation. Please refer to the item-by-item explanations and examples to apply settings suitable for each environment.
+This chapter provides guidance on all configuration values included in the server's configuration files. Each configuration is an important element that controls the server's behavior and environment, and appropriate settings are needed for stable server operation. Refer to the descriptions and examples for each item to apply the appropriate settings for each environment.
 
-Please note that settings with the 🔒 icon are either fixed values by default or generally do not need to be modified.
+Settings with the 🔒 icon are either fixed values by default or values that generally do not need to be modified.
 
 ## 5.1. application.yml
 
-- Role: The application.yml file defines the basic settings for the Spring Boot application. Through this file, you can specify various environment variables such as the application name, database settings, profile settings, etc., which have a significant impact on how the application operates.
+- Role: The application.yml file defines the basic settings of the Spring Boot application. Through this file, you can specify various environment variables such as the application name, database settings, and profile settings, which have a significant impact on how the application operates.
 
 - Location: `src/main/resources/`
 
 ### 5.1.1. Spring Basic Configuration
-Spring's basic configuration defines the application name and profiles to activate, playing an important role in setting up the server's operating environment.
+The basic Spring configuration defines the application name and active profile, playing an important role in setting up the server's operating environment.
 
 * `spring.application.name`: 🔒
     - Specifies the name of the application.
-    - Usage: Mainly used to identify the application in log messages, monitoring tools, or Spring Cloud services.
+    - Purpose: Primarily used for identifying the application in log messages, monitoring tools, or Spring Cloud services.
     - Example: `cas`
 
 * `spring.profiles.active`:  
   - Defines the profile to activate. 
-  - Usage: Selects either sample or development environment to load the appropriate settings for that environment. For more details about profiles, please refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage) chapter.
+  - Purpose: Selects one of the sample or development environments to load the appropriate settings for that environment. For more details on profiles, please refer to [6. Profile Configuration and Usage](#6-profile-configuration-and-usage) chapter.
   - Supported profiles: sample, dev
   - Example: `sample`, `dev`
 
 * `spring.profiles.group.dev`: 🔒
   - Defines individual profiles included in the `dev` profile group.
-  - Usage: Groups settings to be used in the development environment.
-  - Profile file naming convention: Configuration files for each profile use the name defined in the group as is. For example, the auth profile is written as application-auth.yml, and the databases profile as application-databases.yml. The filename should be used exactly as written under group.dev.
+  - Purpose: Manages settings to be used in the development environment as a group.
+  - Profile filename rules: Configuration files for each profile use the exact name defined in the group. For example, the auth profile is written as application-auth.yml, and the databases profile as application-databases.yml. The filename must use the name exactly as it appears under group.dev.
 
 * `spring.profiles.group.sample`: 🔒
   - Defines individual profiles included in the `sample` profile group.
-  - Usage: Groups settings to be used in the development environment.
-  - Profile file naming convention: Configuration files for each profile use the name defined in the group as is. For example, the auth profile is written as application-auth.yml, and the databases profile as application-databases.yml. The filename should be used exactly as written under group.dev.
+  - Purpose: Manages settings to be used in the development environment as a group.
+  - Profile filename rules: Configuration files for each profile use the exact name defined in the group. For example, the auth profile is written as application-auth.yml, and the databases profile as application-databases.yml. The filename must use the name exactly as it appears under group.sample.
 
 <br/>
 
 ### 5.1.2. Jackson Basic Configuration
 
-Jackson is the JSON serialization/deserialization library used by default in Spring Boot. Through Jackson's settings, you can adjust the serialization method or format of JSON data, improving performance and efficiency in data transmission.
+Jackson is the default JSON serialization/deserialization library used in Spring Boot. Through Jackson's configuration, you can adjust the serialization method or format of JSON data, improving performance and efficiency during data transmission.
 
 * `spring.jackson.default-property-inclusion`: 🔒 
-    - Sets not to serialize when property values are null.
+    - Configures not to serialize properties when their values are null.
     - Example: non_null
 
 * `spring.jackson.default-property-inclusion`: 🔒 
-    - Sets not to cause errors when serializing empty objects.
+    - Configures not to generate errors when serializing empty objects.
     - Example: false
 
 <br/>
@@ -397,76 +422,76 @@ Jackson is the JSON serialization/deserialization library used by default in Spr
 Server configuration defines the port number on which the application will receive requests.
 
 * `server.port`:  
-    - The port number on which the application will run. The default port for the CAS server is 8094.
+    - Port number on which the application will run. The default port for CA server is 8094.
     - Value: 8094
 
 <br/>
 
-### 5.1.5. TAS Configuration 
-Enter the information for the TAS server that will communicate with the CAS server.
+### 5.1.4. TA(Trust Agent) Configuration 
+Enter information about the TAS server that will communicate with the CA server.
 
 * `tas.url`:  
-    - The URL of the TAS (Trust Agent Service) server. 
+    - URL of the TAS (Trust Agent Service) server. 
     - Example: `http://127.0.0.1:8090/tas`
 
 <br/>
 
 ## 5.2. database.yml
-- Role: Defines how to manage and operate the database on the server, from database connection information to migration settings using Liquibase, and JPA settings.
+- Role: Defines everything from database connection information to Liquibase migration settings and JPA settings, determining how the server manages and operates the database.
 
 - Location: `src/main/resources/`
   
 ### 5.2.1. Spring Liquibase Configuration 
-Liquibase is a tool for managing database migrations, helping to track and automatically apply changes to database schemas. This allows maintaining database consistency in development and production environments.
+Liquibase is a tool for managing database migrations that helps track and automatically apply changes to database schemas. This helps maintain database consistency in development and production environments.
 
 * `spring.liquibase.change-log`: 🔒 
-    - Specifies the location of the database change log file. This is the location of the log file that Liquibase uses to track and apply database schema changes.
+    - Specifies the location of the database change log file. This is the location of the log file used by Liquibase to track and apply database schema changes.
     - Example: `classpath:/db/changelog/master.xml`
 
 * `spring.liquibase.enabled`: 🔒 
-    - Sets whether to activate Liquibase. When set to true, Liquibase runs when the application starts and performs database migration. The `sample` profile should be set to false as it does not connect to the database.
+    - Sets whether to enable Liquibase. When set to true, Liquibase runs at application startup and performs database migrations. The `sample` profile does not use database integration, so it should be set to false.
     - Example: `true` [dev], `false` [sample]
 
 * `spring.liquibase.fall-on-error`: 🔒
-    - Controls behavior when an error occurs during Liquibase database migration. Only set in the `sample` profile.
+    - Controls the behavior when an error occurs while Liquibase is performing database migration. This is only set in the `sample` profile.
     - Example: `false` [sample]
 
 <br/>
 
 ### 5.2.2. Datasource Configuration
-Datasource configuration defines the basic information for the application to connect to the database. This includes information such as database driver, URL, username, and password.
+Datasource settings define the basic information for the application to connect to the database. This includes database driver, URL, username, and password information.
 
 * `spring.datasource.driver-class-name`: 🔒
     - Specifies the database driver class to use. Specifies the JDBC driver for connecting to the database.
     - Example: `org.postgresql.Driver`
 
 * `spring.datasource.url`:  
-    - The database connection URL. Specifies the location and name of the database the application will connect to. 
+    - Database connection URL. Specifies the location and name of the database the application will connect to. 
     - Example: `jdbc:postgresql://localhost:5432/cas_db`
 
 * `spring.datasource.username`:  
-    - The username for database access.
+    - Database access username.
     - Example: `cas`
 
 * `spring.datasource.password`:  
-    - The password for database access.
+    - Database access password.
     - Example: `caspassword`
 
 <br/>
 
 ### 5.2.3. JPA Configuration
-JPA configuration controls how the application interacts with the database and has a significant impact on performance and readability.
+JPA settings control how the application interacts with the database and have a significant impact on performance and readability.
 
 * `spring.jpa.open-in-view`: 🔒 
-    - Sets whether to use the OSIV (Open Session In View) pattern. When set to true, it maintains the database connection for the entire HTTP request.
+    - Sets whether to use the OSIV (Open Session In View) pattern. When set to true, the database connection is maintained for the entire HTTP request.
     - Example: `true`
 
 * `spring.jpa.show-sql`: 🔒 
-    - Sets whether to log SQL queries. When set to true, it outputs executed SQL queries to the log. Useful for debugging during development.
+    - Sets whether to log SQL queries. When set to true, executed SQL queries are output to the log. This is useful for debugging during development.
     - Example: `true`
 
 * `spring.jpa.hibernate.ddl-auto`: 🔒 
-    - Sets Hibernate's DDL auto-generation mode. Specifies the strategy for automatic database schema generation. Setting to 'none' disables auto-generation.
+    - Sets Hibernate's automatic DDL generation mode. Specifies the strategy for automatic database schema generation. When set to 'none', automatic generation is disabled.
     - Example: `none`
 
 * `spring.jpa.hibernate.naming.physical-strategy`: 🔒 
@@ -474,27 +499,27 @@ JPA configuration controls how the application interacts with the database and h
     - Example: `org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy`
 
 * `spring.jpa.properties.hibernate.format_sql`: 🔒 
-    - Sets whether to format SQL. When set to false, it disables formatting of SQL queries output to the log.
+    - Sets whether to format SQL. When set to false, formatting of SQL queries output to logs is disabled.
     - Example: `false`
 
 <br/>
 
 ## 5.3. application-logging.yml
-- Role: Sets log groups and log levels. Through this configuration file, you can define log groups for specific packages or modules and individually specify log levels for each group.
+- Role: Configures log groups and log levels. Through this configuration file, you can define log groups for specific packages or modules and specify log levels for each group individually.
 
 - Location: `src/main/resources/`
   
 ### 5.3.1. Logging Configuration
 
-- Log groups: You can group and manage desired packages under logging.group. For example, you can include the org.omnione.did.base.util package in the util group and define other packages as separate groups.
+- Log Groups: You can group desired packages under logging.group for management. For example, include the org.omnione.did.base.util package in the util group, and define other packages as separate groups as well.
 
-- Log levels: Through the logging.level setting, you can specify log levels for each group. You can set various log levels such as debug, info, warn, error to output logs at the desired level. For example, you can set the debug level for groups like cas, aop to output debug information from those packages.
+- Log Levels: You can specify log levels for each group through the logging.level setting. You can set various log levels such as debug, info, warn, error to output logs at the desired level. For example, you can set debug level for groups like cas, aop to output debug information from those packages.
 
 * `logging.level`: 
     - Sets the log level.
     - By setting the level to debug, you can see all log messages at DEBUG level and above (INFO, WARN, ERROR, FATAL) for the specified packages.
 
-Full example:
+Complete example:
 ```yaml
 logging:
   group:
@@ -507,16 +532,17 @@ logging:
 <br/>
 
 ## 5.4. application-spring-docs.yml
+
 - Role: Manages SpringDoc and Swagger UI settings in the application.
 
 - Location: `src/main/resources/`
 
 * `springdoc.swagger-ui.path`: 🔒
-  - Defines the URL path to access Swagger UI.
+  - Defines the URL path for accessing Swagger UI.
   - Example: `/swagger-ui.html`
 
 * `springdoc.swagger-ui.groups-order`: 🔒
-  - Specifies the order to display API groups in Swagger UI.
+  - Specifies the order in which API groups are displayed in Swagger UI.
   - Example: `ASC`
 
 * `springdoc.swagger-ui.operations-sorter`: 🔒
@@ -536,71 +562,72 @@ logging:
   - Example: `/api-docs`
 
 * `springdoc.show-actuator`: 🔒
-  - Sets whether to display Actuator endpoints in API documentation.
+  - Sets whether to display Actuator endpoints in the API documentation.
   - Example: `true`
 
 * `springdoc.default-consumes-media-type`: 🔒
-  - Sets the default media type for request bodies in API documentation.
+  - Sets the default media type for request bodies in the API documentation.
   - Example: `application/json`
 
 * `springdoc.default-produces-media-type`: 🔒
-  - Sets the default media type for response bodies in API documentation.
+  - Sets the default media type for response bodies in the API documentation.
   - Example: `application/json`
 
 <br/>
 
 ## 5.5. application-wallet.yml
+
 - Role: Configures wallet file information used by the server.
 
 - Location: `src/main/resources/`
 
 * `wallet.file-path`:  
-    - Specifies the path of the wallet file. Specifies the location of the file storing the file wallet. This file may contain important information such as private keys. *Must be entered as an absolute path*
+    - Specifies the path to the wallet file. Specifies the location of the file storing the file wallet. This file may contain important information such as private keys. *Must be entered as an absolute path*
     - Example: `/path/to/your/cas.wallet`
 
 * `wallet.password`:  
-    - The password used to access the wallet. This is the password used when accessing the wallet file. It requires high security.
+    - Password used to access the wallet. This is the password used when accessing the wallet file. This is information requiring high security.
     - Example: `your_secure_wallet_password`
 
 ## 5.6. application-cas.yml
-This configuration file defines the basic information of the CAS server, encryption settings, token expiration time, etc.
+This configuration file defines the basic information of the CA server, encryption settings, token expiration times, etc. 
 
 * `cas.did`: 
-  - Sets the DID of the CAS server.
+  - Sets the DID of the CA server.
   - Example: did:omn:cas
 
 * `cas.certificate-vc`: 
-  - Sets the CAS server's membership certificate VC lookup API. 
+  - Configures the registration certificate VC lookup API of the CA server. 
   - Format: {CAS domain}/cas/api/v1/certificate-vc
   - Example: http://127.0.0.1:8094/cas/api/v1/certificate-vc
 
 <br/>
 
 ## 5.7. blockchain.properties
-- Role: Configures the blockchain server information that the CAS server will connect to. Following '5.1.1. Installing Hyperledger Fabric Test Network' in the [Open DID Installation Guide], private key, certificate, and server connection information configuration files are automatically generated when installing the Hyperledger Fabric test network. In blockchain.properties, you set the path where these files are located and the network name entered during the Hyperledger Fabric test network installation. Also, set the chaincode name of Open DID deployed in '5.1.2. Deploying Open DID Chaincode'.
+- Role: Configures the blockchain server information that the CA server will integrate with. Following the installation of the Hyperledger Fabric test network according to [Open DID Installation Guide] '5.1.1. Install Hyperledger Fabric Test Network', private key, certificate, and server connection information configuration files are automatically generated. In blockchain.properties, you configure the path where these files are located and the network name entered during the Hyperledger Fabric test network installation. Also, you configure the chaincode name of Open DID deployed in '5.1.2. Deploy Open DID Chaincode'.
 
 - Location: `src/main/resources/properties`
 
 ### 5.7.1. Blockchain Integration Configuration 
 
 * `fabric.configFilePath:`: 
-  - Sets the path where the Hyperledger Fabric connection information file is located. This file is automatically generated when installing the Hyperledger Fabric test network, and the default filename is 'connection-org1.json'.
+  - Configures the path where the Hyperledger Fabric connection information file is located. This file is automatically generated during the Hyperledger Fabric test network installation, and the default filename is 'connection-org1.json'.
   - Example: {yourpath}/connection-org1.json
 
 * `fabric.privateKeyFilePath:`: 
-  - Sets the path of the private key file used by the Hyperledger Fabric client for transaction signing and authentication on the network. This file is automatically generated when installing the Hyperledger Fabric test network.
+  - Configures the path to the private key file used by the Hyperledger Fabric client for transaction signing and authentication on the network. This file is automatically generated during the Hyperledger Fabric test network installation.
   - Example: {yourpath}/{private key filename}
 
 * `fabric.certificateFilePath:`: 
-  - Sets the path where the Hyperledger Fabric client certificate is located. This file is automatically generated when installing the Hyperledger Fabric test network, and the default filename is 'cert.pem'.
+  - Configures the path where the Hyperledger Fabric client certificate is located. This file is automatically generated during the Hyperledger Fabric test network installation, and the default filename is 'cert.pem'.
   - Example: /{yourpath}/cert.pem
 
 * `fabric.mychannel:`: 
-  - The name of the private network (channel) used in Hyperledger Fabric. You should set the channel name entered during the Hyperledger Fabric test network installation.
+  - The name of the private network (channel) used in Hyperledger Fabric. You must set the channel name entered during the Hyperledger Fabric test network installation.
   - Example: mychannel
 
 * `fabric.chaincodeName:`: 🔒
-  - The chaincode name of Open DID used in Hyperledger Fabric. This value is fixed as 'opendid'.
+  - The name of the Open DID chaincode used in Hyperledger Fabric. This value is fixed as 'opendid'.
   - Example: opendid
 
 <br/>
@@ -609,15 +636,13 @@ This configuration file defines the basic information of the CAS server, encrypt
 # 6. Profile Configuration and Usage
 
 ## 6.1. Profile Overview (`sample`, `dev`)
-The CAS server supports two profiles, `dev` and `sample`, to run in various environments.
+The CA server supports two profiles, `dev` and `sample`, to allow execution in various environments.
 
-Each profile is designed to apply settings appropriate to its environment. By default, the CAS server is set to the `sample` profile, which is designed to run the server independently without connecting to external services such as databases or blockchain. The `sample` profile is suitable for API call testing, allowing developers to quickly check the basic behavior of the application.
-
-This profile returns fixed response data for all API calls, making it useful in initial development environments.
+Each profile is designed to apply settings appropriate for that environment. By default, the CA server is set to the `sample` profile, which is designed to run the server independently without integration with external services such as databases or blockchain. The `sample` profile is suitable for API call testing, allowing developers to quickly check the basic operation of the application. This profile returns fixed response data for all API calls, making it useful in initial development environments.
 
 Sample API calls are written as JUnit tests, which can be referenced when writing tests.
 
-On the other hand, the `dev` profile is designed to perform actual operations. Using this profile allows testing and validation with real data. When the `dev` profile is activated, it connects to actual external services such as databases and blockchain, allowing you to test the application's behavior in a real environment.
+In contrast, the `dev` profile is designed to perform actual operations. This profile enables testing and validation of real data. When you activate the `dev` profile, it integrates with actual external services like databases and blockchain, allowing you to test the application's operation in a real environment.
 
 ### 6.1.1. `sample` Profile
 The `sample` profile is designed to run the server independently without connecting to external services (DB, blockchain, etc.). This profile is suitable for API call testing and allows developers to quickly check the basic behavior of the application. It returns fixed response data for all API calls, making it useful in initial development stages or for feature testing. Since it doesn't require any connection with external systems, it provides an environment where you can run and test the server independently.
@@ -749,4 +774,5 @@ docker-compose up -d
 This command runs the PostgreSQL container in the background. The PostgreSQL server runs according to the set environment variables, and the database is prepared. You can proceed with the integration settings to use this database in your application.
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V1.0.0.0/OepnDID_Installation_Guide-V1.0.0.0.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/feature/yklee0911/v1.0.1.0/unrelease-V1.0.1.0/OpenDID_Documentation_Hub.md
+[Open DID Admin Console Guide]: ../admin/OpenDID_CA_Admin_Console_Guide.md
