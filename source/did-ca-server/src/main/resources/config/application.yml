@@ -9,13 +9,12 @@ spring:
           - spring-docs
           - database
           - wallet
-          - cas
+          - blockchain
         sample:
           - logging
           - spring-docs
           - database-sample
           - wallet
-          - cas
   jackson:
     default-property-inclusion: non_null
     serialization:
@@ -26,3 +25,16 @@ server:
 
 tas:
   url: http://127.0.0.1:8090/tas
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "health"
+          - "shutdown"
+  endpoint:
+    health:
+      show-details: "never"
+    shutdown:
+      enabled: true

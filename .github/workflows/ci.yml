@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Test with Gradle Wrapper
-        run: ./gradlew test
+        run: ./gradlew test -DskipFrontendBuild=true
         
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build

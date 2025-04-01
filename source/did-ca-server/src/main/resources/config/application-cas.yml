@@ -1,3 +1,0 @@
-cas:
-  did: did:omn:cas
-  certificate-vc: "http://127.0.0.1:8094/cas/api/v1/certificate-vc"

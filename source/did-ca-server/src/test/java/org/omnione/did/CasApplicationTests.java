@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.base.datamodel.data.*;
 import org.omnione.did.base.datamodel.enums.WalletTokenPurpose;
-import org.omnione.did.base.db.domain.UserPii;
 import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -62,7 +61,7 @@ class CasApplicationTests {
         walletTokenSeed.setPurpose(WalletTokenPurpose.ISSUE_VC);
 
         // 2. 요청
-        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.V1 + UrlConstant.Cas.REQUEST_WALLET_TOKEN_DATA)
+        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.AGENT_V1 + UrlConstant.Cas.REQUEST_WALLET_TOKEN_DATA)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(walletTokenSeed)))
                 .andExpect(status().isOk())
@@ -88,7 +87,7 @@ class CasApplicationTests {
         reqAttestedAppInfo.setAppId("com.raonsecure.did");
 
         // 2. 요청
-        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.V1 + UrlConstant.Cas.REQUEST_ATTESTED_APPINFO)
+        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.AGENT_V1 + UrlConstant.Cas.REQUEST_ATTESTED_APPINFO)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqAttestedAppInfo)))
                 .andExpect(status().isOk())
@@ -142,7 +141,7 @@ class CasApplicationTests {
         reqDto.setUserId("testUser123");
 
         // 2. 컨트롤러 호출 및 응답 검증
-        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.V1 + UrlConstant.Cas.RETRIEVE_PII)
+        MvcResult result = mockMvc.perform(post(UrlConstant.Cas.AGENT_V1 + UrlConstant.Cas.RETRIEVE_PII)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reqDto)))
                 .andExpect(status().isOk())
