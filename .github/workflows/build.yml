@@ -31,7 +31,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew test -DskipFrontendBuild=true
 
       - name: Build JAR
         run: |
