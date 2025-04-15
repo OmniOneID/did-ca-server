@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.base.property;
 
-package org.omnione.did.base.db.constant;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-public enum CasStatus {
-    ACTIVATE,
-    DEACTIVATE,
-    DID_DOCUMENT_REQUIRED,
-    DID_DOCUMENT_REQUESTED,
-    CERTIFICATE_VC_REQUIRED,
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "tas")
+public class TasProperty {
+    private String url;
 }

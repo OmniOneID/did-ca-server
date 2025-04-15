@@ -22,8 +22,11 @@ import org.omnione.did.base.exception.ErrorCode;
  * Error Response
  */
 public class ErrorResponse {
-    private final String code;
-    private final String description;
+    private String code;
+    private String description;
+
+    public ErrorResponse() {
+    }
 
     /**
      * Constructor

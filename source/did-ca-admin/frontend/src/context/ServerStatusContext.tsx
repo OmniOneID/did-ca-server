@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { CasInfoResDto } from '../apis/models/CasInfoResDto';
 
-export type ServerStatus = 'ACTIVATE' | 'DEACTIVATE' | 'REQUIRED_ENROLL_ENTITY';
+export type ServerStatus = 'ACTIVATE' | 'DEACTIVATE' | 'DID_DOCUMENT_REQUIRED' | 'DID_DOCUMENT_REQUESTED' | 'CERTIFICATE_VC_REQUIRED';
 
 interface ServerStatusContextType {
   serverStatus: ServerStatus | null;

@@ -30,4 +30,10 @@ public class UrlConstant {
         public static final String SAVE_USER_INFO = "/save-user-info";
         public static final String RETRIEVE_PII = "/retrieve-pii";
     }
+
+    public static class Tas {
+        public static final String ADMIN_V1 = "/tas/admin/v1";
+        public static final String REGISTER_DID_PUBLIC = "/entities/register-did/public";
+        public static final String REQUEST_ENTITY_STATUS = "/entities/request-status";
+    }
 }

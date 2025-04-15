@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.omnione.did.base.db.constant;
+package org.omnione.did.cas.v1.admin.constant;
 
-public enum CasStatus {
-    ACTIVATE,
-    DEACTIVATE,
+/**
+ * Enum class representing the status of an entity as managed by the TAS.
+ */
+public enum EntityStatus {
     DID_DOCUMENT_REQUIRED,
-    DID_DOCUMENT_REQUESTED,
     CERTIFICATE_VC_REQUIRED,
+    COMPLETED,
 }

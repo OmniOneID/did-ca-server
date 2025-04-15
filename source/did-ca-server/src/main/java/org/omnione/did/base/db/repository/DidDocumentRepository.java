@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.omnione.did.base.db.repository;
 
-package org.omnione.did.base.db.constant;
+import org.omnione.did.base.db.domain.EntityDidDocument;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public enum CasStatus {
-    ACTIVATE,
-    DEACTIVATE,
-    DID_DOCUMENT_REQUIRED,
-    DID_DOCUMENT_REQUESTED,
-    CERTIFICATE_VC_REQUIRED,
+import java.util.Optional;
+
+public interface DidDocumentRepository extends JpaRepository<EntityDidDocument, Long> {
+    Optional<EntityDidDocument> findTop1ByOrderByIdDesc();
 }

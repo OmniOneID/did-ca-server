@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package org.omnione.did.base.db.constant;
+package org.omnione.did.cas.v1.admin.dto.server;
 
-public enum CasStatus {
-    ACTIVATE,
-    DEACTIVATE,
-    DID_DOCUMENT_REQUIRED,
-    DID_DOCUMENT_REQUESTED,
-    CERTIFICATE_VC_REQUIRED,
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * DTO for verifying server URL.
+ */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class VerifyServerUrlResDto {
+    private Boolean isAvailable;
 }
