@@ -87,7 +87,7 @@ puppeteer:
 # 1. Introduction
 
 ## 1.1. Overview
-This document provides a guide for the installation, configuration, and operation of the Open DID CA (Certified App) Server. The CA (Certified App) Server consists of a Spring Boot-based backend and a React-based Admin console frontend, which can be deployed together through Gradle build. The installation process, environment configuration, Docker execution method, and profile settings are explained step by step to guide users in efficiently installing and running the server.
+This document provides a guide for the installation, configuration, and operation of the Open DID CA (Certified Application) Server. The CA Server consists of a Spring Boot-based backend and a React-based Admin console frontend, which can be deployed together through Gradle build. The installation process, environment configuration, Docker execution method, and profile settings are explained step by step to guide users in efficiently installing and running the server.
 
 - For a complete guide on installing OpenDID, please refer to the [Open DID Installation Guide].
 - For the Admin console guide, please refer to the [Open DID Admin Console Guide].

@@ -46,13 +46,13 @@ Open DID CA Admin Operation Guide
 
 ## 1.1. 개요
 
-본 문서는 Open DID CA Admin Console의 사용 방법에 관한 가이드를 제공합니다. 관리자가 CA(Certificate Authority) 시스템을 효율적으로 관리하고 운영할 수 있도록 기능 및 사용 방법을 단계별로 설명합니다.
+본 문서는 Open DID CA Admin Console의 사용 방법에 관한 가이드를 제공합니다. 관리자가 CA(Certificate Application) 시스템을 효율적으로 관리하고 운영할 수 있도록 기능 및 사용 방법을 단계별로 설명합니다.
 
 OpenDID의 전체 설치에 대한 가이드는 [Open DID Installation Guide]를 참고해 주세요.
 
 ## 1.2. Admin Console 정의
 
-CA Admin Console은 Open DID 시스템에서 인증서 발급, 사용자 관리, 관리자 권한 제어 등 CA(Certificate Application) 서버의 핵심 기능을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 시스템의 전반적인 상태를 모니터링하고, 필요한 설정 및 작업을 수행할 수 있습니다.
+CA Admin Console은 Open DID 시스템에서 인증서 발급, 사용자 관리, 관리자 권한 제어 등 CA 서버의 핵심 기능을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 시스템의 전반적인 상태를 모니터링하고, 필요한 설정 및 작업을 수행할 수 있습니다.
 
 CA Admin Console은 다음과 같은 주요 기능을 제공합니다:
 
