@@ -83,6 +83,7 @@ public enum ErrorCode {
     FAILED_TO_REGISTER_CAS_DID_DOCUMENT("SCRVCFA01005", "Failed to register CAS DID Document.", 500),
     CAS_DID_DOCUMENT_NOT_FOUND("SCRVCFA01006", "Failed to find CAS DID Document: o registration request has been made.", 400),
     CAS_DID_DOCUMENT_ALREADY_REQUESTED("SCRVCFA01007", "Failed to register CAS DID Document: document is already requested.", 400),
+    INVALID_CERTIFICATE_VC_JSON_FORMAT("SCRVCFA01008", "Failed to process certificate VC: invalid JSON format.", 500),
 
 
     // External server integration errors (1100 ~ 1199)

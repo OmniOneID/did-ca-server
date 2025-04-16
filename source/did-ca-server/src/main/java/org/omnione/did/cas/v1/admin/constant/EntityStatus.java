@@ -20,6 +20,7 @@ package org.omnione.did.cas.v1.admin.constant;
  * Enum class representing the status of an entity as managed by the TAS.
  */
 public enum EntityStatus {
+    NOT_REGISTERED,
     DID_DOCUMENT_REQUIRED,
     CERTIFICATE_VC_REQUIRED,
     COMPLETED,

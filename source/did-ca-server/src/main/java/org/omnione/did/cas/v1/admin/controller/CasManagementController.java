@@ -29,6 +29,7 @@ import org.omnione.did.cas.v1.admin.dto.cas.SendEntityInfoReqDto;
 import org.omnione.did.cas.v1.admin.service.CasManagementService;
 import org.omnione.did.cas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,5 +78,10 @@ public class CasManagementController {
     @GetMapping(value = "/ca/request-status")
     public RequestEntityStatusResDto requestEntityStatus() {
         return casManagementService.requestEntityStatus();
+    }
+
+    @PostMapping(value = "/ca/request-enroll-entity")
+    public Map<String, Object> requestEnrollEntity() {
+        return casManagementService.enrollEntity();
     }
 }

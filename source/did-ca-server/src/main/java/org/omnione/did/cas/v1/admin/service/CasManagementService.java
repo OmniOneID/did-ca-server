@@ -35,6 +35,7 @@ import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.response.ErrorResponse;
 import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.cas.v1.admin.constant.EntityStatus;
 import org.omnione.did.cas.v1.admin.dto.cas.CaInfoResDto;
 import org.omnione.did.cas.v1.admin.dto.cas.RegisterCaInfoReqDto;
 import org.omnione.did.cas.v1.admin.dto.cas.RegisterDidToTaReqDto;
@@ -45,6 +46,7 @@ import org.omnione.did.cas.v1.admin.dto.cas.SendEntityInfoReqDto;
 import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.cas.v1.admin.service.query.DidDocumentQueryService;
 import org.omnione.did.cas.v1.agent.service.CertificateVcQueryService;
+import org.omnione.did.cas.v1.agent.service.EnrollEntityService;
 import org.omnione.did.cas.v1.agent.service.FileWalletService;
 import org.omnione.did.cas.v1.agent.service.StorageService;
 import org.omnione.did.cas.v1.common.dto.EmptyResDto;
@@ -56,6 +58,7 @@ import org.omnione.did.core.manager.DidManager;
 import org.omnione.did.data.model.did.DidDocument;
 import org.omnione.did.data.model.enums.did.ProofPurpose;
 import org.omnione.did.data.model.enums.vc.RoleType;
+import org.omnione.did.data.model.vc.VerifiableCredential;
 import org.omnione.did.wallet.key.WalletManagerInterface;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +79,7 @@ public class CasManagementService {
     private final TasProperty tasProperty;
     private final DidDocumentQueryService didDocumentQueryService;
     private final DidDocumentRepository didDocumentRepository;
+    private final EnrollEntityService entollEntityService;
 
     /**
      * Get CAS information.
@@ -347,8 +351,9 @@ public class CasManagementService {
             didDocumentRepository.save(entityDidDoc);
 
             // Update CAS status
-            log.debug("\t--> Updating CAS status");
+            log.debug("\t--> Updating CAS did and status");
             cas.setStatus(CasStatus.DID_DOCUMENT_REQUESTED);
+            cas.setDid(BaseCoreDidUtil.parseDid(reqDto.getDidDocument()));
             casRepository.save(cas);
 
             log.debug("=== Finished requestRegisterDid ===");
@@ -429,6 +434,17 @@ public class CasManagementService {
         log.debug("\t--> Sending request-status request to TAS");
         RequestEntityStatusResDto requestEntityStatusResDto = sendRequestEntityStatus(did);
 
+        // Update CAS status based on the response
+        if (requestEntityStatusResDto.getStatus() == EntityStatus.NOT_REGISTERED) {
+            log.debug("\t--> TA has deleted the entity's registration request. Updating CAS status accordingly");
+            exsitedCas.setStatus(CasStatus.DID_DOCUMENT_REQUIRED);
+            casRepository.save(exsitedCas);
+        } else if (requestEntityStatusResDto.getStatus() == EntityStatus.CERTIFICATE_VC_REQUIRED) {
+            log.debug("\t--> TA has requested a certificate VC. Updating CAS status accordingly");
+            exsitedCas.setStatus(CasStatus.CERTIFICATE_VC_REQUIRED);
+            casRepository.save(exsitedCas);
+        }
+
         log.debug("=== Finished requestEntityStatus ===");
 
         return requestEntityStatusResDto;
@@ -446,6 +462,30 @@ public class CasManagementService {
         } catch (Exception e) {
             log.error("An unknown error occurred while sending request-status request", e);
             throw new OpenDidException(ErrorCode.TAS_COMMUNICATION_ERROR);
+        }
+    }
+
+    public Map<String, Object> enrollEntity() {
+        try {
+            log.debug("=== Starting enrollEntity ===");
+            // Register the entity
+            log.debug("\t--> Registering the entity");
+            entollEntityService.enrollEntity();
+
+            // Finding Certificate VC
+            log.debug("\t--> Finding Certificate VC");
+            CertificateVc certificateVc = certificateVcQueryService.findCertificateVc();
+            VerifiableCredential verifiableCredential = new VerifiableCredential();
+            verifiableCredential.fromJson(certificateVc.getVc());
+
+            log.debug("=== Finished enrollEntity ===");
+            return jsonParseService.parseCertificateVcToMap(verifiableCredential.toJson());
+        } catch(OpenDidException e) {
+            log.error("An OpenDidException occurred while sending requestCertificateVc request", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("An unknown error occurred while sending requestCertificateVc request", e);
+            throw new OpenDidException(ErrorCode.FAILED_TO_REQUEST_CERTIFICATE_VC);
         }
     }
 }

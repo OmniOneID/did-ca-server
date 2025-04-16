@@ -21,3 +21,7 @@ export const registerCaDidDocument = async (data: any) => {
 export const requestEntityStatus = async () => {
     return getData(API_BASE_URL, "ca/request-status");
 }
+
+export const requestEnrollEntity = async () => {
+    return postData(API_BASE_URL, "ca/request-enroll-entity", undefined);
+}

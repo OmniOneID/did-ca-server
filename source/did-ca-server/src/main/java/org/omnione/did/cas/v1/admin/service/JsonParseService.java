@@ -14,19 +14,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class JsonParseService {
-//
-//    public Map<String, Object> parseCertificateVcToMap(String certificateJson) {
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            return objectMapper.readValue(certificateJson, Map.class);
-//        } catch (JsonProcessingException e) {
-//            log.error("Failed to parse Certificate VC JSON (invalid format): {}", certificateJson, e);
-//            throw new OpenDidException(ErrorCode.INVALID_CERTIFICATE_VC_JSON_FORMAT);
-//        } catch (Exception e) {
-//            log.error("Unexpected error while parsing Certificate VC JSON", e);
-//            throw new OpenDidException(ErrorCode.INVALID_CERTIFICATE_VC_JSON_FORMAT);
-//        }
-//    }
+
+    public Map<String, Object> parseCertificateVcToMap(String certificateJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(certificateJson, Map.class);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse Certificate VC JSON (invalid format): {}", certificateJson, e);
+            throw new OpenDidException(ErrorCode.INVALID_CERTIFICATE_VC_JSON_FORMAT);
+        } catch (Exception e) {
+            log.error("Unexpected error while parsing Certificate VC JSON", e);
+            throw new OpenDidException(ErrorCode.INVALID_CERTIFICATE_VC_JSON_FORMAT);
+        }
+    }
 
     public Map<String, Object> parseDidDocToMap(String didDocJson) {
         try {

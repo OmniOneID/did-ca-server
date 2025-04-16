@@ -24,8 +24,10 @@ import org.omnione.did.base.datamodel.data.DidAuth;
 import org.omnione.did.base.datamodel.data.EcdhReqData;
 import org.omnione.did.base.datamodel.enums.EccCurveType;
 import org.omnione.did.base.datamodel.enums.SymmetricCipherType;
+import org.omnione.did.base.db.constant.CasStatus;
 import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.db.domain.CertificateVc;
+import org.omnione.did.base.db.repository.CasRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.util.BaseCryptoUtil;
@@ -61,6 +63,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Service
 public class EnrollEntityService {
+    private final CasRepository casRepository;
     private final EnrollFeign enrollFeign;
     private final CertificateVcQueryService certificateVcQueryService;
     private final DidDocService didDocService;
@@ -122,6 +125,11 @@ public class EnrollEntityService {
             certificateVcQueryService.save(CertificateVc.builder()
                     .vc(vc.toJson())
                     .build());
+
+            // Update CAS status.
+            log.debug("\t\t--> Update CAS status");
+            existedCas.setStatus(CasStatus.ACTIVATE);
+            casRepository.save(existedCas);
 
             log.debug("*** Finished enrollEntity ***");
 

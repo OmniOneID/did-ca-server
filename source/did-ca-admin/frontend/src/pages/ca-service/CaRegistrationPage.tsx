@@ -2,13 +2,16 @@ import { Box, Button, Step, StepLabel, Stepper, Typography, styled } from '@mui/
 import React, { useEffect, useState } from 'react';
 import { CasStatus } from '../../apis/constants/CasStatus';
 import { CasInfoResDto } from '../../apis/models/CasInfoResDto';
-import { getCaInfo } from '../../apis/ca-api';
+import { getCaInfo, requestEntityStatus } from '../../apis/ca-api';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
 import { useServerStatus } from '../../context/ServerStatusContext';
 import Step1CaInfo from './stepper/Step1CaInfo';
 import Step2DIDDocument from './stepper/Step2DIDDocument';
+import Step3Certificate from './stepper/Step3Certificate';
+import StepComplete from './stepper/StepComplete';
+import { Navigate } from 'react-router';
 
-const steps = ['Enter CA Info', 'Register DID Document', 'Issue Certificate VC'];
+const steps = ['Enter CA Info', 'Register DID Document', 'Enroll Entity'];
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   width: 800,
@@ -59,6 +62,7 @@ type Props = {}
 const CaServiceRegistrationPage = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [isInitialized, setIsInitialized] = useState(false); // 초기화 상태 추적
   const [validateFns, setValidateFns] = useState<Record<number, () => boolean>>({});
   const [afterValidateFns, setAfterValidateFns] = useState<Record<number, () => Promise<void>>>({});
   const { serverStatus } = useServerStatus();
@@ -104,14 +108,18 @@ const CaServiceRegistrationPage = (props: Props) => {
     switch (step) {
       case 0: return <Step1CaInfo step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
       case 1: return <Step2DIDDocument step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
+      case 2: return <Step3Certificate step={0} onRegister={registerStepFns} setIsLoading={setIsLoading}/>;
+      case 3: return <StepComplete />;
       default: return 'Unknown step';
     }
   };
   
   useEffect(() => {
-    const fetchCaInfo = () => {
-        setIsLoading(true);
-        getCaInfo()
+    requestEntityStatus()
+      .catch(err => console.error('Error requesting entity status:', err))
+      .finally(() => {
+        const fetchCaInfo = () => {
+          getCaInfo()
             .then(({ data }) => {
               if (!data.name) {
                 setActiveStep(0);
@@ -122,18 +130,27 @@ const CaServiceRegistrationPage = (props: Props) => {
               } else if (data.status === CasStatus.CERTIFICATE_VC_REQUIRED) {
                 setActiveStep(2);
               }
-            setIsLoading(false);
-        })
-        .catch((err) => {
-          console.error('Error fetching CA info:', err);
-          setIsLoading(false);
-        });
-      };
+              setIsInitialized(true);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              console.error('Error fetching CA info:', err);
+              setIsInitialized(true);
+              setIsLoading(false);
+            });
+        };
 
-      fetchCaInfo();
+        fetchCaInfo();
+      });
+  }, []);
+  
+  if (!isInitialized) {
+    return <FullscreenLoader open={true} />;
+  }
 
-
-  },[]);
+  if (serverStatus === 'ACTIVATE') {
+    return <Navigate to="/ca-management" replace />;
+  }
 
   return (
     <>

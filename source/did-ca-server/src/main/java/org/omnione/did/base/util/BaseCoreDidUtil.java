@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -167,6 +167,19 @@ public class BaseCoreDidUtil {
             log.error("Failed to sign DID Document: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
         }
+    }
+
+    /**
+     * Parses a DID document from its JSON representation and returns the DID.
+     *
+     * @param didDocJson The JSON string representing the DID document.
+     * @return The parsed DID.
+     */
+    public static String parseDid(String didDocJson) {
+        DidDocument didDocument = new DidDocument();
+        didDocument.fromJson(didDocJson);
+
+        return didDocument.getId();
     }
 }
 
