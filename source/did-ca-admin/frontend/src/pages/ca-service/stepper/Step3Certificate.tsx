@@ -22,7 +22,7 @@ const Step3Certificate: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
       setIsRequested(true);
       dialogs.open(CustomDialog, {
         title: 'Notification',
-        message: 'Certificate VC has been successfully issued.',
+        message: 'Entity registration request completed successfully. Certificate VC has been issued.',
         isModal: true,
       });
     } catch (error) {

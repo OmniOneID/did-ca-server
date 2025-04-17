@@ -5,6 +5,7 @@ import CustomDialog from '../../../components/dialog/CustomDialog';
 import { formatErrorMessage } from '../../../utils/error-handler';
 import { useDialogs } from '@toolpad/core';
 import { getCaInfo, generateCaDidDocument, registerCaDidDocument, requestEntityStatus } from '../../../apis/ca-api';
+import { useNavigate } from 'react-router';
 
 interface Props {
     step: number;
@@ -18,6 +19,7 @@ const Step2DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
     const [isDidRequestSubmitted, setIsDidRequestSubmitted] = useState<boolean>(false); 
     const [isDidApproved, setIsDidApproved] = useState<boolean>(false); 
     const dialogs = useDialogs();
+    const navigate = useNavigate();
 
     const handleGenerateDid = async () => {
         setIsLoading(true);
@@ -88,6 +90,15 @@ const Step2DIDDocument: React.FC<Props> = ({ step, onRegister, setIsLoading }) =
                     title: 'Notification',
                     message: `The DID Document registration request has been approved.`,
                     isModal: true,
+                });
+            } else if (data.status === 'NOT_REGISTERED') {
+                setIsDidApproved(false);
+                dialogs.open(CustomDialog, {
+                    title: 'Notification',
+                    message: `The DID Document registration request has been rejected.`,
+                    isModal: true,
+                }, {
+                  onClose: async () => navigate('/', { replace: true }),
                 });
             }
             setIsLoading(false);
