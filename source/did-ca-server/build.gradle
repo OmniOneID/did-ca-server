@@ -10,7 +10,7 @@ group = 'org.omnione.did'
 version = '1.0.0'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 jar {
@@ -110,11 +110,13 @@ licenseReport {
 
 node {
     version = "22.9.0"
-    download = false
+    download = true
     nodeProjectDir = file("${frontendResourceDir}")
     workDir = file("${projectDir}/.gradle/nodejs")
     npmWorkDir = file("${projectDir}/.gradle/npm")
 }
+
+import com.github.gradle.node.npm.task.NpmTask
 
 tasks.register('deleteFrontResources', Delete) {
     delete "${backendResourceDir}/**"
@@ -123,16 +125,17 @@ tasks.register('deleteFrontResources', Delete) {
     delete "${frontendResourceDir}/dist"
 }
 
-tasks.register('npm_install', Exec) {
+tasks.register('npm_install', NpmTask) {
+    dependsOn tasks.named("nodeSetup")
     workingDir = file("${frontendResourceDir}")
-    commandLine = ["npm", "install"]
+    args = ['install']
 }
 
-tasks.register('npm_build', Exec) {
+tasks.register('npm_build', NpmTask) {
     dependsOn 'deleteFrontResources'
     dependsOn 'npm_install'
     workingDir = file("${frontendResourceDir}")
-    commandLine = ["npm", "run", "build"]
+    args = ['run', 'build']
 }
 
 tasks.register('copyFrontResources', Copy) {
