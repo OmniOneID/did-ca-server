@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * The EnrollFeign interface is a Feign client that provides endpoints for enrolling an entity.
  * It is used to communicate with the TAS service.
  */
-@FeignClient(value = "Tas", url = "${tas.url}", path = "/api/v1")
+@FeignClient(value = "Tas", url = "${tas.url}" + "/tas", path = "/api/v1")
 public interface EnrollFeign {
     /**
      * Request to enroll an entity.
