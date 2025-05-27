@@ -48,7 +48,7 @@ public class BlockChainServiceImpl implements StorageService {
      */
     private ContractApi initBlockChain() {
         log.debug("Initializing block chain :: file-path {}", blockchainProperty.getFilePath());
-        return ContractFactory.FABRIC.create(blockchainProperty.getFilePath());
+        return ContractFactory.EVM.create(blockchainProperty.getFilePath());
     }
 
     /**

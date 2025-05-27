@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.cas.v1.admin.dto.admin;
+package org.omnione.did.cas.v1.admin.dto.cas;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,11 +26,14 @@ import lombok.Setter;
 import lombok.ToString;
 import org.omnione.did.base.db.constant.CasStatus;
 import org.omnione.did.base.db.domain.Cas;
+import org.omnione.did.base.exception.ErrorCode;
+import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.data.model.did.DidDocument;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 @Getter
@@ -37,7 +42,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @ToString
 @Builder
-public class GetCasInfoReqDto {
+public class CaInfoResDto {
     private Long id;
     private String did;
     private String name;
@@ -45,7 +50,7 @@ public class GetCasInfoReqDto {
     private CasStatus status;
     private String serverUrl;
     private String certificateUrl;
-    private DidDocument didDocument;
+    private Map<String, Object> didDocument;
     private String createdAt;
     private String updatedAt;
 
@@ -56,9 +61,9 @@ public class GetCasInfoReqDto {
                 .orElse(null);
     }
 
-    public static GetCasInfoReqDto fromEntity(Cas cas) {
+    public static CaInfoResDto fromEntity(Cas cas) {
         return Optional.ofNullable(cas)
-                .map(t -> GetCasInfoReqDto.builder()
+                .map(t -> CaInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
@@ -71,19 +76,30 @@ public class GetCasInfoReqDto {
                 .orElse(null);
     }
 
-    public static GetCasInfoReqDto fromEntity(Cas cas, DidDocument didDocument) {
+    public static CaInfoResDto fromEntity(Cas cas, DidDocument didDocument) {
         return Optional.ofNullable(cas)
-                .map(t -> GetCasInfoReqDto.builder()
+                .map(t -> CaInfoResDto.builder()
                         .id(t.getId())
                         .did(t.getDid())
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
                         .certificateUrl(t.getCertificateUrl())
-                        .didDocument(didDocument)
+                        .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))
                         .updatedAt(formatInstant(t.getUpdatedAt()))
                         .build())
                 .orElse(null);
+    }
+
+    public static Map<String, Object> parseDidDocToMap(String didDocJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(didDocJson, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        } catch (Exception e) {
+            throw new OpenDidException(ErrorCode.INVALID_DID_DOCUMENT);
+        }
     }
 }

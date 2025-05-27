@@ -52,6 +52,9 @@ public enum ErrorCode {
     WALLET_CONNECTION_FAILED("SCRVCFA00500", "Failed to connect to wallet.", 500),
     WALLET_SIGNATURE_GENERATION_FAILED("SCRVCFA00501", "Failed to generate wallet signature.", 500),
     FAILED_TO_GET_FILE_WALLET_MANAGER("SCRVCFA00502", "Failed to get File Wallet Manager", 500),
+    WALLET_ALREADY_EXISTS("SCRVCFA00503", "Failed to create wallet: wallet already exists.", 500),
+    KEY_ALREADY_EXISTS("SCRVCFA00504", "Failed to generate keys: key already exists.", 500),
+    FAILED_TO_LOAD_KEY_ELEMENT("SCRVCFA00505", "Failed to load key element.", 500),
 
     // Verification and Proof Errors (600-699)
     INVALID_PROOF_PURPOSE("SCRVCFA00600", "Invalid proof purpose.", 400),
@@ -59,7 +62,7 @@ public enum ErrorCode {
     // Blockchain (700~799),
     BLOCKCHAIN_GET_DID_DOC_FAILED("SCRVCFA00701", "Failed to retrieve DID document on the blockchain.", 500),
 
-    //API Process Errors (800~899)
+    // API Process Errors (800~899)
     FAILED_TO_REQUEST_WALLET_TOKEN_DATA("SCRVCFA00800", "Failed to process the 'request-wallet-tokendata' API request.", 500),
     FAILED_TO_REQUEST_ATTESTED_APPINFO("SCRVCFA00801", "Failed to process the 'request-attested-appinfo' API request.", 500),
     FAILED_TO_SAVE_USER_INFO("SCRVCFA00802", "Failed to process the 'save-user-info' API request.", 500),
@@ -67,12 +70,26 @@ public enum ErrorCode {
     FAILED_TO_ISSUE_CERTIFICATE_VC("SCRVCFA00804", "Failed to process the 'issue_certificate-vc' API request.", 500),
     FAILED_TO_REQUEST_CERTIFICATE_VC("SCRVCFA00805", "Failed to process the 'request-certificate-vc' API request.", 500),
 
-    //Admin-related errors (900~999)
+    // Admin-related errors (900~999)
     ADMIN_INFO_NOT_FOUND("SCRVCFA00900", "Failed to find admin: admin is not registered.", 400),
     ADMIN_ALREADY_EXISTS("SCRVCFA00901", "Failed to register admin: admin is already registered.", 400),
 
-    //CAS-related errors (1000 ~ 1099)
-    CAS_INFO_NOT_FOUND("SCRVCFA01000", "CAS is not registered.", 500)
+    // CAS-related errors (1000 ~ 1099)
+    CAS_INFO_NOT_FOUND("SCRVCFA01000", "CAS is not registered.", 500),
+    CAS_ALREADY_REGISTERED("SCRVCFA01001", "CAS is already registered.", 400),
+    INVALID_DID_DOCUMENT("SCRVCFA01002", "Invalid DID Document.", 400),
+    CAS_DID_DOCUMENT_ALREADY_REGISTERED("SCRVCFA01003", "Failed to register CAS DID Document: document is already registered.", 400),
+    DIDDOC_GENERATION_FAILED("SCRVCFA01004", "Failed to generate DID document.", 500),
+    FAILED_TO_REGISTER_CAS_DID_DOCUMENT("SCRVCFA01005", "Failed to register CAS DID Document.", 500),
+    CAS_DID_DOCUMENT_NOT_FOUND("SCRVCFA01006", "Failed to find CAS DID Document: o registration request has been made.", 400),
+    CAS_DID_DOCUMENT_ALREADY_REQUESTED("SCRVCFA01007", "Failed to register CAS DID Document: document is already requested.", 400),
+    INVALID_CERTIFICATE_VC_JSON_FORMAT("SCRVCFA01008", "Failed to process certificate VC: invalid JSON format.", 500),
+
+
+    // External server integration errors (1100 ~ 1199)
+    URL_PING_ERROR("SCRVCFA01100", "Failed to ping the URL.", 400),
+    TAS_UNKNOWN_RESPONSE("SCRVCFA01101", "Failed to process response: received unknown data from the tas.", 500),
+    TAS_COMMUNICATION_ERROR("SCRVCFA01102", "Failed to communicate with tas: unknown error occurred.", 500),
     ;
 
     private final String code;

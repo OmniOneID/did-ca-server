@@ -24,7 +24,7 @@ server:
   port: 8094
 
 tas:
-  url: http://127.0.0.1:8090/tas
+  url: http://localhost:8090
 
 management:
   endpoints:

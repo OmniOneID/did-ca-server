@@ -18,8 +18,15 @@ puppeteer:
 Open DID CA Admin Operation Guide
 ==
 
-- Date: 2025-03-31
-- Version: v1.0.0
+- Date: 2025-04-24
+- Version: v1.0.1
+
+개정 이력
+==
+| 버전   | 일자       | 변경 내용                  |
+| ------ | ---------- | -------------------------- |
+| v1.0.0 | 2025-03-31 | 최초 작성                  |
+| v1.0.1 | 2025-04-24 | `3.1.1. CA 등록` 장 추가 |
 
 목차
 ==
@@ -31,28 +38,31 @@ Open DID CA Admin Operation Guide
   - [2.1. 로그인](#21-로그인)
   - [2.2. 메인 화면 구성](#22-메인-화면-구성)
   - [2.3. 메뉴 구성](#23-메뉴-구성)
+    - [2.3.1. CA 미등록 상태](#231-ca-미등록-상태)
+    - [2.3.2. CA 등록 상태](#232-ca-등록-상태)
   - [2.4. 비밀번호 변경 관리](#24-비밀번호-변경-관리)
 - [3. 기능별 상세 메뉴얼](#3-기능별-상세-메뉴얼)
   - [3.1. CA Management](#31-ca-management)
-    - [3.1.1 DID Document 조회](#311-did-document-조회)
+    - [3.1.1. CA 등록](#311-ca-등록)
+    - [3.1.2. 등록된 CA 관리](#312-등록된-ca-관리)
   - [3.2. User Management](#32-user-management)
-    - [3.2.1 사용자 목록 조회](#321-사용자-목록-조회)
-    - [3.2.2 사용자 상세 정보 조회](#322-사용자-상세-정보-조회)
+    - [3.2.1. 사용자 목록 조회](#321-사용자-목록-조회)
+    - [3.2.2. 사용자 상세 정보 조회](#322-사용자-상세-정보-조회)
   - [3.3. Admin Management](#33-admin-management)
     - [3.3.1 Admin 목록 조회](#331-admin-목록-조회)
-    - [3.3.2 Admin 등록](#332-admin-등록)
+    - [3.3.2. Admin 등록](#332-admin-등록)
 
 # 1. 소개
 
 ## 1.1. 개요
 
-본 문서는 Open DID CA Admin Console의 사용 방법에 관한 가이드를 제공합니다. 관리자가 CA(Certificate Authority) 시스템을 효율적으로 관리하고 운영할 수 있도록 기능 및 사용 방법을 단계별로 설명합니다.
+본 문서는 Open DID CA Admin Console의 사용 방법에 관한 가이드를 제공합니다. 관리자가 CA(Client Application) 시스템을 효율적으로 관리하고 운영할 수 있도록 기능 및 사용 방법을 단계별로 설명합니다.
 
 OpenDID의 전체 설치에 대한 가이드는 [Open DID Installation Guide]를 참고해 주세요.
 
 ## 1.2. Admin Console 정의
 
-CA Admin Console은 Open DID 시스템에서 인증서 발급, 사용자 관리, 관리자 권한 제어 등 CA(Certificate Application) 서버의 핵심 기능을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 시스템의 전반적인 상태를 모니터링하고, 필요한 설정 및 작업을 수행할 수 있습니다.
+CA Admin Console은 Open DID 시스템에서 인증서 발급, 사용자 관리, 관리자 권한 제어 등 CA 서버의 핵심 기능을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 시스템의 전반적인 상태를 모니터링하고, 필요한 설정 및 작업을 수행할 수 있습니다.
 
 CA Admin Console은 다음과 같은 주요 기능을 제공합니다:
 
@@ -82,34 +92,50 @@ Admin Console에 접속하려면 다음 단계를 따르세요:
 
 > **참고**: 보안상의 이유로 최초 로그인 시에는 비밀번호 변경이 필요합니다.
 
+<br/>
+
 ## 2.2. 메인 화면 구성
 
 로그인 후 표시되는 메인 화면은 다음과 같은 요소로 구성됩니다:
 
-<img src="./images/main_screen.jpg" width="800"/>
+<img src="./images/2.1.main_screen.png" width="800"/>
 
-| 번호 | 영역 | 설명 |
-|------|------|------|
-| 1 | 설정 버튼 | 'SETTING' 버튼을 클릭하면 현재 로그인한 계정의 비밀번호를 변경할 수 있는 화면으로 이동합니다. |
-| 2 | 콘텐츠 헤더 | 현재 선택된 메뉴의 제목이 표시됩니다. 메뉴별로 해당 페이지 이름이 노출됩니다. |
-| 3 | 사이드바 메뉴 | CA Management를 비롯한 주요 기능에 접근할 수 있는 메뉴가 나열되어 있습니다. |
-| 4 | 사용자 정보 영역 | 현재 로그인한 관리자의 이메일(<admin@opendid.omnione.net>)과 로그아웃 버튼이 표시됩니다. |
+| 번호 | 영역             | 설명                                                                                                                                |
+| ---- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | 헤더 영역        | 우측 상단의 `SETTING` 버튼을 통해 비밀번호 변경 화면으로 이동할 수 있습니다.                                                        |
+| 2    | 콘텐츠 영역      | 현재 선택된 메뉴의 제목과 해당 콘텐츠가 표시됩니다. 각 메뉴에 따라 화면 내용이 바뀝니다.                                            |
+| 3    | 사이드 메뉴      | 화면 왼쪽에 위치하며, 주요 메뉴 항목들이 세로로 정렬되어 있습니다. 선택한 메뉴는 강조 표시되며, 필요한 경우 하위 메뉴가 펼쳐집니다. |
+| 4    | 사용자 정보 영역 | 현재 로그인한 관리자의 이메일 주소와 '로그아웃(Sign Out)' 버튼이 표시됩니다.                                                        |
 
 <br/>
 
 ## 2.3. 메뉴 구성
 
-Admin Console의 메뉴는 다음과 같이 구성되어 있습니다:
+CA Admin Console의 사이드바 메뉴는 **CA 등록 상태에 따라 화면 구성에 차이**가 있습니다.
 
-<img src="./images/menu_structure.jpg" width="800"/>
+<br/>
+
+### 2.3.1. CA 미등록 상태
+
+CA 서버가 아직 등록되지 않은 초기 상태에서는 메뉴에 `CA Registration` 항목만 단독으로 표시됩니다.
+
+<img src="./images/2-2.side-menu-before-registration.png" width="200"/>
+
+### 2.3.2. CA 등록 상태
+
+CA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 메뉴는 다음과 같이 구성됩니다:
+
+<img src="./images/2-3.side-menu-after-registration.png" width="200"/>
 
 | 번호 | 기능 명칭 | 기능 설명 |
 |------|-----------|-----------|
-| 1 | **CA Management** | 서비스의 CA(Certificate Application) 관리를 할 수 있는 메뉴입니다. CA 관련 설정 및 관리 작업을 이곳에서 진행할 수 있습니다. |
+| 1 | **CA Management** | CA 서버의 기본 정보(DID, URL 등)를 확인하고 관리하는 메뉴입니다. |
 | 2 | **User Management** | 시스템에 등록된 사용자 정보를 조회할 수 있는 메뉴입니다. 사용자의 개인 식별 정보(PII)를 확인할 수 있습니다. |
 | 3 | **Admin Management** | 관리자 관련 설정을 관리하는 메뉴입니다. 관리자의 계정 및 권한을 조정할 수 있습니다. |
 
 각 메뉴에 대한 상세 기능은 [3. 기능별 상세 메뉴얼](#3-기능별-상세-메뉴얼) 섹션에서 자세히 설명합니다.
+
+<br/>
 
 ## 2.4. 비밀번호 변경 관리
 
@@ -125,34 +151,130 @@ Admin Console의 메뉴는 다음과 같이 구성되어 있습니다:
 
 > **참고**: 비밀번호는 8자 이상, 64자 이하입니다.
 
+<br/>
+
 # 3. 기능별 상세 메뉴얼
 
 이 장에서는 Open DID CA Admin Console의 주요 기능에 대한 상세 사용 방법을 안내합니다.
 
 ## 3.1. CA Management
 
-CA Management 메뉴에서는 가입증명서로 등록된 CA(Certificate Application) 서버의 정보를 조회할 수 있습니다. 이 화면에서는 CA의 기본 정보가 표시되며, 수정이나 삭제는 불가능합니다.
+CA Management는 CA 서버의 등록 및 상태 관리를 위한 기능입니다.  
 
-<img src="./images/ca_management.png" width="800"/>
 
-| 번호 | 항목 | 설명 |
-|------|------|------|
-| 1 | DID | CA의 고유 식별자입니다. 형식은 'did:omn:ca'와 같은 형태로 표시됩니다. |
-| 2 | Name | CA의 이름입니다. VC 발급 시 표시되는 이름입니다. |
-| 3 | Status | CA의 활성화 상태를 나타냅니다. ACTIVATE 또는 DEACTIVATE 상태가 표시됩니다. |
-| 4 | URL | CA 서비스의 기본 URL 주소입니다. |
-| 5 | Certificate URL | CA의 가입증명서를 확인할 수 있는 URL 주소입니다. |
-| 6 | Registered At | CA가 등록된 날짜와 시간을 표시합니다. |
-| 7 | VIEW DID DOCUMENT | DID 문서를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다. |
-| 8 | DID Document 내용 | VIEW DID DOCUMENT 버튼을 클릭했을 때 표시되는 DID Document의 내용입니다. JSON 형식으로 CA의 DID 정보, controller, 생성일시, 검증 방법 등이 포함됩니다. |
+CA 서버는 Open DID 시스템에서 사용자의 Client Application을 보증하는 역할을 수행합니다.    
+Client Application은 CA 서버를 통해 인증된 후 Wallet을 사용하여 DID 생성, VC 발급 등의 주요 기능을 사용할 수 있습니다.
 
-### 3.1.1. DID Document 조회
+CA 등록은 최초 1회만 수행되며, 이후에는 관리 화면에서 등록된 상태를 확인할 수 있습니다.
 
-DID Document를 조회하려면 다음 단계를 따르세요:
+<br/>
 
-1. CA Management 화면에서 'VIEW DID DOCUMENT' 버튼을 클릭합니다.
-2. 팝업 창이 열리며 블록체인에 등록된 DID Document의 전체 내용이 JSON 형식으로 표시됩니다.
-3. 팝업 창을 닫으려면 창 외부를 클릭합니다.
+### 3.1.1. CA 등록
+
+CA 서버가 아직 Open DID 시스템에 등록되지 않은 초기 상태에서는,  
+CA Admin Console 좌측 메뉴에 `CA Registration` 항목만 표시됩니다.  
+
+CA 등록은 총 3단계의 스텝을 통해 순차적으로 진행됩니다.
+
+
+<br/>
+
+**Step 1 - Enter CA Info**
+
+CA의 정보를 입력하는 단계입니다.
+
+<img src="./images/3-1-1.ca-registration.png" width="600"/>
+
+| 항목              | 설명                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| **Name**          | CA 서버의 이름을 입력합니다. 예: `cas`                              |
+| **CA URL**        | CA 서버의 호출 URL을 입력합니다. `http://<IP>:8094/cas` 형식 사용   |
+| **Test Connection 버튼** | 입력한 URL로 실제 연결이 가능한지 확인합니다.                 |
+| **NEXT 버튼**     | 다음 단계로 이동합니다.                                              |
+
+<br/>
+
+**Step 2 - Register DID Document**
+
+이 단계에서는 CA의 DID Document를 생성하고 TA Admin에 등록을 요청합니다.   
+한 번 등록된 DID Document는 **변경하거나 재등록할 수 없습니다.**
+
+▶ **Step 2-1: Generate DID Document**
+
+CA의 DID Document를 생성합니다.  
+
+<img src="./images/3-1-2.ca-registration.png" width="600"/>
+
+| 항목               | 설명                                                               |
+| ------------------ | ------------------------------------------------------------------ |
+| **GENERATE 버튼**  | CA 서버의 DID Document를 생성합니다. 생성 후 하단 영역에 결과 표시 |
+| **요청 상태 표시** | 요청 성공 시 초록색 메시지로 확인 가능합니다.                      |
+
+DID Document가 성공적으로 생성되면, **Step 2-2 영역이 화면에 자동으로 표시됩니다.**
+
+<br/>
+
+▶ **Step 2-2 - Submit Registeration Request**
+
+생성된 DID Document를 TA Admin에 등록 요청합니다.
+
+<img src="./images/3-1-3.ca-registration.png" width="600"/>
+<img src="./images/3-1-4.ca-registration.png" width="600"/>
+
+| 항목              | 설명                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| **REQUEST 버튼**  | 생성한 DID Document에 대한 등록 요청을 TA Admin에 보냅니다.        |
+| **요청 상태 표시** | 요청 성공 시 초록색 메시지로 확인 가능합니다.                        |
+
+DID Document가 성공적으로 생성되면, **Step 2-3 영역이 화면에 자동으로 표시됩니다.**
+
+<br/>
+
+▶ **Step 2-3 - Check Approval Status**
+
+TA 관리자가 DID Document 등록 요청을 승인했는지 확인합니다.
+
+<img src="./images/3-1-5.ca-registration.png" width="600"/>
+
+| 항목              | 설명                                                                 |
+| ----------------- | -------------------------------------------------------------------- |
+| **CHECK 버튼**    | TA 관리자가 등록 요청을 승인했는지 확인합니다.                      |
+| **승인 상태 표시** | 승인 완료 시 초록색 메시지와 함께 다음 단계로 이동할 수 있습니다.     |
+
+<br/>
+
+
+**Step 3 - Enroll Entity**
+
+TA 서버에 CA를 Entity로 등록 요청하고, 가입증명서(Certificate VC)를 발급받는 단계입니다. 
+
+이때 등록 요청은 TA 프로토콜 중 사용자 등록 프로토콜(P132)의 흐름을 따르며,  
+CA Admin이 해당 프로토콜의 API들을 호출하여 등록 절차를 수행합니다.
+
+<img src="./images/3-1-6.ca-registration.png" width="600"/>
+<img src="./images/3-1-7.ca-registration.png" width="600"/>
+
+| 항목        | 설명                                       |
+| ----------- | ------------------------------------------ |
+| **REQUEST** | TA 서버에 Entity 등록 요청을 보냅니다.     |
+| **FINISH**  | 등록을 마치고 최종 완료 상태로 이동합니다. |
+
+<br/>
+
+
+### 3.1.2. 등록된 CA 관리
+
+<img src="./images/3.2.ca_management.png" width="800"/>
+
+| 번호 | 항목              | 설명                                                                                                                                                   |
+| ---- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | **DID**               | CA의 고유 식별자입니다. 형식은 'did:omn:ca'와 같은 형태로 표시됩니다.                                                                                  |
+| 2    | **Name**              | CA의 이름입니다. VC 발급 시 표시되는 이름입니다.                                                                                                       |
+| 3    | **Status**            | CA의 활성화 상태를 나타냅니다. ACTIVATE 또는 DEACTIVATE 상태가 표시됩니다.                                                                             |
+| 4    | **URL**               | CA 서비스의 기본 URL 주소입니다.                                                                                                                       |
+| 5    | **Certificate URL**   | CA의 가입증명서를 확인할 수 있는 URL 주소입니다.                                                                                                       |
+| 6    | **Registered At**    | CA가 등록된 날짜와 시간을 표시합니다.                                                                                                                  |
+| 7    | **VIEW DID DOCUMENT** | DID 문서를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다.                                                |
 
 <br/>
 
@@ -163,7 +285,7 @@ User Management 메뉴는 시스템에 등록된 사용자 정보를 조회하�
 
 ### 3.2.1. 사용자 목록 조회
 
-<img src="./images/user_management.jpg" width="800"/>
+<img src="./images/3.3.user_management.jpg" width="800"/>
 
 User Management 화면은 다음과 같은 주요 정보를 표시합니다:
 
@@ -177,11 +299,13 @@ User Management 화면은 다음과 같은 주요 정보를 표시합니다:
 
 > **참고**: 사용자 목록 화면에서는 읽기만 가능하며, 사용자 정보의 추가, 수정, 삭제 기능은 제공되지 않습니다.
 
+<br/>
+
 ### 3.2.2. 사용자 상세 정보 조회
 
 사용자 목록에서 사용자 ID를 클릭하면 해당 사용자의 상세 정보를 조회할 수 있습니다.
 
-<img src="./images/user_detail.png" width="800"/>
+<img src="./images/3.4.user_detail.png" width="800"/>
 
 사용자 상세 정보 화면에는 다음과 같은 정보가 표시됩니다:
 
@@ -192,6 +316,9 @@ User Management 화면은 다음과 같은 주요 정보를 표시합니다:
 > **중요**: 개인 식별 정보(PII)는 현재 시스템상 Demo Server를 통해 입력받은 임의의 값입니다. CA서버는 사용자 정보를 갖고 있는 설정을 위해 해당 조회 기능을 제공합니다.
 
 을 적용합니다.
+
+<br/>
+
 ## 3.3. Admin Management
 
 `Admin Management` 메뉴는 CA Admin Console에 접근할 수 있는 관리자 계정을 관리하는 기능입니다.  
@@ -208,15 +335,14 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 > 그 외 시스템의 다른 메뉴에 대한 접근 권한이나 기능 제한은 아직 적용되어 있지 않습니다.
 ---
 
-
 <br/>
 
-## 3.3.1 Admin 목록 조회
+### 3.3.1 Admin 목록 조회
 
 
 `Admin Management` 메뉴에 진입하면 등록된 관리자 계정들의 목록이 테이블 형태로 표시됩니다.
 
-<img src="./images/admin-management.png" width="800"/>
+<img src="./images/3.5.admin-management.png" width="800"/>
 
 
 | 번호 | 항목                    | 설명                                                             |
@@ -231,11 +357,11 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 <br/>
 
-## 3.3.2. Admin 등록
+### 3.3.2. Admin 등록
 
 `Admin Management` 화면에서 **REGISTER** 버튼을 클릭하면, 아래와 같은 등록 화면으로 이동합니다.
 
-<img src="./images/admin-registration.png" width="600"/>
+<img src="./images/3.6.admin-registration.png" width="600"/>
 
 | 번호 | 항목                        | 설명                                                                |
 | ---- | --------------------------- | ------------------------------------------------------------------- |

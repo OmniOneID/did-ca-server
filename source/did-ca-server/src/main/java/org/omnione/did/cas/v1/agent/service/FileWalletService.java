@@ -80,4 +80,13 @@ public class FileWalletService {
         }
     }
 
+    public WalletManagerInterface initializeWalletWithKeys() {
+        WalletManagerInterface walletManager = BaseWalletUtil.initializeWalletWithKeys(
+                walletProperty.getFilePath(),
+                walletProperty.getPassword(),
+                "auth", "assert", "keyagree", "invoke"
+        );
+
+        return walletManager;
+    }
 }

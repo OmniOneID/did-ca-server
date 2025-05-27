@@ -20,17 +20,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.cas.v1.admin.dto.admin.GetCasInfoReqDto;
+import org.omnione.did.cas.v1.admin.dto.cas.CaInfoResDto;
+import org.omnione.did.cas.v1.admin.dto.cas.RegisterCaInfoReqDto;
+import org.omnione.did.cas.v1.admin.dto.cas.RequestEntityStatusResDto;
+import org.omnione.did.cas.v1.admin.dto.cas.RequestRegisterDidReqDto;
 import org.omnione.did.cas.v1.admin.dto.cas.SendCertificateVcReqDto;
 import org.omnione.did.cas.v1.admin.dto.cas.SendEntityInfoReqDto;
 import org.omnione.did.cas.v1.admin.service.CasManagementService;
 import org.omnione.did.cas.v1.common.dto.EmptyResDto;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,7 +46,7 @@ public class CasManagementController {
 
     @Operation(summary = "Get CAS Info", description = "get CAS Info")
     @GetMapping("/ca/info")
-    public GetCasInfoReqDto getCasInfo() {
+    public CaInfoResDto getCasInfo() {
         return casManagementService.getCasInfo();
     }
 
@@ -55,4 +60,28 @@ public class CasManagementController {
         return casManagementService.updateEntityInfo(sendEntityInfoReqDto);
     }
 
+    @RequestMapping(value = "/ca/register-ca-info", method = RequestMethod.POST)
+    public CaInfoResDto registerCaInfo(@RequestBody RegisterCaInfoReqDto registerCaInfoReqDto) {
+        return casManagementService.registerCaInfo(registerCaInfoReqDto);
+    }
+
+    @RequestMapping(value = "/ca/generate-did-auto", method = RequestMethod.POST)
+    public Map<String, Object> generateCaDidDocumentAuto() {
+        return casManagementService.registerCaDidDocumentAuto();
+    }
+
+    @RequestMapping(value = "/ca/register-did", method = RequestMethod.POST)
+    public EmptyResDto requestRegisterDid(@RequestBody RequestRegisterDidReqDto requestRegisterDidReqDto) {
+        return casManagementService.requestRegisterDid(requestRegisterDidReqDto);
+    }
+
+    @GetMapping(value = "/ca/request-status")
+    public RequestEntityStatusResDto requestEntityStatus() {
+        return casManagementService.requestEntityStatus();
+    }
+
+    @PostMapping(value = "/ca/request-enroll-entity")
+    public Map<String, Object> requestEnrollEntity() {
+        return casManagementService.enrollEntity();
+    }
 }

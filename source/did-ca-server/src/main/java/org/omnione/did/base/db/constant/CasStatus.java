@@ -19,5 +19,7 @@ package org.omnione.did.base.db.constant;
 public enum CasStatus {
     ACTIVATE,
     DEACTIVATE,
-    REQUIRED_ENROLL_ENTITY
+    DID_DOCUMENT_REQUIRED,
+    DID_DOCUMENT_REQUESTED,
+    CERTIFICATE_VC_REQUIRED,
 }

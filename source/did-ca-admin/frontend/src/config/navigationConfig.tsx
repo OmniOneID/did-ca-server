@@ -9,7 +9,7 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
   if (serverStatus !== 'ACTIVATE') {
     return [
       {kind: 'divider'},
-      { segment: 'ca-registration', title: 'CAS Registration', icon: <StorageIcon /> },
+      { segment: 'ca-registration', title: 'CA Registration',},
       {kind: 'divider'},
     ];
   } 

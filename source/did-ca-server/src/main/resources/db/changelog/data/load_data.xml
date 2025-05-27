@@ -5,7 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
     <changeSet id="load-data" author="yklee0911">
-        <loadData tableName="cas" file="cas.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
 </databaseChangeLog>
