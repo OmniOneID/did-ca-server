@@ -76,7 +76,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.web3j:core:4.13.0'
+    implementation 'org.web3j:core:4.14.0'
+
 
     // Query DSL
     implementation 'io.github.openfeign.querydsl:querydsl-jpa:6.11'
