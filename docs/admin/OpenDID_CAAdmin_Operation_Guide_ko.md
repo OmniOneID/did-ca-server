@@ -18,8 +18,8 @@ puppeteer:
 Open DID CA Admin Operation Guide
 ==
 
-- Date: 2025-04-24
-- Version: v1.0.1
+- Date: 2025-05-29
+- Version: v2.0.0
 
 개정 이력
 ==
@@ -27,6 +27,7 @@ Open DID CA Admin Operation Guide
 | ------ | ---------- | -------------------------- |
 | v1.0.0 | 2025-03-31 | 최초 작성                  |
 | v1.0.1 | 2025-04-24 | `3.1.1. CA 등록` 장 추가 |
+| v2.0.0 | 2025-05-29 | 버전 업 |
 
 목차
 ==
