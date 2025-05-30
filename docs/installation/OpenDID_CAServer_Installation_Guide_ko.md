@@ -645,29 +645,7 @@ logging:
 - `evm.connection.privateKey:`: 
   - API 접근 통제에 사용되는 k1 키, hardhat.config.js 내부 accounts에 정의된 키 문자열을 입력(앞에 0x 문자열은 제거)하면 Owner 권한으로 API 호출 가능(Default 설정), 상세 가이드는 [DID Besu Contract] 참조바랍니다.
   - 예시: 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
-
-#### Fabric  Network Configuration
-
-- `fabric.configFilePath:`: 
-  - Hyperledger Fabric의 접속 정보 파일이 위치한 경로를 설정합니다. 해당 파일은 Hyperledger Fabric 테스트 네트워크 설치시 자동으로 생성되며, 기본 파일명은 'connection-org1.json' 입니다.
-  - 예시: {yourpath}/connection-org1.json
-
-- `fabric.privateKeyFilePath:`: 
-  - Hyperledger Fabric의 클라이언트가 네트워크 상에서 트랜잭션 서명과 인증을 위해 사용하는 개인 키 파일 경로를 설정합니다. 해당 파일은 Hyperledger Fabric 테스트 네트워크 설치시 자동으로 생성됩니다.
-  - 예시: {yourpath}/{개인키 파일명}
-
-- `fabric.certificateFilePath:`: 
-  - Hyperledger Fabric의 클라이언트 인증서가 위치한 경로를 설정합니다. 해당 파일은 Hyperledger Fabric 테스트 네트워크 설치시 자동으로 생성되며, 기본 파일명은 'cert.pem' 입니다.
-  - 예시: /{yourpath}/cert.pem
-
-- `fabric.mychannel:`: 
-  - Hyperledger Fabric에서 사용하는 프파이빗 네트워크(채널) 이름입니다. Hyperledger Fabric 테스트 네트워크 설치시 입력한 채널명을 설정해야 합니다.
-  - 예시: mychannel
-
-- `fabric.chaincodeName:`: 🔒
-  - Hyperledger Fabric에서 사용하는 Open DID의 체인코드 이름입니다. 해당 값은 'opendid'로 고정입니다.
-  - 예시: opendid
-
+  
 <br/>
 
 # 6. 프로파일 설정 및 사용
