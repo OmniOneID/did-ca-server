@@ -22,14 +22,17 @@ did-ca-server
 ├── SECURITY.md
 ├── docs
 │   └── api
+│       ├── CAS_API.md
 │       └── CAS_API_ko.md
 │   └── errorCode
-│       └── CA_ErrorCode.md
+│       ├── CA_ErrorCode.md
+│       └── CA_ErrorCode_ko.md
 │   └── installation
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
 │   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_TableDefinition_CAS.md
+│       └── OpenDID_TableDefinition_CAS_ko.md
 └── source
     └── did-ca-admin
         ├── frontend
