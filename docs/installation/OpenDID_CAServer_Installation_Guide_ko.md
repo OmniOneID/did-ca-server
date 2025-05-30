@@ -212,13 +212,13 @@ did-ca-server
     └── did-ca-server
         ├── gradle
         ├── libs
-            └── did-sdk-common-1.0.0.jar
+            └── did-sdk-common-2.0.0.jar
             └── did-blockchain-sdk-server-2.0.0.jar
-            └── did-core-sdk-server-1.0.0..jar
-            └── did-crypto-sdk-server-1.0.0.jar
-            └── did-datamodel-server-1.0.0.jar
-            └── did-wallet-sdk-server-1.0.0.jar
-            └── did-zkp-sdk-server-1.0.0.jar
+            └── did-core-sdk-server-2.0.0..jar
+            └── did-crypto-sdk-server-2.0.0.jar
+            └── did-datamodel-server-2.0.0.jar
+            └── did-wallet-sdk-server-2.0.0.jar
+            └── did-zkp-sdk-server-2.0.0.jar
         ├── sample
         └── src
         └── build.gradle
@@ -702,7 +702,7 @@ CAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 - **프로파일 지정:** 서버 구동 명령어에 `--spring.profiles.active={profile}` 옵션을 추가하여 원하는 프로파일을 활성화합니다.
   
   ```bash
-  java -jar build/libs/did-ca-server-1.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-ca-server-2.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **설정 적용:** 활성화된 프로파일에 따라 해당 설정 파일이 적용됩니다.
