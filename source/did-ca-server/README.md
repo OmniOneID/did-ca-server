@@ -10,13 +10,13 @@ Here's an overview of the directory structure.
 cas
 ├── gradle
 ├── libs
-    └── did-sdk-common-1.0.0.jar
+    └── did-sdk-common-2.0.0.jar
     └── did-blockchain-sdk-server-2.0.0.jar
-    └── did-core-sdk-server-1.0.0..jar
-    └── did-crypto-sdk-server-1.0.0.jar
-    └── did-datamodel-server-1.0.0.jar
-    └── did-wallet-sdk-server-1.0.0.jar
-    └── did-zkp-sdk-server-1.0.0.jar
+    └── did-core-sdk-server-2.0.0..jar
+    └── did-crypto-sdk-server-2.0.0.jar
+    └── did-datamodel-server-2.0.0.jar
+    └── did-wallet-sdk-server-2.0.0.jar
+    └── did-zkp-sdk-server-2.0.0.jar
 ├── sample
 └── src
 └── build.gradle
