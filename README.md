@@ -21,6 +21,9 @@ did-ca-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       ├── OpenDID_CAAdmin_Operation_Guide.md
+│       └── OpenDID_CAAdmin_Operation_Guide_ko.md
 │   └── api
 │       ├── CAS_API.md
 │       └── CAS_API_ko.md
