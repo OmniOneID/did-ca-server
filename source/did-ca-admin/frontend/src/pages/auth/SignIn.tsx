@@ -71,7 +71,7 @@ export default function SignIn() {
         newPassword: newHashedPassword,
       });
 
-      const session = { user: { name: loginData.email } };
+      const session = { user: { id: loginData.email } };
       setSession(session);
       
       navigate('/ta-management', { replace: true });
