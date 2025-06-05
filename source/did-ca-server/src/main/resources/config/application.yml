@@ -15,6 +15,9 @@ spring:
           - spring-docs
           - database-sample
           - wallet
+        lls:
+          - lls
+
   jackson:
     default-property-inclusion: non_null
     serialization:

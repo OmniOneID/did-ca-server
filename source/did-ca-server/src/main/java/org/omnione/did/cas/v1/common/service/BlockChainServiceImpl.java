@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.agent.service;
+package org.omnione.did.cas.v1.common.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Profile("!repository & !sample")
+@Profile("!lls & !sample")
 public class BlockChainServiceImpl implements StorageService {
 
     private final BlockchainProperty blockchainProperty;

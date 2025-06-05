@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.agent.service;
+package org.omnione.did.cas.v1.common.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.exception.ErrorCode;
@@ -40,29 +41,34 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Primary
-@Profile("repository")
+@Profile("lls")
 public class RepositoryServiceImpl implements StorageService {
     private final RepositoryFeign repositoryFeign;
-
     /**
-     * Retrieve a DID document from the repository.
-     * This method retrieves the DID document associated with the specified DID key URL from the repository and returns it as a DidDocument object.
+     * Finds a DID document by DID key URL.
      *
-     * @param didKeyUrl the DID key URL associated with the DID document
-     * @return the retrieved DID document
-     * @throws OpenDidException if the DID document cannot be retrieved
+     * @param didKeyUrl The DID key URL of the document to find
+     * @return The found DID document
+     * @throws OpenDidException If the DID document cannot be found
      */
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
-            String did = DidUtil.extractDid(didKeyUrl);
+        try {
+            String didDocument = repositoryFeign.getDid(didKeyUrl);
 
-            DidDocApiResDto didDocApiResDto = repositoryFeign.getDid(did);
-
-            byte[] decodedDidDoc = BaseMultibaseUtil.decode(didDocApiResDto.getDidDoc());
-
-            String didDocJson = new String(decodedDidDoc);
-            DidManager didManager = BaseCoreDidUtil.parseDidDoc(didDocJson);
+            DidManager didManager = BaseCoreDidUtil.parseDidDoc(didDocument);
 
             return didManager.getDocument();
+        } catch (OpenDidException e) {
+            log.error("Failed to find DID document.", e);
+            throw e;
+        } catch (FeignException e) {
+            log.error("Failed to find DID document.", e);
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_GET_DID_DOC_FAILED);
+        } catch (Exception e) {
+            log.error("Failed to find DID document.", e);
+            throw new OpenDidException(ErrorCode.BLOCKCHAIN_GET_DID_DOC_FAILED);
+        }
     }
+
 }
