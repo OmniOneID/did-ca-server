@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * The RepositoryFeign interface is a Feign client that provides endpoints for getting a DID document and a verifiable credential metadata.
  * It is used to communicate with the Repository service.
  */
-@FeignClient(value = "Storage",  url = "${lls.url:htt://127.0.0.1:8098}" + UrlConstant.LLS.V1)
+@FeignClient(value = "Storage",  url = "${lls.url:http://127.0.0.1:8098}" + UrlConstant.LLS.V1)
 public interface RepositoryFeign {
 
     /**
