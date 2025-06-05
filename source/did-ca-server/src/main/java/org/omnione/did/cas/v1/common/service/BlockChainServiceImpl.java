@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 @Profile("!lss & !sample")
 public class BlockChainServiceImpl implements StorageService {
 
+    private final ContractApi contractApi;
     private final BlockchainProperty blockchainProperty;
 
     /**
@@ -47,7 +48,7 @@ public class BlockChainServiceImpl implements StorageService {
      * @return a ContractApi instance.
      */
     private ContractApi initBlockChain() {
-        log.debug("Initializing block chain :: file-path {}", blockchainProperty.getFilePath());
+
         return ContractFactory.EVM.create(blockchainProperty.getFilePath());
     }
 
@@ -61,7 +62,7 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
         try {
-            ContractApi contractApi = initBlockChain();
+
             DidDocAndStatus didDocAndStatus = (DidDocAndStatus) contractApi.getDidDoc(didKeyUrl);
             return didDocAndStatus.getDocument();
 
