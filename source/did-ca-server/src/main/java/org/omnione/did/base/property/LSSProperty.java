@@ -5,11 +5,11 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Property class for setup for lls.
+ * Property class for setup for lss.
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "lls")
-public class LLSProperty {
+@ConfigurationProperties(prefix = "lss")
+public class LSSProperty {
     private String url;
 }

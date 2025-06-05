@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 @Primary
-@Profile("lls")
+@Profile("lss")
 public class RepositoryServiceImpl implements StorageService {
     private final RepositoryFeign repositoryFeign;
     /**

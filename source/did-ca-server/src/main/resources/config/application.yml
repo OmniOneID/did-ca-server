@@ -15,8 +15,8 @@ spring:
           - spring-docs
           - database-sample
           - wallet
-        lls:
-          - lls
+        lss:
+          - lss
 
   jackson:
     default-property-inclusion: non_null
