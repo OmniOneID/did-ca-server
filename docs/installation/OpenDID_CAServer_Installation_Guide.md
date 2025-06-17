@@ -22,6 +22,8 @@ puppeteer:
 
 ## Table of Contents
 
+- [Open DID CA Server Installation Guide](#open-did-ca-server-installation-guide)
+  - [Table of Contents](#table-of-contents)
 - [1. Introduction](#1-introduction)
   - [1.1. Overview](#11-overview)
   - [1.2. CA Server Definition](#12-ca-server-definition)
@@ -66,7 +68,7 @@ puppeteer:
   - [5.7. blockchain.properties](#57-blockchainproperties)
     - [5.7.1. Blockchain Integration Configuration](#571-blockchain-integration-configuration)
       - [EVM Network Configuration](#evm-network-configuration)
-      - [EVM Contract Configuration](#evm-contract-configuration)      
+      - [EVM Contract Configuration](#evm-contract-configuration)
 - [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
   - [6.1. Profile Overview (`sample`, `dev`)](#61-profile-overview-sample-dev)
     - [6.1.1. `sample` Profile](#611-sample-profile)
@@ -75,13 +77,17 @@ puppeteer:
     - [6.2.1. When Running Server Using IDE](#621-when-running-server-using-ide)
     - [6.2.2. When Running Server Using Console Commands](#622-when-running-server-using-console-commands)
     - [6.2.3. When Running Server Using Docker](#623-when-running-server-using-docker)
-- [7. Building and Running with Docker](#7-building-and-running-with-docker)
-  - [7.1. Docker Image Build Method (`Dockerfile` based)](#71-docker-image-build-method-dockerfile-based)
-  - [7.2. Docker Image Execution](#72-docker-image-execution)
-  - [7.3. Running with Docker Compose](#73-running-with-docker-compose)
-    - [7.3.1. `docker-compose.yml` File Description](#731-docker-composeyml-file-description)
-    - [7.3.2. Container Execution and Management](#732-container-execution-and-management)
-    - [7.3.3. Server Configuration Method](#733-server-configuration-method)
+- [7. Running After Building with Docker](#7-running-after-building-with-docker)
+  - [7.1. Docker Image Build Method (Based on `Dockerfile`)](#71-docker-image-build-method-based-on-dockerfile)
+    - [7.1.1. Build Docker image](#711-build-docker-image)
+  - [7.2. Running with Docker Compose](#72-running-with-docker-compose)
+    - [7.2.1. Preparing Directories and Configuration Files](#721-preparing-directories-and-configuration-files)
+      - [1. Create docker-compose directory and config directory](#1-create-docker-compose-directory-and-config-directory)
+      - [2. Copy configuration files (yml) to config directory](#2-copy-configuration-files-yml-to-config-directory)
+      - [3. Modify blockchain.properties file](#3-modify-blockchainproperties-file)
+      - [4. Modify application-database.yml file](#4-modify-application-databaseyml-file)
+    - [7.2.2. Create `docker-compose.yml` file](#722-create-docker-composeyml-file)
+    - [7.2.3. Run Container](#723-run-container)
 - [8. Installing Docker PostgreSQL](#8-installing-docker-postgresql)
   - [8.1. PostgreSQL Installation using Docker Compose](#81-postgresql-installation-using-docker-compose)
   - [8.2. PostgreSQL Container Execution](#82-postgresql-container-execution)
@@ -141,7 +147,7 @@ To run the CAS server, database installation is required, and Open DID uses Post
 <br/>
 
 ## 2.3. Node.js Installation
-To run the React-based Issuer Admin Console, `Node.js` and `npm` are required.
+To run the React-based ca Admin Console, `Node.js` and `npm` are required.
 
 npm (Node Package Manager) is used to install and manage dependencies needed for frontend development.
 
@@ -278,7 +284,7 @@ IntelliJ IDEA is an IDE widely used for Java development and is well compatible 
 #### 4.1.1.2. Opening Project
 
 - Select `File -> New -> Project from Existing Sources`  
-- Select the `source/did-issuer-server` directory  
+- Select the `source/did-ca-server` directory  
 - The `build.gradle` file is automatically recognized, and necessary dependencies are automatically downloaded
 
 #### 4.1.1.3. Gradle Build
@@ -696,53 +702,86 @@ This section explains how to change profiles for each operation method.
 
 You can flexibly change profile-specific configurations according to each method and easily apply configurations suitable for your project environment.
 
-# 7. Building and Running with Docker
+# 7. Running After Building with Docker
 
-## 7.1. Docker Image Build Method (`Dockerfile` based)
+## 7.1. Docker Image Build Method (Based on `Dockerfile`)
+
+### 7.1.1. Build Docker image
 Build the Docker image with the following command:
 
 ```bash
-docker build -t did-ca-server .
+cd {source_directory}
+docker build -t did-ca-server -f did-ca-server/Dockerfile .
 ```
 
-## 7.2. Docker Image Execution
-Run the built image:
+<br/>
 
+## 7.2. Running with Docker Compose
+
+### 7.2.1. Preparing Directories and Configuration Files
+
+#### 1. Create docker-compose directory and config directory
 ```bash
-docker run -d -p 8094:8094 did-ca-server
+mkdir -p {docker_compose_directory}/config
 ```
 
-## 7.3. Running with Docker Compose
+#### 2. Copy configuration files (yml) to config directory
+```bash
+cp {application_yml_directory}/* {docker_compose_directory}/config/
+cp {blockchain_properties_path} {docker_compose_directory}/config/
+```
 
-### 7.3.1. `docker-compose.yml` File Description
+#### 3. Modify blockchain.properties file
+```yml
+evm.network.url=http://host.docker.internal:8545
+... (omitted)
+```
+
+> **host.docker.internal** is a special address that points to the host machine from within a Docker container.  
+> Since localhost inside a container refers to the container itself, you must use host.docker.internal to access services (PostgreSQL, blockchain) running on the host.
+
+#### 4. Modify application-database.yml file
+```yml
+spring:
+ ... (omitted)
+ datasource:
+   driver-class-name: org.postgresql.Driver
+   url: jdbc:postgresql://host.docker.internal:5430/ca
+   username: omn
+   password: omn
+ ... (omitted)
+```
+
+### 7.2.2. Create `docker-compose.yml` file
 You can easily manage multiple containers using the `docker-compose.yml` file.
 
-```yaml
+```yml
 version: '3'
 services:
-  app:
-    image: did-ca-server
-    ports:
-      - "8094:8094"
-    volumes:
-      - ${your-config-dir}:/app/config
-    environment:
-      - SPRING_PROFILES_ACTIVE=local
+ app:
+   image: did-ca-server
+   ports:
+     - "8094:8094"
+   volumes:
+     - {config_directory}:/app/config
+   environment:
+     - SPRING_PROFILES_ACTIVE=dev
+   extra_hosts:
+     - "host.docker.internal:host-gateway"
 ```
 
-### 7.3.2. Container Execution and Management
-Run containers using Docker Compose with the following command:
+> - In the example above, the `config_directory` is mounted to `/app/config` inside the container to share configuration files.
+>   - Configuration files located in `config_directory` take priority over default configuration files.
+>   - For detailed configuration instructions, please refer to [5. Configuration Guide](#5-configuration-guide).
 
+
+### 7.2.3. Run Container
 ```bash
+cd {docker_compose_directory}
 docker-compose up -d
 ```
 
-### 7.3.3. Server Configuration Method
-In the above example, the `${your-config-dir}` directory is mounted to `/app/config` within the container to share configuration files.
-- If additional configuration is needed, you can change settings by adding separate property files to the mounted folder.
-  - For example, add an `application.yml` file to `${your-config-dir}` and write the settings to change in this file. 
-  - The `application.yml` file located in `${your-config-dir}` takes priority over the default configuration file.
-- For detailed configuration methods, please refer to [5. Configuration Guide](#5-configuration-guide).
+<br/>
 
 # 8. Installing Docker PostgreSQL
 

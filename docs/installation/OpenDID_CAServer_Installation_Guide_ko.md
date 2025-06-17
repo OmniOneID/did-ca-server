@@ -22,6 +22,8 @@ puppeteer:
 
 ## 목차
 
+- [Open DID CA Server Installation Guide](#open-did-ca-server-installation-guide)
+  - [목차](#목차)
 - [1. 소개](#1-소개)
   - [1.1. 개요](#11-개요)
   - [1.2. CA 서버 정의](#12-ca-서버-정의)
@@ -67,7 +69,6 @@ puppeteer:
     - [5.7.1. 블록체인 연동 설정](#571-블록체인-연동-설정)
       - [EVM Network Configuration](#evm-network-configuration)
       - [EVM Contract Configuration](#evm-contract-configuration)
-      - [Fabric  Network Configuration](#fabric--network-configuration)
 - [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용)
   - [6.1. 프로파일 개요 (`sample`, `dev`)](#61-프로파일-개요-sample-dev)
     - [6.1.1. `sample` 프로파일](#611-sample-프로파일)
@@ -78,11 +79,15 @@ puppeteer:
     - [6.2.3. Docker를 사용한 서버 구동 시](#623-docker를-사용한-서버-구동-시)
 - [7. Docker로 빌드 후 구동하기](#7-docker로-빌드-후-구동하기)
   - [7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)](#71-docker-이미지-빌드-방법-dockerfile-기반)
-  - [7.2. Docker 이미지 실행](#72-docker-이미지-실행)
-  - [7.3. Docker Compose를 이용한 구동](#73-docker-compose를-이용한-구동)
-    - [7.3.1. `docker-compose.yml` 파일 설명](#731-docker-composeyml-파일-설명)
-    - [7.3.2. 컨테이너 실행 및 관리](#732-컨테이너-실행-및-관리)
-    - [7.3.3. 서버 설정 방법](#733-서버-설정-방법)
+    - [7.1.1. Docker 이미지 빌드](#711-docker-이미지-빌드)
+  - [7.2. Docker Compose를 이용한 구동](#72-docker-compose를-이용한-구동)
+    - [7.2.1. 디렉토리 및 설정 파일 준비](#721-디렉토리-및-설정-파일-준비)
+      - [1. docker-compose 디렉토리 및 config 디렉토리 생성](#1-docker-compose-디렉토리-및-config-디렉토리-생성)
+      - [2. 설정 파일(yml)들을 config 디렉토리로 복사](#2-설정-파일yml들을-config-디렉토리로-복사)
+      - [3. blockchain.properties 파일 수정](#3-blockchainproperties-파일-수정)
+      - [4. application-database.yml 파일 수정](#4-application-databaseyml-파일-수정)
+    - [7.2.2. `docker-compose.yml` 파일 생성](#722-docker-composeyml-파일-생성)
+    - [7.2.3. 컨테이너 실행](#723-컨테이너-실행)
 - [8. Docker PostgreSQL 설치하기](#8-docker-postgresql-설치하기)
   - [8.1. Docker Compose를 이용한 PostgreSQL 설치](#81-docker-compose를-이용한-postgresql-설치)
   - [8.2. PostgreSQL 컨테이너 실행](#82-postgresql-컨테이너-실행)
@@ -142,7 +147,7 @@ CAS 서버를 구동하려면 데이터베이스 설치가 필요하며, Open DI
 <br/>
 
 ## 2.3. Node.js 설치
-React 기반의 Issuer Admin Console을 실행하려면 `Node.js`와 `npm`이 필요합니다.
+React 기반의 ca Admin Console을 실행하려면 `Node.js`와 `npm`이 필요합니다.
 
 npm(Node Package Manager)은 프론트엔드 개발에 필요한 의존성들을 설치하고 관리하는 데 사용됩니다.
 
@@ -279,7 +284,7 @@ IntelliJ IDEA는 Java 개발에 널리 사용되는 IDE로, Gradle 기반 프로
 #### 4.1.1.2. 프로젝트 열기
 
 - `File -> New -> Project from Existing Sources` 선택  
-- `source/did-issuer-server` 디렉토리 선택  
+- `source/did-ca-server` 디렉토리 선택  
 - `build.gradle` 파일이 자동 인식되며, 필요한 의존성이 자동으로 다운로드됨
 
 #### 4.1.1.3. Gradle 빌드
@@ -701,25 +706,57 @@ CAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 # 7. Docker로 빌드 후 구동하기
 
 ## 7.1. Docker 이미지 빌드 방법 (`Dockerfile` 기반)
+
+### 7.1.1. Docker 이미지 빌드
 다음 명령어로 Docker 이미지를 빌드합니다:
 
 ```bash
-docker build -t did-ca-server .
+cd {source_directory}
+docker build -t did-ca-server -f did-ca-server/Dockerfile .
 ```
 
-## 7.2. Docker 이미지 실행
-빌드된 이미지를 실행합니다:
+<br/>
 
+## 7.2. Docker Compose를 이용한 구동
+
+### 7.2.1. 디렉토리 및 설정 파일 준비
+
+#### 1. docker-compose 디렉토리 및 config 디렉토리 생성
 ```bash
-docker run -d -p 8094:8094 did-ca-server
+mkdir -p {docker_compose_directory}/config
 ```
 
-## 7.3. Docker Compose를 이용한 구동
+#### 2. 설정 파일(yml)들을 config 디렉토리로 복사
+```bash
+cp {application_yml_directory}/* {docker_compose_directory}/config/
+cp {blockchain_properties_path} {docker_compose_directory}/config/
+```
 
-### 7.3.1. `docker-compose.yml` 파일 설명
+#### 3. blockchain.properties 파일 수정
+```yml
+evm.network.url=http://host.docker.internal:8545
+... 생략
+```
+
+> **host.docker.internal**은 Docker 컨테이너에서 호스트 머신을 가리키는 특별한 주소입니다.  
+> 컨테이너 내부에서 localhost는 컨테이너 자신을 의미하므로, 호스트에서 실행 중인 서비스(PostgreSQL, 블록체인)에 접근하려면 host.docker.internal을 사용해야 합니다.
+
+#### 4. application-database.yml 파일 수정
+```yml
+spring:
+  ... 생략
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://host.docker.internal:5430/ca
+    username: omn
+    password: omn
+  ... 생략
+```
+
+### 7.2.2. `docker-compose.yml` 파일 생성
 `docker-compose.yml` 파일을 사용하여 여러 컨테이너를 쉽게 관리할 수 있습니다.
 
-```yaml
+```yml
 version: '3'
 services:
   app:
@@ -727,25 +764,25 @@ services:
     ports:
       - "8094:8094"
     volumes:
-      - ${your-config-dir}:/app/config
+      - {config_directory}:/app/config
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 ```
 
-### 7.3.2. 컨테이너 실행 및 관리
-다음 명령어로 Docker Compose를 사용해 컨테이너를 실행합니다:
+> - 위의 예시에서 `config_directory` 디렉토리를 컨테이너 내 `/app/config`로 마운트하여 설정 파일을 공유합니다.
+>   - `config_directory`에 위치한 설정 파일은 기본 설정 파일보다 우선적으로 적용됩니다.
+>   - 자세한 설정 방법은 [5. 설정 가이드](#5-설정-가이드) 를 참고해 주세요.
 
+
+### 7.2.3. 컨테이너 실행
 ```bash
+cd {docker_compose_directory}
 docker-compose up -d
 ```
 
-### 7.3.3. 서버 설정 방법
-위의 예시에서 `${your-config-dir}` 디렉토리를 컨테이너 내 `/app/config`로 마운트하여 설정 파일을 공유합니다.
-- 추가적인 설정이 필요한 경우, 마운트된 폴더에 별도의 property 파일을 추가하여 설정을 변경할 수 있습니다.
-  - 예를 들어, `application.yml` 파일을 `${your-config-dir}`에 추가하고, 이 파일에 변경할 설정을 작성합니다. 
-  - `${your-config-dir}`에 위치한 `application.yml` 파일은 기본 설정 파일보다 우선적으로 적용됩니다.
-- - 자세한 설정 방법은 [5. 설정 가이드](#5-설정-가이드) 를 참고해 주세요.
-
+<br/>
 
 # 8. Docker PostgreSQL 설치하기
 
