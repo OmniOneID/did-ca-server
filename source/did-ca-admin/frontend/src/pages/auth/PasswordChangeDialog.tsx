@@ -10,11 +10,13 @@ interface PasswordResetDialogProps {
 interface ErrorState {
   oldPassword?: string;
   newPassword?: string;
+  confirmPassword?: string;
 }
 
 const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClose, onSubmit }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<ErrorState>({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -40,6 +42,12 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
       tempErrors.newPassword = "Password must be between 8 and 64 characters.";
     }
 
+    if (!confirmPassword.trim()) {
+      tempErrors.confirmPassword = "Please confirm your new password.";
+    } else if (newPassword !== confirmPassword) {
+      tempErrors.confirmPassword = "Passwords do not match.";
+    }
+
     setErrors(tempErrors);
     return Object.values(tempErrors).every((error) => !error);
   };
@@ -60,14 +68,14 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ maxWidth: 500, margin: "0 auto" }}>
       <Box sx={{ px: 2 }}>
-        <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>Reset Password</DialogTitle>
+        <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>Change Password</DialogTitle>
         <Box sx={{ height: "1px", backgroundColor: "var(--G40, #BFBFBF)", width: "100%", mt: 1 }} />
       </Box>
 
       <DialogContent sx={{ px: 2 }}>
         <TextField
           fullWidth
-          label="Current Password"
+          label="Current Password *"
           type="password"
           variant="outlined"
           margin="normal"
@@ -78,7 +86,7 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
         />
         <TextField
           fullWidth
-          label="New Password"
+          label="New Password *"
           type="password"
           variant="outlined"
           margin="normal"
@@ -86,6 +94,17 @@ const PasswordChangeDialog: React.FC<PasswordResetDialogProps> = ({ open, onClos
           onChange={handleChange(setNewPassword)}
           error={!!errors.newPassword}
           helperText={errors.newPassword}
+        />
+        <TextField
+          fullWidth
+          label="Confirm Password *"
+          type="password"
+          variant="outlined"
+          margin="normal"
+          value={confirmPassword}
+          onChange={handleChange(setConfirmPassword)}
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword}
         />
       </DialogContent>
 
