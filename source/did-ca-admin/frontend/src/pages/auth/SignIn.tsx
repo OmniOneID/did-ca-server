@@ -74,7 +74,7 @@ export default function SignIn() {
       const session = { user: { id: loginData.email } };
       setSession(session);
       
-      navigate('/ta-management', { replace: true });
+      navigate('/ca-management', { replace: true });
     } catch (error) {
       console.error('Failed to reset password:', error);
     } finally {
