@@ -159,7 +159,7 @@ const AdminRegisterPage = (props: Props) => {
 
         verifyAdminIdUnique(formData.loginId as string)
         .then((response) => {
-            if (response.data.isUnique === false) {
+            if (response.data.unique === false) {
                 setErrors((prev) => ({ ...prev, loginId: 'Login ID already exists.' }));
                 setIsLoginIdIsValid(false);
                 setLoginIdCheckMessage('This login ID is already in use. Please choose a different one.');
