@@ -21,15 +21,21 @@ did-ca-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       ├── OpenDID_CAAdmin_Operation_Guide.md
+│       └── OpenDID_CAAdmin_Operation_Guide_ko.md
 │   └── api
+│       ├── CAS_API.md
 │       └── CAS_API_ko.md
 │   └── errorCode
-│       └── CA_ErrorCode.md
+│       ├── CA_ErrorCode.md
+│       └── CA_ErrorCode_ko.md
 │   └── installation
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
 │   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_TableDefinition_CAS.md
+│       └── OpenDID_TableDefinition_CAS_ko.md
 └── source
     └── did-ca-admin
         ├── frontend

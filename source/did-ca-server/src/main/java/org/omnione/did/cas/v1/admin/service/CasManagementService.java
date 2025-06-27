@@ -48,7 +48,7 @@ import org.omnione.did.cas.v1.admin.service.query.DidDocumentQueryService;
 import org.omnione.did.cas.v1.agent.service.CertificateVcQueryService;
 import org.omnione.did.cas.v1.agent.service.EnrollEntityService;
 import org.omnione.did.cas.v1.agent.service.FileWalletService;
-import org.omnione.did.cas.v1.agent.service.StorageService;
+import org.omnione.did.cas.v1.common.service.StorageService;
 import org.omnione.did.cas.v1.common.dto.EmptyResDto;
 import org.omnione.did.common.exception.HttpClientException;
 import org.omnione.did.common.util.HttpClientUtil;

@@ -10,12 +10,13 @@ Here's an overview of the directory structure.
 cas
 ├── gradle
 ├── libs
-    └── did-sdk-common-1.0.0.jar
-    └── did-blockchain-sdk-server-1.0.0.jar
-    └── did-core-sdk-server-1.0.0..jar
-    └── did-crypto-sdk-server-1.0.0.jar
-    └── did-datamodel-sdk-server-1.0.0.jar
-    └── did-wallet-sdk-server-1.0.0.jar
+    └── did-sdk-common-2.0.0.jar
+    └── did-blockchain-sdk-server-2.0.0.jar
+    └── did-core-sdk-server-2.0.0..jar
+    └── did-crypto-sdk-server-2.0.0.jar
+    └── did-datamodel-server-2.0.0.jar
+    └── did-wallet-sdk-server-2.0.0.jar
+    └── did-zkp-sdk-server-2.0.0.jar
 ├── sample
 └── src
 └── build.gradle
@@ -43,12 +44,13 @@ Libraries used in this project are organized into two main categories:
 
 1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](libs). They include:
 
-   - `did-sdk-common-1.0.0.jar`
-   - `did-blockchain-sdk-server-1.0.0.jar`
-   - `did-core-sdk-server-1.0.0.jar`
-   - `did-crypto-sdk-server-1.0.0.jar`
-   - `did-datamodel-sdk-server-1.0.0.jar`
-   - `did-wallet-sdk-server-1.0.0.jar`
+    - `did-sdk-common-2.0.0.jar`
+    - `did-blockchain-sdk-server-2.0.0.jar`
+    - `did-core-sdk-server-2.0.0..jar`
+    - `did-crypto-sdk-server-2.0.0.jar`
+    - `did-datamodel-server-2.0.0.jar`
+    - `did-wallet-sdk-server-2.0.0.jar`
+    - `did-zkp-sdk-server-2.0.0.jar`
 
 2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](../../dependencies-license.md) file.
 

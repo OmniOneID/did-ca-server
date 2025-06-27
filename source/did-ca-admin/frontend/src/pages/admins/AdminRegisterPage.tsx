@@ -42,6 +42,8 @@ const AdminRegisterPage = (props: Props) => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoginIdIsValid, setIsLoginIdIsValid] = useState(false);
+    const [loginIdCheckMessage, setLoginIdCheckMessage] = useState<string>('');
+    const [loginIdCheckStatus, setLoginIdCheckStatus] = useState<'success' | 'error' | ''>('');
 
     const handleChange = (field: keyof AdminFormData) => 
         (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
@@ -51,6 +53,8 @@ const AdminRegisterPage = (props: Props) => {
             if (field === 'loginId') {
                 setIsLoginIdIsValid(false);
                 setErrors((prev) => ({ ...prev, loginId: undefined }));
+                setLoginIdCheckMessage('');
+                setLoginIdCheckStatus('');
             }
     };
 
@@ -59,6 +63,8 @@ const AdminRegisterPage = (props: Props) => {
         setIsButtonDisabled(true);
         setFormData({ loginId: '', role: 'NORMAL', loginPassword: '', confirmPassword: '' });
         setIsLoginIdIsValid(false);
+        setLoginIdCheckMessage('');
+        setLoginIdCheckStatus('');
     };
 
     const validate = () => {
@@ -144,15 +150,31 @@ const AdminRegisterPage = (props: Props) => {
 
     const handleCheckDuplicateLoginId = () => {
         if (!validateOnlyLoginId()) return;
+        
+        if (!formData.loginId.trim()) {
+            setLoginIdCheckMessage('Please enter a login ID first.');
+            setLoginIdCheckStatus('error');
+            return;
+        }
+
         verifyAdminIdUnique(formData.loginId as string)
         .then((response) => {
             if (response.data.unique === false) {
                 setErrors((prev) => ({ ...prev, loginId: 'Login ID already exists.' }));
                 setIsLoginIdIsValid(false);
+                setLoginIdCheckMessage('This login ID is already in use. Please choose a different one.');
+                setLoginIdCheckStatus('error');
             } else {        
                 setIsLoginIdIsValid(true);
                 setErrors((prev) => ({ ...prev, loginId: undefined }));
+                setLoginIdCheckMessage('This login ID is available for use.');
+                setLoginIdCheckStatus('success');
             }
+        })
+        .catch((error) => {
+            setIsLoginIdIsValid(false);
+            setLoginIdCheckMessage('Failed to check login ID availability. Please try again.');
+            setLoginIdCheckStatus('error');
         });
     };
 
@@ -222,8 +244,15 @@ const AdminRegisterPage = (props: Props) => {
                             value={formData.loginId} 
                             onChange={handleChange('loginId')} 
                             error={!!errors.loginId} 
-                            helperText={errors.loginId} 
-                            sx={{minWidth: 250}}
+                            helperText={errors.loginId || loginIdCheckMessage}
+                            sx={{
+                                minWidth: 250,
+                                '& .MuiFormHelperText-root': {
+                                    color: loginIdCheckStatus === 'success' ? 'green' : 
+                                           loginIdCheckStatus === 'error' ? 'red' : 'inherit',
+                                    fontWeight: loginIdCheckStatus ? 500 : 'inherit'
+                                }
+                            }}
                         />
                         <Button 
                             variant="outlined" 

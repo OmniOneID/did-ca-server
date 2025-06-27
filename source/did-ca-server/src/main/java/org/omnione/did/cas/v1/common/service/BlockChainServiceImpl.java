@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.agent.service;
+package org.omnione.did.cas.v1.common.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +36,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Profile("!repository & !sample")
+@Profile("!lss & !sample")
 public class BlockChainServiceImpl implements StorageService {
 
+    private final ContractApi contractApi;
     private final BlockchainProperty blockchainProperty;
 
     /**
@@ -47,7 +48,7 @@ public class BlockChainServiceImpl implements StorageService {
      * @return a ContractApi instance.
      */
     private ContractApi initBlockChain() {
-        log.debug("Initializing block chain :: file-path {}", blockchainProperty.getFilePath());
+
         return ContractFactory.EVM.create(blockchainProperty.getFilePath());
     }
 
@@ -61,7 +62,7 @@ public class BlockChainServiceImpl implements StorageService {
     @Override
     public DidDocument findDidDoc(String didKeyUrl) {
         try {
-            ContractApi contractApi = initBlockChain();
+
             DidDocAndStatus didDocAndStatus = (DidDocAndStatus) contractApi.getDidDoc(didKeyUrl);
             return didDocAndStatus.getDocument();
 

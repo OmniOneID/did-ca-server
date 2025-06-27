@@ -10,5 +10,6 @@
   <include file="set.1/admin-dev_admin.xml" relativeToChangelogFile="true" />
   <include file="set.2/admin-2phase-cas.xml" relativeToChangelogFile="true" />
   <include file="set.2/admin-2phase-did_document.xml" relativeToChangelogFile="true" />
+  <include file="set.2/admin-2phase_admin.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

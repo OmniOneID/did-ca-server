@@ -27,6 +27,7 @@ const Step1CaInfo: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
   const [formData, setFormData] = useState<formData>({ name: '', serverUrl: '' });
   const [errors, setErrors] = useState<ErrorState>({});
   const [isServerValid, setIsServerValid] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const dialogs = useDialogs();
 
   const handleChange = (field: keyof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +37,7 @@ const Step1CaInfo: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
       if (field === 'serverUrl') {
         setIsServerValid(false); 
         setErrors((prev) => ({ ...prev, serverUrl: undefined }));
+        setSuccessMessage('');
       }
   };
 
@@ -92,13 +94,16 @@ const Step1CaInfo: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
         if (response.data.isAvailable === false) {
             setErrors((prev) => ({ ...prev, serverUrl: 'Test Connection failed.' }));
             setIsServerValid(false);
+            setSuccessMessage('');
         } else {
             setIsServerValid(true);
             setErrors((prev) => ({ ...prev, serverUrl: undefined }));
+            setSuccessMessage('Connection test successful!');
         }
     } catch (error) {
         setErrors((prev) => ({ ...prev, serverUrl: 'Error occurred while testing connection.' }));
         setIsServerValid(false);
+        setSuccessMessage('');
     }
   };
 
@@ -226,6 +231,18 @@ const Step1CaInfo: React.FC<Props> = ({ step, onRegister, setIsLoading }) => {
               Test Connection
           </Button>
         </Box>
+        {successMessage && (
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: 'success.main', 
+              mt: 1, 
+              ml: 2 
+            }}
+          >
+            {successMessage}
+          </Typography>
+        )}
       </StyledInputArea>
 
     </>

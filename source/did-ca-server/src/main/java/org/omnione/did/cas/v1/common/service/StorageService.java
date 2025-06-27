@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.agent.service;
+package org.omnione.did.cas.v1.common.service;
 
 import org.omnione.did.data.model.did.DidDocument;
 

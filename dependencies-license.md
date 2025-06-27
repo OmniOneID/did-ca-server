@@ -11,8 +11,7 @@ This document provides an overview of the third-party libraries used in this rep
 > - **Manifest License**: "Apache-2.0";link="https://www.apache.org/licenses/LICENSE-2.0.txt" (Not Packaged)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
-**2** **Group:** `com.querydsl` **Name:** `querydsl-jpa` **Version:** `5.0.0` 
-> - **POM Project URL**: [${project.homepage}](${project.homepage})
+**2** **Group:** `io.github.openfeign.querydsl` **Name:** `querydsl-jpa` **Version:** `6.11` 
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 **3** **Group:** `org.apache.commons` **Name:** `commons-pool2` **Version:** `2.12.0` 
@@ -74,23 +73,28 @@ This document provides an overview of the third-party libraries used in this rep
 > - **POM Project URL**: [https://projects.spring.io/spring-cloud](https://projects.spring.io/spring-cloud)
 > - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
+**14** **Group:** `org.web3j` **Name:** `core` **Version:** `4.14.0` 
+> - **POM Project URL**: [https://web3j.io](https://web3j.io)
+> - **POM License**: Apache License, Version 2.0 - [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
+> - **Embedded license files**: [core-4.14.0.jar/solidity/readme.txt](core-4.14.0.jar/solidity/readme.txt)
+
 ## Bouncy Castle Licence
 
-**14** **Group:** `org.bouncycastle` **Name:** `bcpkix-jdk18on` **Version:** `1.78.1` 
+**15** **Group:** `org.bouncycastle` **Name:** `bcpkix-jdk18on` **Version:** `1.78.1` 
 > - **POM Project URL**: [https://www.bouncycastle.org/java.html](https://www.bouncycastle.org/java.html)
 > - **POM License**: Bouncy Castle Licence - [https://www.bouncycastle.org/licence.html](https://www.bouncycastle.org/licence.html)
 
-**15** **Group:** `org.bouncycastle` **Name:** `bcutil-jdk18on` **Version:** `1.78.1` 
+**16** **Group:** `org.bouncycastle` **Name:** `bcutil-jdk18on` **Version:** `1.78.1` 
 > - **POM Project URL**: [https://www.bouncycastle.org/java.html](https://www.bouncycastle.org/java.html)
 > - **POM License**: Bouncy Castle Licence - [https://www.bouncycastle.org/licence.html](https://www.bouncycastle.org/licence.html)
 
-**16** **Group:** `org.bouncycastle` **Name:** `bcprov-jdk18on` **Version:** `1.78.1` 
+**17** **Group:** `org.bouncycastle` **Name:** `bcprov-jdk18on` **Version:** `1.78.1` 
 > - **POM Project URL**: [https://www.bouncycastle.org/java.html](https://www.bouncycastle.org/java.html)
 > - **POM License**: Bouncy Castle Licence - [https://www.bouncycastle.org/licence.html](https://www.bouncycastle.org/licence.html)
 
 ## The 2-Clause BSD License
 
-**17** **Group:** `org.postgresql` **Name:** `postgresql` **Version:** `42.6.2` 
+**18** **Group:** `org.postgresql` **Name:** `postgresql` **Version:** `42.6.2` 
 > - **Manifest Project URL**: [https://jdbc.postgresql.org/](https://jdbc.postgresql.org/)
 > - **Manifest License**: The 2-Clause BSD License (Not Packaged)
 > - **POM Project URL**: [https://jdbc.postgresql.org](https://jdbc.postgresql.org)
@@ -101,9 +105,10 @@ This document provides an overview of the third-party libraries used in this rep
     - [postgresql-42.6.2.jar/META-INF/licenses/com.ongres.stringprep/saslprep-1.1/LICENSE](postgresql-42.6.2.jar/META-INF/licenses/com.ongres.stringprep/saslprep-1.1/LICENSE) 
     - [postgresql-42.6.2.jar/META-INF/licenses/com.ongres.stringprep/stringprep-1.1/LICENSE](postgresql-42.6.2.jar/META-INF/licenses/com.ongres.stringprep/stringprep-1.1/LICENSE)
 
+
 # Server Application Dependencies (FrontEnd)
 
-# License List
+## License List
 
 | Package | Version | License | Repository |
 |--------|---------|---------|------------|
@@ -183,6 +188,7 @@ This document provides an overview of the third-party libraries used in this rep
 | @types/babel__template@7.4.4 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @types/babel__traverse@7.20.6 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @types/cookie@0.6.0 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
+| @types/crypto-js@4.2.2 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @types/d3-color@3.1.3 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @types/d3-delaunay@6.0.4 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | @types/d3-interpolate@3.0.4 | undefined | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
@@ -219,6 +225,7 @@ This document provides an overview of the third-party libraries used in this rep
 | cookie@1.0.2 | undefined | MIT | https://github.com/jshttp/cookie |
 | cosmiconfig@7.1.0 | undefined | MIT | https://github.com/davidtheclark/cosmiconfig |
 | cross-spawn@7.0.6 | undefined | MIT | https://github.com/moxystudio/node-cross-spawn |
+| crypto-js@4.2.0 | undefined | MIT | https://github.com/brix/crypto-js |
 | css-color-keywords@1.0.0 | undefined | ISC | https://github.com/sonicdoe/css-color-keywords |
 | css-to-react-native@3.2.0 | undefined | MIT | https://github.com/styled-components/css-to-react-native |
 | csstype@3.1.3 | undefined | MIT | https://github.com/frenic/csstype |

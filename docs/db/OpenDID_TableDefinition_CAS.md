@@ -4,13 +4,15 @@
 - Version: v1.0.1 (dev)
 
 ## Contents
-- [1. Overview](#1-overview)
-  - [1.1. ERD](#11-erd)
-- [2. Table Definition](#2-table-definition)
-  - [2.1. User PII](#21-user-pii)
-  - [2.2. Certificate VC](#22-certificate-vc)
-  - [2.3. CAS](#23-cas)
-  - [2.4. Admin](#24-admin)
+- [Open DID CAS Database Table Definition](#open-did-cas-database-table-definition)
+  - [Contents](#contents)
+  - [1. Overview](#1-overview)
+    - [1.1 ERD](#11-erd)
+  - [2. Table Definition](#2-table-definition)
+    - [2.1. User PII](#21-user-pii)
+    - [2.2. Certificate VC](#22-certificate-vc)
+    - [2.3. CAS](#23-cas)
+    - [2.4. Admin](#24-admin)
 
 ## 1. Overview
 

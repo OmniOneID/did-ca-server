@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.cas.v1.common.service.StorageService;
 import org.omnione.did.data.model.did.DidDocument;
 import org.springframework.stereotype.Service;
 

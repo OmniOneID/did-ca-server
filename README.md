@@ -4,6 +4,17 @@ CA Server
 Welcome to the CA Server Repository. <br>
 This repository contains the source code, documentation, and related resources for the CA Server.
 
+## S/W Specifications
+| Category           | Details                                         |
+|--------------------|-------------------------------------------------|
+| OS                 | macOS / Linux / Windows 10 or higher            |
+| Language           | Java 21 or higher                               |
+| IDE                | IntelliJ IDEA                                   |
+| Build System       | Gradle 7.0 or higher                            |
+| Compatibility      | Requires JDK 21 or higher                       |
+| Docker             | Docker and Docker Compose must be installed     |
+| Other Requirements | Minimum 2GB RAM and 10GB of disk space required |
+
 ## Folder Structure
 Overview of the major folders and documents in the project directory:
 
@@ -21,15 +32,21 @@ did-ca-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       ├── OpenDID_CAAdmin_Operation_Guide.md
+│       └── OpenDID_CAAdmin_Operation_Guide_ko.md
 │   └── api
+│       ├── CAS_API.md
 │       └── CAS_API_ko.md
 │   └── errorCode
-│       └── CA_ErrorCode.md
+│       ├── CA_ErrorCode.md
+│       └── CA_ErrorCode_ko.md
 │   └── installation
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
 │   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_TableDefinition_CAS.md
+│       └── OpenDID_TableDefinition_CAS_ko.md
 └── source
     └── did-ca-admin
         ├── frontend
