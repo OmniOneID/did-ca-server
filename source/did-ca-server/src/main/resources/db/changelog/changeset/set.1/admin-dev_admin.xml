@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+  <changeSet id="admin-dev-admin" author="yklee0911">
+    <createTable tableName="admin">
+      <column name="id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="login_id" type="varchar(50)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+      <column name="login_password" type="varchar(64)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="name" type="varchar(200)">
+        <constraints nullable="true" unique="false"/>
+      </column>
+      <column name="email_verified" type="boolean" defaultValue="false">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="require_password_reset" type="boolean" defaultValue="true">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="role" type="varchar(50)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="created_by" type="varchar(50)">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="created_at" type="timestamp" defaultValue="NOW()">
+        <constraints nullable="false" unique="false"/>
+      </column>
+      <column name="updated_at" type="timestamp">
+        <constraints nullable="true" unique="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="insert-initial-admin-data" author="yklee0911">
+    <insert tableName="admin">
+      <column name="login_id" value="admin@opendid.omnione.net"/>
+      <column name="login_password" value="5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"/>
+      <column name="email_verified" value="true"/>
+      <column name="require_password_reset" value="false"/>
+      <column name="role" value="ROOT"/>
+      <column name="created_by" value="SYSTEM"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

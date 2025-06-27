@@ -4,6 +4,17 @@ CA Server
 Welcome to the CA Server Repository. <br>
 This repository contains the source code, documentation, and related resources for the CA Server.
 
+## S/W Specifications
+| Category           | Details                                         |
+|--------------------|-------------------------------------------------|
+| OS                 | macOS / Linux / Windows 10 or higher            |
+| Language           | Java 21 or higher                               |
+| IDE                | IntelliJ IDEA                                   |
+| Build System       | Gradle 7.0 or higher                            |
+| Compatibility      | Requires JDK 21 or higher                       |
+| Docker             | Docker and Docker Compose must be installed     |
+| Other Requirements | Minimum 2GB RAM and 10GB of disk space required |
+
 ## Folder Structure
 Overview of the major folders and documents in the project directory:
 
@@ -21,79 +32,60 @@ did-ca-server
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
+│   └── admin
+│       ├── OpenDID_CAAdmin_Operation_Guide.md
+│       └── OpenDID_CAAdmin_Operation_Guide_ko.md
 │   └── api
+│       ├── CAS_API.md
 │       └── CAS_API_ko.md
 │   └── errorCode
-│       └── CA_ErrorCode.md
+│       ├── CA_ErrorCode.md
+│       └── CA_ErrorCode_ko.md
 │   └── installation
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
 │       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
 │   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_TableDefinition_CAS.md
+│       └── OpenDID_TableDefinition_CAS_ko.md
 └── source
+    └── did-ca-admin
+        ├── frontend
     └── did-ca-server
-        ├── gradle
-        ├── libs
-            └── did-sdk-common-1.0.0.jar
-            └── did-blockchain-sdk-server-1.0.0.jar
-            └── did-core-sdk-server-1.0.0..jar
-            └── did-crypto-sdk-server-1.0.0.jar
-            └── did-datamodel-sdk-server-1.0.0.jar
-            └── did-wallet-sdk-server-1.0.0.jar
-        └── src
-        └── build.gradle
-        └── README.md
 ```
 
 <br/>
 
 Below is a description of each folder and file in the directory:
 
-| Name                    | Description                                     |
-| ----------------------- | ----------------------------------------------- |
-| CHANGELOG.md            | Version-specific changes in the project         |
-| CODE_OF_CONDUCT.md      | Code of conduct for contributors                |
-| CONTRIBUTING.md         | Contribution guidelines and procedures          |
-| LICENSE                 | Licenses                                        |
-| dependencies-license.md | Licenses for the project’s dependency libraries |
-| MAINTAINERS.md          | Guidelines for project maintainers              |
-| RELEASE-PROCESS.md      | Procedures for releasing new versions           |
-| SECURITY.md             | Security policies and vulnerability reporting   |
-| docs                    | Documentation                                   |
-| ┖ api                   | API guide documentation                         |
-| ┖ errorCode             | Error codes and troubleshooting guides          |
-| ┖ installation          | Installation and setup instructions             |
-| ┖ db                    | Database ERD,  Table Specifications             |
-| source                  | Server source code project                      |
-| ┖ did-ca-server         | CA Server source code and build files           |
-| &nbsp;&nbsp;&nbsp;┖ gradle              | Gradle build configurations and scripts         |
-| &nbsp;&nbsp;&nbsp;┖ libs                | External libraries and dependencies             |
-| &nbsp;&nbsp;&nbsp;┖ src                 | Main source code directory                      |
-| &nbsp;&nbsp;&nbsp;┖ build.gradle        | Gradle build configuration file                 |
-| &nbsp;&nbsp;&nbsp;┖ README.md           | Overview and instructions for the source code   |
+| Name                         | Description                                     |
+| ---------------------------- | ----------------------------------------------- |
+| CHANGELOG.md                 | Version-specific changes in the project         |
+| CODE_OF_CONDUCT.md           | Code of conduct for contributors                |
+| CONTRIBUTING.md              | Contribution guidelines and procedures          |
+| LICENSE                      | Licenses                                        |
+| dependencies-license.md      | Licenses for the project’s dependency libraries |
+| MAINTAINERS.md               | Guidelines for project maintainers              |
+| RELEASE-PROCESS.md           | Procedures for releasing new versions           |
+| SECURITY.md                  | Security policies and vulnerability reporting   |
+| docs                         | Documentation                                   |
+| ┖ api                        | API guide documentation                         |
+| ┖ errorCode                  | Error codes and troubleshooting guides          |
+| ┖ installation               | Installation and setup instructions             |
+| ┖ db                         | Database ERD,  Table Specifications             |
+| source                       | Source code for the server and admin console    |
+| ┖ did-ca-server              | CA Server source code                           |
+| ┖ did-ca-admin               | CA Admin source code                            |
+| &nbsp;&nbsp;&nbsp;┖ frontend | CA Admin frontend source code                   |
 
 <br/>
 
-
-## Libraries
-
-Libraries used in this project are organized into two main categories:
-
-1. **Open DID Libraries**: These libraries are developed by the Open DID project and are available in the [libs folder](source/did-ca-server/libs). They include:
-
-   - `did-sdk-common-1.0.0.jar`
-   - `did-blockchain-sdk-server-1.0.0.jar`
-   - `did-core-sdk-server-1.0.0.jar`
-   - `did-crypto-sdk-server-1.0.0.jar`
-   - `did-datamodel-sdk-server-1.0.0.jar`
-   - `did-wallet-sdk-server-1.0.0.jar`
-
-2. **Third-Party Libraries**: These libraries are open-source dependencies managed via the [build.gradle](source/did-ca-server/build.gradle) file. For a detailed list of third-party libraries and their licenses, please refer to the [dependencies-license.md](dependencies-license.md) file.
-
 ## Installation And Operation Guide
 
-For detailed instructions on installing and configuring the Issuer Server, please refer to the guide below:
-- [OpenDID CA Server Installation and Operation Guide](docs/installation/OpenDID_CAServer_InstallationAndOperation_Guide.md)  
+For detailed instructions on installing the CA Server, please refer to the guide below:
+- [OpenDID CA Server Installation and Operation Guide](docs/installation/OpenDID_CAServer_Installation_Guide.md)  
+
+For detailed instructions on operating the CA Admin Console, please refer to the guide below:  
+- [OpenDID CA Admin Console Operation Guide](docs/admin/OpenDID_CAAdmin_Operation_Guide_ko.md)
 
 ## API Reference
 

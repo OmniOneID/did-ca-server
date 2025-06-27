@@ -53,7 +53,7 @@ public class BaseCryptoUtil {
     public static KeyPairInterface generateKeyPair(EccCurveType eccCurveType) {
         try {
             return CryptoUtils.generateKeyPair(eccCurveType.toOmnioneDidKeyType());
-        } catch (Exception e) {
+        } catch (CryptoException e) {
             log.error("Failed to generate key pair: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.KEY_PAIR_GENERATION_FAILED);
         }
@@ -71,7 +71,7 @@ public class BaseCryptoUtil {
     public static byte[] generateNonce(int length) {
         try {
             return CryptoUtils.generateNonce(length);
-        } catch (Exception e) {
+        } catch (CryptoException e) {
             log.error("Failed to generate nonce: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.NONCE_GENERATION_FAILED);
         }
@@ -90,7 +90,7 @@ public class BaseCryptoUtil {
     public static byte[] mergeNonce(byte[] clientNonce, byte[] serverNonce) {
         try {
             return DigestUtils.mergeNonce(clientNonce, serverNonce);
-        } catch (Exception e) {
+        } catch (CryptoException e) {
             log.error("Failed to merge nonce: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.NONCE_MERGE_FAILED);
         }

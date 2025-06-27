@@ -50,7 +50,13 @@ public class BaseWalletUtil {
         try {
             WalletManagerInterface walletManager = WalletManagerFactory.getWalletManager(WalletManagerFactory.WalletManagerType.FILE);
             walletManager.create(walletFilePath, password.toCharArray(), WalletEncryptType.AES_256_CBC_PKCS5Padding);
-        } catch (Exception e) {
+        } catch (WalletException e) {
+            String errCode = e.getErrorCode();
+            if (errCode.equals("SSDKWLT02030")) {
+                log.error("Wallet already exists: {}", e.getMessage());
+                throw new OpenDidException(ErrorCode.WALLET_ALREADY_EXISTS);
+            }
+
             log.error("Failed to create wallet: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.WALLET_CONNECTION_FAILED);
         }
@@ -108,6 +114,11 @@ public class BaseWalletUtil {
         try {
             walletManager.generateRandomKey(keyId, CryptoKeyPairInfo.KeyAlgorithmType.SECP256r1);
         } catch (WalletException e) {
+            if (e.getErrorCode().equals("SSDKWLT02005")) {
+                log.error("Key already exists: {}", e.getMessage());
+                throw new OpenDidException(ErrorCode.KEY_ALREADY_EXISTS);
+            }
+
             log.error("Failed to generate random keys: {} ", e.getMessage());
             throw new OpenDidException(ErrorCode.KEY_PAIR_GENERATION_FAILED);
         }
@@ -142,5 +153,47 @@ public class BaseWalletUtil {
             log.error("Failed to generate compact signature: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
         }
+    }
+
+    /**
+     * Creates a file-based wallet if not exists. Ignores if already exists.
+     */
+    public static void createFileWalletSafe(String walletFilePath, String password) {
+        try {
+            createFileWallet(walletFilePath, password);
+        } catch (OpenDidException e) {
+            if (e.getErrorCode() == ErrorCode.WALLET_ALREADY_EXISTS) {
+                log.info("Wallet already exists at {}.", walletFilePath);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Generates a key pair if not already present.
+     */
+    public static void generateKeyPairSafe(WalletManagerInterface walletManager, String keyId) {
+        try {
+            generateKeyPair(walletManager, keyId);
+        } catch (OpenDidException e) {
+            if (e.getErrorCode() == ErrorCode.KEY_ALREADY_EXISTS) {
+                log.info("Key already exists: {}", keyId);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * Creates wallet if needed, connects it, and generates default key set safely.
+     */
+    public static WalletManagerInterface initializeWalletWithKeys(String walletFilePath, String password, String... keyIds) {
+        createFileWalletSafe(walletFilePath, password);
+        WalletManagerInterface walletManager = connectFileWallet(walletFilePath, password);
+        for (String keyId : keyIds) {
+            generateKeyPairSafe(walletManager, keyId);
+        }
+        return walletManager;
     }
 }

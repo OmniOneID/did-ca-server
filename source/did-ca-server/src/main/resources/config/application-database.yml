@@ -4,9 +4,9 @@ spring:
     enabled: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    url:
-    username:
-    password:
+    url: jdbc:postgresql://127.0.0.1:5430/cas
+    username: omn
+    password: omn
 
   jpa:
     open-in-view: true

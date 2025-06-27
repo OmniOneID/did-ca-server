@@ -23,10 +23,27 @@ package org.omnione.did.base.constants;
 public class UrlConstant {
 
     public static class Cas {
-        public static final String V1 = "/cas/api/v1";
+        public static final String AGENT_V1 = "/cas/api/v1";
+        public static final String ADMIN_V1 = "/cas/admin/v1";
         public static final String REQUEST_WALLET_TOKEN_DATA = "/request-wallet-tokendata";
         public static final String REQUEST_ATTESTED_APPINFO = "/request-attested-appinfo";
         public static final String SAVE_USER_INFO = "/save-user-info";
         public static final String RETRIEVE_PII = "/retrieve-pii";
+    }
+
+    public static class Tas {
+        public static final String ADMIN_V1 = "/tas/admin/v1";
+        public static final String REGISTER_DID_PUBLIC = "/entities/register-did/public";
+        public static final String REQUEST_ENTITY_STATUS = "/entities/request-status";
+    }
+
+    public static class LSS {
+        public static final String V1 = "/lss/api/v1";
+        public static final String DID = "/did-doc";
+        public static final String VC_META = "/vc-meta";
+        public static final String CREDENTIAL_SCHEMA = "/credential-schema";
+        public static final String CREDENTIAL_DEFINITION = "/credential-definition";
+
+
     }
 }

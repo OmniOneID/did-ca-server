@@ -350,7 +350,7 @@ Content-Type: application/json;charset=utf-8
 
 월렛토큰을 만들기 위해 필요한 데이터를 요청한다.
 
-월렛토큰 데이터에는 인가 앱이 보유한 사용자의 개인 식별 정보(PII)가 해시된 형태로 포함되며, 인가앱 서버에서 서명한 값도 포함된다. 인가앱은 로그인 등의 과정을 통해 서버와 세션을 맺어 userId를 획득한 뒤에만 API 호출이 가능하다. 해당 과정은 본 범위에 포함되지 않습니다.
+월렛토큰 데이터에는 인가 앱이 보유한 사용자의 개인 식별 정보(PII)가 해시된 형태로 포함되며, 인가앱 서버에서 서명한 값도 포함된다. 인가앱은 로그인 등의 과정을 통해 서버와 세션을 맺어 userId를 획득한 뒤에만 API 호출이 가능하다.
 
 | Item          | Description                    | Remarks |
 | ------------- | ------------------------------ | ------- |
@@ -393,7 +393,7 @@ def object RequestWalletTokenData: "Request Wallet TokenData 요청문"
 ```c#
 def object _RequestWalletTokenData: "Request Wallet TokenData 응답문"
 {
-    @spread(WalletTokenData) // 데이터 명세서 참고
+    @spread(WalletTokenData) 
 }
 ```
 
@@ -721,33 +721,3 @@ def object _RetrievePii: "Retrieve PII 응답문"
 | SCRVCFA00803 | "'retrieve-pii' API 요청 처리에 실패했습니다." |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.6.3. Example
-
-**■ Request**
-
-```shell
-curl -v -X POST "http://${Host}:${Port}/cas/api/v1/retrieve-pii"
--H "Content-Type: application/json;charset=utf-8" \
--d @"data.json"
-```
-
-```json
-{
-    "userId":"testUser123"
-}
-```
-
-**■ Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-
-{
-    "pii":"2845bac0835ba292946e2476545dfec6cd82027ee91b1cfb5ae5b1edce9b9b74"
-}
-```
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-

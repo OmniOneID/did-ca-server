@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * communication with external services defined by Feign interfaces.
  */
 @Configuration
-@EnableFeignClients("org.omnione.did.cas.v1.api")
+@EnableFeignClients("org.omnione.did.cas.v1.agent.api")
 public class OpenFeignConfig {
 
 }
