@@ -829,7 +829,7 @@ docker-compose up -d
 이 명령어는 백그라운드에서 PostgreSQL 컨테이너를 실행합니다. 설정된 환경 변수에 따라 PostgreSQL 서버가 실행되며, 데이터베이스가 준비됩니다. 이 데이터베이스를 애플리케이션에서 사용할 수 있도록 연동 설정을 진행하면 됩니다.
 
 <!-- References -->
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 [DID Besu Contract]: https://github.com/OmniOneID/did-besu-contract
-[Open DID Admin Console Guide]: ../admin/OpenDID_CA_Admin_Console_Guide_ko.md
+[Open DID Admin Console Guide]: ../../docs/admin/OpenDID_CAAdmin_Operation_Guide_ko.md
 

@@ -377,5 +377,5 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 
 
 
-[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/develop/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
+[Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 
