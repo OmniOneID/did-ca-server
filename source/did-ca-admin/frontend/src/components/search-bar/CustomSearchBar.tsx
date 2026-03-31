@@ -1,68 +1,187 @@
 import * as React from 'react';
-import { TextField, InputAdornment, Button, Box, Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
+import {
+    TextField,
+    InputAdornment,
+    Button,
+    Box,
+    Select,
+    MenuItem,
+    FormControl,
+    SelectChangeEvent,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface CustomSearchBarProps {
-  searchText: string;
-  setSearchText: (text: string) => void;
-  selectedSearch: string;  // ✅ 부모에서 받아옴
-  setSelectedSearch: (value: string) => void;  // ✅ 부모에서 받아옴
-  onSearch?: (searchField: string, searchText: string) => void;
-  searchOptions?: Array<{ value: string; label: string }>;
+    searchText: string;
+    setSearchText: (text: string) => void;
+    selectedSearch: string;
+    setSelectedSearch: (value: string) => void;
+    onSearch?: (searchField: string, searchText: string) => void;
+    searchOptions?: Array<{ value: string; label: string }>;
+    selectableFields?: Array<{ field: string; options: Array<{ value: string; label: string }> }>;
 }
 
 export default function CustomSearchBar({
-  searchText,
-  setSearchText,
-  selectedSearch,
-  setSelectedSearch,
-  onSearch,
-  searchOptions = [],
-}: CustomSearchBarProps) {
-  const inputRef = React.useRef<HTMLInputElement | null>(null);
+                                            searchText: externalSearchText,
+                                            setSearchText,
+                                            selectedSearch,
+                                            setSelectedSearch,
+                                            onSearch,
+                                            searchOptions = [],
+                                            selectableFields = [],
+                                        }: CustomSearchBarProps) {
+    const inputRef = React.useRef<HTMLInputElement | null>(null);
+    const defaultValueRef = React.useRef(externalSearchText);
+    const lastSearchedValueRef = React.useRef(externalSearchText);
+    const isFirstRender = React.useRef(true);
 
-  const handleSearchTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
+    // State to store temporary value for SelectBox
+    const [tempSelectValue, setTempSelectValue] = React.useState<string>(externalSearchText);
 
-  const handleSearchOptionChange = (e: SelectChangeEvent<string>) => {
-    setSelectedSearch(e.target.value);
-  };
+    const isSelectableField = React.useMemo(() => {
+        return selectableFields.some(field => field.field === selectedSearch);
+    }, [selectableFields, selectedSearch]);
 
-  return (
-    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      <FormControl size="small">
-        <Select value={selectedSearch} onChange={handleSearchOptionChange}>
-          {searchOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    const currentSelectableField = React.useMemo(() => {
+        return selectableFields.find(field => field.field === selectedSearch);
+    }, [selectableFields, selectedSearch]);
 
-      <TextField
-        inputRef={inputRef}
-        autoFocus
-        size="small"
-        variant="outlined"
-        placeholder="검색어 입력"
-        value={searchText}
-        onChange={handleSearchTextChange}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            )
-          }
-        }}
-      />
+    React.useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
 
-      <Button variant="contained" color="primary" onClick={() => onSearch?.(selectedSearch, searchText)} disabled={!onSearch}>
-        검색
-      </Button>
-    </Box>
-  );
+        if (externalSearchText === lastSearchedValueRef.current) {
+            return;
+        }
+
+        // Synchronize tempSelectValue when externalSearchText changes
+        setTempSelectValue(externalSearchText);
+
+        if (inputRef.current && document.activeElement !== inputRef.current) {
+            inputRef.current.value = externalSearchText;
+        }
+    }, [externalSearchText]);
+
+    const executeSearch = React.useCallback(() => {
+        if (!onSearch) return;
+
+        const currentValue = isSelectableField ? tempSelectValue : (inputRef.current?.value || '');
+        lastSearchedValueRef.current = currentValue;
+
+        setSearchText(currentValue);
+        onSearch(selectedSearch, currentValue);
+    }, [onSearch, selectedSearch, setSearchText, tempSelectValue, isSelectableField]);
+
+    const handleSelectableFieldChange = React.useCallback((e: SelectChangeEvent<string>) => {
+        const newValue = e.target.value;
+        // Store in temporary state only, actual search will be executed when Search button is clicked
+        setTempSelectValue(newValue);
+    }, []);
+
+    const handleSearchClick = React.useCallback(() => {
+        executeSearch();
+    }, [executeSearch]);
+
+    const handleSearchOptionChange = React.useCallback((e: SelectChangeEvent<string>) => {
+        const newField = e.target.value;
+        setSelectedSearch(newField);
+        // Reset all search values when search field is changed
+        setTempSelectValue('');
+        setSearchText('');
+        if (inputRef.current) {
+            inputRef.current.value = '';
+        }
+    }, [setSelectedSearch, setSearchText]);
+
+    const handleBlur = React.useCallback(() => {
+        if (inputRef.current) {
+            if (inputRef.current.value !== externalSearchText) {
+                setSearchText(inputRef.current.value);
+            }
+        }
+    }, [setSearchText, externalSearchText]);
+
+    const handleKeyDown = React.useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && onSearch) {
+            e.preventDefault();
+            executeSearch();
+        }
+    }, [executeSearch, onSearch]);
+
+    return (
+        <Box sx={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <FormControl size="small" sx={{ minWidth: 100 }}>
+                <Select
+                    value={selectedSearch}
+                    onChange={handleSearchOptionChange}
+                    displayEmpty
+                    size="small"
+                >
+                    {searchOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            {isSelectableField ? (
+                <FormControl size="small" sx={{ width: 200 }}>
+                    <Select
+                        value={tempSelectValue}
+                        onChange={handleSelectableFieldChange}
+                        displayEmpty
+                        size="small"
+                        startAdornment={
+                            <InputAdornment position="start">
+                                <SearchIcon fontSize="small" />
+                            </InputAdornment>
+                        }
+                    >
+                        <MenuItem value="">
+                            <em>Select {currentSelectableField?.field}</em>
+                        </MenuItem>
+                        {currentSelectableField?.options.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            ) : (
+                <TextField
+                    inputRef={inputRef}
+                    size="small"
+                    variant="outlined"
+                    placeholder="Enter keyword"
+                    defaultValue={defaultValueRef.current}
+                    onBlur={handleBlur}
+                    onKeyDown={handleKeyDown}
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                    sx={{ width: 200 }}
+                />
+            )}
+
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSearchClick}
+                disabled={!onSearch || (isSelectableField && !tempSelectValue)}
+                size="small"
+                sx={{ minWidth: 80, height: 36 }}
+            >
+                Search
+            </Button>
+        </Box>
+    );
 }
