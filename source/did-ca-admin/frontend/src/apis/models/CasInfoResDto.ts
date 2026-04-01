@@ -7,6 +7,7 @@ export interface CasInfoResDto {
   status: CasStatus;
   serverUrl: string;
   certificateUrl: string;
+  certificateVc: string;
   didDocument?: any;
   createdAt: string;
   updatedAt: string;

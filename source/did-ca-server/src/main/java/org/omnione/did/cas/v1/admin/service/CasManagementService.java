@@ -113,6 +113,12 @@ public class CasManagementService {
         // If CAS didocument is already registered, fetch it from storage
         DidDocument didDocument = storageService.findDidDoc(existingCas.getDid());
 
+        if (existingCas.getStatus() == CasStatus.ACTIVATE) {
+            log.debug("\t--> Returning complete CAS info with certificate VC");
+            String certificateVc = certificateVcQueryService.findCertificateVc().getVc();
+            return CaInfoResDto.fromEntity(existingCas, didDocument, certificateVc);
+        }
+
         log.debug("=== Finished getCasInfo ===");
         return CaInfoResDto.fromEntity(existingCas, didDocument);
     }

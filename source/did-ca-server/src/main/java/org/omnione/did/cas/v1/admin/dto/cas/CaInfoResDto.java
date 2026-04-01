@@ -50,6 +50,7 @@ public class CaInfoResDto {
     private CasStatus status;
     private String serverUrl;
     private String certificateUrl;
+    private String certificateVc;
     private Map<String, Object> didDocument;
     private String createdAt;
     private String updatedAt;
@@ -85,6 +86,23 @@ public class CaInfoResDto {
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
                         .certificateUrl(t.getCertificateUrl())
+                        .didDocument(parseDidDocToMap(didDocument.toJson()))
+                        .createdAt(formatInstant(t.getCreatedAt()))
+                        .updatedAt(formatInstant(t.getUpdatedAt()))
+                        .build())
+                .orElse(null);
+    }
+
+    public static CaInfoResDto fromEntity(Cas cas, DidDocument didDocument, String certificateVc) {
+        return Optional.ofNullable(cas)
+                .map(t -> CaInfoResDto.builder()
+                        .id(t.getId())
+                        .did(t.getDid())
+                        .name(t.getName())
+                        .status(t.getStatus())
+                        .serverUrl(t.getServerUrl())
+                        .certificateUrl(t.getCertificateUrl())
+                        .certificateVc(certificateVc)
                         .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))
                         .updatedAt(formatInstant(t.getUpdatedAt()))
