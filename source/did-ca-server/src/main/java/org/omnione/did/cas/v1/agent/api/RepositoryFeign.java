@@ -19,6 +19,7 @@ package org.omnione.did.cas.v1.agent.api;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.cas.v1.agent.api.dto.DidDocApiResDto;
 import org.omnione.did.cas.v1.agent.api.dto.VcMetaApiResDto;
+import org.omnione.did.cas.v1.agent.config.RepositoryFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * The RepositoryFeign interface is a Feign client that provides endpoints for getting a DID document and a verifiable credential metadata.
  * It is used to communicate with the Repository service.
  */
-@FeignClient(value = "Storage",  url = "${lss.url:http://127.0.0.1:8098}" + UrlConstant.LSS.V1)
+@FeignClient(value = "Storage",  url = "${lss.url:http://127.0.0.1:8098}" + UrlConstant.LSS.V1, configuration = RepositoryFeignConfig.class)
 public interface RepositoryFeign {
 
     /**

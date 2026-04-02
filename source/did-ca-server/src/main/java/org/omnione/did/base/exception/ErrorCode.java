@@ -90,6 +90,7 @@ public enum ErrorCode {
     URL_PING_ERROR("SCRVCFA01100", "Failed to ping the URL.", 400),
     TAS_UNKNOWN_RESPONSE("SCRVCFA01101", "Failed to process response: received unknown data from the tas.", 500),
     TAS_COMMUNICATION_ERROR("SCRVCFA01102", "Failed to communicate with tas: unknown error occurred.", 500),
+    SERVER_CONFIG_KEY_NOT_FOUND("SCRVCFA01801", "Server configuration key not found.", 500),
     ;
 
     private final String code;
