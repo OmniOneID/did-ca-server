@@ -19,10 +19,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.db.domain.Admin;
+import org.omnione.did.base.db.domain.AdminPasswordPolicy;
+import org.omnione.did.base.db.repository.AdminPasswordPolicyRepository;
+import org.omnione.did.base.db.repository.AdminRepository;
 import org.omnione.did.cas.v1.admin.dto.admin.AdminDto;
 import org.omnione.did.cas.v1.admin.dto.admin.RequestAdminLoginReqDto;
 import org.omnione.did.cas.v1.admin.service.query.AdminQueryService;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +37,47 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class SessionService {
     private final AdminQueryService adminQueryService;
+    private final AdminPasswordPolicyRepository adminPasswordPolicyRepository;
+    private final AdminRepository adminRepository;
 
     public AdminDto requestAdminLogin(RequestAdminLoginReqDto requestAdminLoginReqDto) {
         Admin admin = adminQueryService.findByLoginIdAndLoginPassword(requestAdminLoginReqDto.getLoginId(), requestAdminLoginReqDto.getLoginPassword());
-        return AdminDto.fromAdmin(admin);
+
+        boolean isPasswordExpired = checkPasswordExpired(admin);
+        if (isPasswordExpired && !admin.getRequirePasswordReset()) {
+            admin.setRequirePasswordReset(true);
+            admin.setPasswordResetReason(org.omnione.did.base.db.constant.PasswordResetReason.EXPIRED);
+            adminRepository.save(admin);
+        }
+
+        AdminDto dto = AdminDto.fromAdmin(admin);
+        return AdminDto.builder()
+                .id(dto.getId())
+                .loginId(dto.getLoginId())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .emailVerified(dto.getEmailVerified())
+                .requirePasswordReset(dto.getRequirePasswordReset())
+                .role(dto.getRole())
+                .createdBy(dto.getCreatedBy())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
+                .passwordResetReason(dto.getPasswordResetReason())
+                .isPasswordExpired(isPasswordExpired)
+                .build();
+    }
+
+    private boolean checkPasswordExpired(Admin admin) {
+        Optional<AdminPasswordPolicy> policyOpt = adminPasswordPolicyRepository.findTop1ByOrderByIdAsc();
+        if (policyOpt.isEmpty()) {
+            return false;
+        }
+        AdminPasswordPolicy policy = policyOpt.get();
+        Instant lastChanged = admin.getLastPasswordChangedAt();
+        if (lastChanged == null) {
+            return false;
+        }
+        long daysSinceChange = ChronoUnit.DAYS.between(lastChanged, Instant.now());
+        return daysSinceChange >= policy.getPasswordExpiryDays();
     }
 }

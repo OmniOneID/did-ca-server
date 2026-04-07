@@ -1,16 +1,19 @@
 import { AuthProvider, AuthResponse, SignInPage } from '@toolpad/core/SignInPage';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { requestLogin, requestPasswordReset } from '../../apis/admin-api';
+import { requestLogin, requestPasswordReset, changeAdminIdAndPassword } from '../../apis/admin-api';
 import { useSession } from '../../context/SessionContext';
 import { sha256Hash } from '../../utils/sha256-hash';
 import PasswordResetDialog from './PasswordResetDialog';
+import ChangeIdAndPasswordDialog from './ChangeIdAndPasswordDialog';
 
 export default function SignIn() {
   const { setSession } = useSession();
   const navigate = useNavigate();
   const [requirePasswordReset, setRequirePasswordReset] = useState(false);
   const [loginData, setLoginData] = useState<{ email: string; hashedPassword: string } | null>(null);
+  const [requireChangeIdAndPassword, setRequireChangeIdAndPassword] = useState(false);
+  const [changeIdAndPasswordData, setChangeIdAndPasswordData] = useState<{ email: string; hashedPassword: string } | null>(null);
   const [rememberMe, setRememberMe] = useState<boolean>(() => {
     return localStorage.getItem('rememberMe') === 'true';
   });
@@ -30,6 +33,14 @@ export default function SignIn() {
         loginPassword: hashedPassword,
       });
 
+      if (data.requirePasswordReset &&
+          data.role === 'ROOT' &&
+          data.passwordResetReason === 'FIRST_LOGIN') {
+        setRequireChangeIdAndPassword(true);
+        setChangeIdAndPasswordData({ email, hashedPassword });
+        return {};
+      }
+
       if (data.requirePasswordReset) {
         setRequirePasswordReset(true);
         setLoginData({ email, hashedPassword });
@@ -38,14 +49,12 @@ export default function SignIn() {
 
       const session = {
         user: {
-          id: data.loginId, 
+          id: data.loginId,
           role: data.role,
         },
       };
       setSession(session);
 
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem('session', JSON.stringify(session));
       localStorage.setItem('rememberMe', rememberMe.toString());
       if (rememberMe) {
         localStorage.setItem('email', email);
@@ -53,10 +62,42 @@ export default function SignIn() {
         localStorage.removeItem('email');
       }
 
-      navigate(callbackUrl ?? '/ta-registration', { replace: true });
+      navigate(callbackUrl ?? '/ca-registration', { replace: true });
       return {};
     } catch (error) {
       return { error: 'Invalid username or password.' };
+    }
+  };
+
+  const handleChangeIdAndPassword = async (
+    oldLoginId: string,
+    newLoginId: string,
+    oldPassword: string,
+    newPassword: string
+  ) => {
+    try {
+      const newHashedPassword = await sha256Hash(newPassword);
+      const oldHashedPassword = await sha256Hash(oldPassword);
+      await changeAdminIdAndPassword({
+        oldLoginId,
+        newLoginId,
+        oldPassword: oldHashedPassword,
+        newPassword: newHashedPassword,
+      });
+      const { data } = await requestLogin({
+        loginId: newLoginId,
+        loginPassword: newHashedPassword,
+      });
+      const session = { user: { id: newLoginId, role: data.role } };
+      setSession(session);
+      localStorage.setItem('rememberMe', rememberMe.toString());
+      if (rememberMe) localStorage.setItem('email', newLoginId);
+      else localStorage.removeItem('email');
+      setRequireChangeIdAndPassword(false);
+      setChangeIdAndPasswordData(null);
+      navigate('/ca-management', { replace: true });
+    } catch (error: any) {
+      throw error;
     }
   };
 
@@ -71,9 +112,13 @@ export default function SignIn() {
         newPassword: newHashedPassword,
       });
 
-      const session = { user: { id: loginData.email } };
+      const { data } = await requestLogin({
+        loginId: loginData.email,
+        loginPassword: newHashedPassword,
+      });
+      const session = { user: { id: data.loginId, role: data.role } };
       setSession(session);
-      
+
       navigate('/ca-management', { replace: true });
     } catch (error) {
       console.error('Failed to reset password:', error);
@@ -126,9 +171,15 @@ export default function SignIn() {
           },
         }}
       />
+      <ChangeIdAndPasswordDialog
+        open={requireChangeIdAndPassword}
+        onClose={() => { setRequireChangeIdAndPassword(false); setChangeIdAndPasswordData(null); }}
+        onSubmit={handleChangeIdAndPassword}
+        oldLoginId={changeIdAndPasswordData?.email}
+      />
       <PasswordResetDialog
         open={requirePasswordReset}
-        onClose={() => setRequirePasswordReset(false)}
+        onClose={() => { setRequirePasswordReset(false); setLoginData(null); }}
         onSubmit={handlePasswordReset}
       />
     </>

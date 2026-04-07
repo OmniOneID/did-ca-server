@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.cas.v1.admin.dto.admin.AdminDto;
+import org.omnione.did.cas.v1.admin.dto.admin.ChangeAdminIdAndPasswordReqDto;
 import org.omnione.did.cas.v1.admin.dto.admin.RegisterAdminReqDto;
 import org.omnione.did.cas.v1.admin.dto.admin.ResetPasswordByRootReqDto;
 import org.omnione.did.cas.v1.admin.dto.admin.ResetPasswordReqDto;
@@ -79,6 +80,12 @@ public class AdminManagementController {
     @ResponseBody
     public EmptyResDto resetPasswordByRoot(@RequestBody ResetPasswordByRootReqDto resetPasswordByRootReqDto) {
         return adminManagementService.resetPasswordByRoot(resetPasswordByRootReqDto);
+    }
+
+    @PostMapping(value = "/admins/change-id-and-password")
+    @ResponseBody
+    public EmptyResDto changeAdminIdAndPassword(@Valid @RequestBody ChangeAdminIdAndPasswordReqDto changeAdminIdAndPasswordReqDto) {
+        return adminManagementService.changeAdminIdAndPassword(changeAdminIdAndPasswordReqDto);
     }
 
 }

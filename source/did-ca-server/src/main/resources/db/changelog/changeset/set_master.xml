@@ -12,5 +12,8 @@
   <include file="set.2/admin-2phase-did_document.xml" relativeToChangelogFile="true" />
   <include file="set.2/admin-2phase_admin.xml" relativeToChangelogFile="true"/>
   <include file="set.3/create-table_server_config.xml" relativeToChangelogFile="true"/>
+  <include file="set.4/create-table_admin_password_policy.xml" relativeToChangelogFile="true"/>
+  <include file="set.4/alter-table_admin_add_password_fields.xml" relativeToChangelogFile="true"/>
+  <include file="set.4/update-password_reset_reason_admin.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

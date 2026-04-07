@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.cas.v1.admin.dto.admin;
+package org.omnione.did.base.db.repository;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.omnione.did.base.db.domain.AdminPasswordPolicy;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class VerifyAdminIdUniqueResDto {
-    private boolean unique;
+import java.util.Optional;
+
+@Repository
+public interface AdminPasswordPolicyRepository extends JpaRepository<AdminPasswordPolicy, Long> {
+
+    Optional<AdminPasswordPolicy> findTop1ByOrderByIdAsc();
 }

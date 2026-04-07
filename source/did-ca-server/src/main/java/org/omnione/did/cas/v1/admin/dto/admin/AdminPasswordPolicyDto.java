@@ -1,0 +1,46 @@
+/*
+ * Copyright 2025 OmniOne.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.omnione.did.cas.v1.admin.dto.admin;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.omnione.did.base.db.domain.AdminPasswordPolicy;
+
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
+public class AdminPasswordPolicyDto {
+    private final Long id;
+    private final Short minLength;
+    private final Boolean requireUppercase;
+    private final Boolean requireNumber;
+    private final Boolean requireSpecial;
+    private final Short passwordExpiryDays;
+
+    public static AdminPasswordPolicyDto fromAdminPasswordPolicy(AdminPasswordPolicy policy) {
+        return AdminPasswordPolicyDto.builder()
+                .id(policy.getId())
+                .minLength(policy.getMinLength())
+                .requireUppercase(policy.getRequireUppercase())
+                .requireNumber(policy.getRequireNumber())
+                .requireSpecial(policy.getRequireSpecial())
+                .passwordExpiryDays(policy.getPasswordExpiryDays())
+                .build();
+    }
+}

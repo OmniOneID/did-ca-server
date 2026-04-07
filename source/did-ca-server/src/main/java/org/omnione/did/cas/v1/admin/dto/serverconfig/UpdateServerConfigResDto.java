@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.omnione.did.cas.v1.admin.dto.admin;
+package org.omnione.did.cas.v1.admin.dto.serverconfig;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.util.List;
+
+/**
+ * DTO for server configuration update response.
+ */
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class VerifyAdminIdUniqueResDto {
-    private boolean unique;
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
+public class UpdateServerConfigResDto {
+
+    private final Integer updatedCount;
+    private final List<ServerConfigDto> updatedConfigs;
+    private final String message;
 }

@@ -15,17 +15,26 @@
  */
 package org.omnione.did.cas.v1.admin.dto.admin;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class VerifyAdminIdUniqueResDto {
-    private boolean unique;
+public class ChangeAdminIdAndPasswordReqDto {
+    @NotNull
+    private String oldLoginId;
+
+    @NotNull
+    private String newLoginId;
+
+    @NotNull
+    private String oldPassword;
+
+    @NotNull
+    private String newPassword;
 }

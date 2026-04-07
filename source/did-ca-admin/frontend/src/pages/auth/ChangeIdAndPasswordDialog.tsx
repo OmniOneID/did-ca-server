@@ -8,55 +8,64 @@ import {
     Box,
     Typography,
     IconButton,
+    Alert,
     Collapse,
     List,
     ListItem,
     ListItemIcon,
-    ListItemText,
-    Alert
+    ListItemText
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { usePasswordPolicy } from "../../hooks/usePasswordPolicy";
 import { ValidationRuleResult } from "../../constants/password-policy";
-import { Visibility, VisibilityOff, Check, Close, ExpandMore, ExpandLess, Info, Shield, AccessTime, VpnKey } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Shield, Check, Close, ExpandMore, ExpandLess, Info } from "@mui/icons-material";
+import { verifyAdminIdUnique } from "../../apis/admin-api";
+import {emailRegex} from "../../utils/regex";
 
-// Types for password reset reasons
-type PasswordResetReason = 'FIRST_LOGIN' | 'EXPIRED' | 'ADMIN_FORCED';
-
-interface PasswordResetDialogProps {
+interface ChangeIdAndPasswordDialogProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (newPassword: string) => void;
-    passwordResetReason?: PasswordResetReason | null;
-    isPasswordExpired?: boolean;
+    onSubmit: (oldLoginId: string, newLoginId: string, oldPassword: string, newPassword: string) => void;
+    oldLoginId?: string;
 }
 
 interface ErrorState {
+    oldLoginId?: string;
+    newLoginId?: string;
+    oldPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
 }
 
-const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
-                                                                     open,
-                                                                     onClose,
-                                                                     onSubmit,
-                                                                     passwordResetReason,
-                                                                     isPasswordExpired
-                                                                 }) => {
+const ChangeIdAndPasswordDialog: React.FC<ChangeIdAndPasswordDialogProps> = ({
+                                                                                 open,
+                                                                                 onClose,
+                                                                                 onSubmit,
+                                                                                 oldLoginId: initialOldLoginId = ""
+                                                                             }) => {
+    const [oldLoginId, setOldLoginId] = useState(initialOldLoginId);
+    const [newLoginId, setNewLoginId] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errors, setErrors] = useState<ErrorState>({});
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [isCheckingId, setIsCheckingId] = useState(false);
+    const [idCheckMessage, setIdCheckMessage] = useState<string | null>(null);
+    const [isIdUnique, setIsIdUnique] = useState(false);
+    const [idCheckPerformed, setIdCheckPerformed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     // Password visibility states
+    const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    // Requirements visibility
-    const [showRequirements, setShowRequirements] = useState(false);
-
-    // Focus and touch states for better UX
+    // Touch states for validation
+    const [oldLoginIdTouched, setOldLoginIdTouched] = useState(false);
+    const [newLoginIdTouched, setNewLoginIdTouched] = useState(false);
+    const [oldPasswordTouched, setOldPasswordTouched] = useState(false);
     const [newPasswordTouched, setNewPasswordTouched] = useState(false);
     const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
@@ -78,50 +87,55 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
         failedRules: [] as string[]
     });
 
-    // Get message and UI info based on password reset reason
-    const getPasswordResetInfo = () => {
-        switch (passwordResetReason) {
-            case 'FIRST_LOGIN':
-                return {
-                    title: 'Set New Password',
-                    message: 'Welcome! For security reasons, please set a new password for your account.',
-                    icon: <Shield sx={{ color: 'info.main' }} />,
-                    severity: 'info' as const
-                };
-            case 'EXPIRED':
-                return {
-                    title: 'Password Expired',
-                    message: 'Your password has expired. Please set a new password to continue.',
-                    icon: <AccessTime sx={{ color: 'warning.main' }} />,
-                    severity: 'warning' as const
-                };
-            case 'ADMIN_FORCED':
-                return {
-                    title: 'Password Reset Required',
-                    message: 'Your password has been reset by an administrator. Please set a new password.',
-                    icon: <VpnKey sx={{ color: 'error.main' }} />,
-                    severity: 'error' as const
-                };
-            default:
-                return {
-                    title: 'Reset Password',
-                    message: 'Please set a new password.',
-                    icon: <VpnKey sx={{ color: 'primary.main' }} />,
-                    severity: 'info' as const
-                };
+    // Requirements visibility
+    const [showNewPasswordRequirements, setShowNewPasswordRequirements] = useState(false);
+
+    // Check ID uniqueness
+    const checkIdUniqueness = async () => {
+        if (!newLoginId.trim()) {
+            setIdCheckMessage("Please enter a new ID");
+            setIsIdUnique(false);
+            setIdCheckPerformed(false);
+            return;
+        }
+
+        // Check email format first before API call
+        if (!emailRegex.test(newLoginId.trim())) {
+            setIdCheckMessage(null);
+            setIsIdUnique(false);
+            setIdCheckPerformed(false);
+            return;
+        }
+
+        setIsCheckingId(true);
+        try {
+            const response = await verifyAdminIdUnique(newLoginId);
+            if (response.data.unique) {
+                setIdCheckMessage("ID is available");
+                setIsIdUnique(true);
+                setIdCheckPerformed(true);
+            } else {
+                setIdCheckMessage("ID is already in use");
+                setIsIdUnique(false);
+                setIdCheckPerformed(true);
+            }
+        } catch (error) {
+            setIdCheckMessage("Error checking ID availability");
+            setIsIdUnique(false);
+            setIdCheckPerformed(true);
+        } finally {
+            setIsCheckingId(false);
         }
     };
 
-    const passwordResetInfo = getPasswordResetInfo();
-
-    const handleConfirm = async () => {
-        if (!validate()) return;
-        setIsSubmitting(true);
-        await onSubmit(newPassword);
+    const handleNewLoginIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setNewLoginId(value);
+        // Reset uniqueness check when user modifies the input
+        setIsIdUnique(false);
+        setIdCheckMessage(null);
+        setIdCheckPerformed(false);
     };
-
-    const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
-        (event: React.ChangeEvent<HTMLInputElement>) => setter(event.target.value);
 
     const handleNewPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const password = event.target.value;
@@ -135,14 +149,14 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
             setValidationSummary(summary);
 
             // Auto-show requirements when user starts typing
-            if (!showRequirements) {
-                setShowRequirements(true);
+            if (!showNewPasswordRequirements) {
+                setShowNewPasswordRequirements(true);
             }
 
             // Auto-hide requirements when password becomes valid and is not focused
-            if (summary.isValid && document.activeElement?.id !== 'new-password-reset') {
+            if (summary.isValid && document.activeElement?.id !== 'new-password-change') {
                 setTimeout(() => {
-                    setShowRequirements(false);
+                    setShowNewPasswordRequirements(false);
                 }, 1500);
             }
         } else {
@@ -156,32 +170,57 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
         }
     };
 
-    const handleNewPasswordBlur = () => {
-        setNewPasswordTouched(true);
+    const handleConfirm = async () => {
+        if (!validate(true)) return;
+        setIsSubmitting(true);
+        setSubmitError(null);
+        try {
+            await onSubmit(oldLoginId, newLoginId, oldPassword, newPassword);
+        } catch (error: any) {
+            const errorMessage = error?.response?.data?.description || error?.message || "An error occurred while updating your information.";
+            setSubmitError(errorMessage);
+            setIsSubmitting(false);
+        }
     };
 
-    const handleConfirmPasswordBlur = () => {
-        setConfirmPasswordTouched(true);
-    };
-
-    const validate = () => {
+    const validate = (showErrors = false) => {
         let tempErrors: ErrorState = {};
 
-        // Validate new password using policy
-        if (!newPassword.trim()) {
-            tempErrors.newPassword = "Please enter a new password.";
-        } else if (policy && newPasswordTouched && !validatePassword(newPassword)) {
-            tempErrors.newPassword = "Password does not meet policy requirements.";
-        } else if (!policy && (newPassword.length < 8 || newPassword.length > 64)) {
-            // Fallback validation if policy is not available
-            tempErrors.newPassword = "Password must be between 8 and 64 characters.";
+        // Validate old login ID - only show error if touched or showErrors is true
+        if (showErrors && !oldLoginId.trim()) {
+            tempErrors.oldLoginId = "Current ID cannot be empty";
+        }
+
+        // Validate new login ID
+        if ((showErrors || newLoginIdTouched) && !newLoginId.trim()) {
+            tempErrors.newLoginId = "New ID cannot be empty";
+        } else if (idCheckMessage && !isIdUnique && newLoginId.trim()) {
+            tempErrors.newLoginId = "Please check availability";
+        } else if (!idCheckPerformed && newLoginId.trim() && !emailRegex.test(newLoginId)) {
+            // Validate email format only if check has NOT been performed yet
+            // Once checked, rely on the check result instead
+            tempErrors.newLoginId = 'Please enter a valid email address.';
+        }
+
+        // Validate old password
+        if ((showErrors || oldPasswordTouched) && !oldPassword.trim()) {
+            tempErrors.oldPassword = "Current password cannot be empty";
+        }
+
+        // Validate new password
+        if ((showErrors || newPasswordTouched) && !newPassword.trim()) {
+            tempErrors.newPassword = "New password cannot be empty";
+        } else if (policy && newPasswordTouched && newPassword.trim() && !validatePassword(newPassword)) {
+            tempErrors.newPassword = "Password does not meet policy requirements";
+        } else if (!policy && newPassword.trim() && (newPassword.length < 8 || newPassword.length > 64)) {
+            tempErrors.newPassword = "Password must be between 8 and 64 characters";
         }
 
         // Validate password confirmation
-        if (!confirmPassword.trim()) {
-            tempErrors.confirmPassword = "Please confirm your new password.";
-        } else if (confirmPasswordTouched && confirmPassword !== newPassword) {
-            tempErrors.confirmPassword = "Passwords do not match.";
+        if ((showErrors || confirmPasswordTouched) && !confirmPassword.trim()) {
+            tempErrors.confirmPassword = "Please confirm your new password";
+        } else if (confirmPasswordTouched && confirmPassword !== newPassword && confirmPassword.trim()) {
+            tempErrors.confirmPassword = "Passwords do not match";
         }
 
         setErrors(tempErrors);
@@ -190,20 +229,35 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
 
     // Update button state based on validation
     useEffect(() => {
-        const hasBasicInput = newPassword.trim() && confirmPassword.trim();
+        const hasAllInputs = oldLoginId.trim() && newLoginId.trim() && oldPassword.trim() && newPassword.trim() && confirmPassword.trim();
         const isPasswordValid = policy ? validatePassword(newPassword) : newPassword.length >= 8;
         const passwordsMatch = newPassword === confirmPassword;
 
-        setIsButtonDisabled(!hasBasicInput || !isPasswordValid || !passwordsMatch);
-    }, [newPassword, confirmPassword, policy, validatePassword]);
+        setIsButtonDisabled(!hasAllInputs || !isPasswordValid || !passwordsMatch || !isIdUnique || isCheckingId);
+    }, [oldLoginId, newLoginId, oldPassword, newPassword, confirmPassword, policy, validatePassword, isIdUnique, isCheckingId]);
 
     // Reset form when dialog opens
     useEffect(() => {
         if (open) {
+            setOldLoginId(initialOldLoginId);
+            setNewLoginId("");
+            setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");
             setErrors({});
             setIsButtonDisabled(true);
+            setIdCheckMessage(null);
+            setIsIdUnique(false);
+            setIdCheckPerformed(false);
+            setShowOldPassword(false);
+            setShowNewPassword(false);
+            setShowConfirmPassword(false);
+            setOldLoginIdTouched(false);
+            setNewLoginIdTouched(false);
+            setOldPasswordTouched(false);
+            setNewPasswordTouched(false);
+            setConfirmPasswordTouched(false);
+            setSubmitError(null);
             setValidationResults([]);
             setValidationSummary({
                 isValid: false,
@@ -211,20 +265,15 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                 totalCount: 0,
                 failedRules: []
             });
-            setShowNewPassword(false);
-            setShowConfirmPassword(false);
-            setShowRequirements(false);
-            setNewPasswordTouched(false);
-            setConfirmPasswordTouched(false);
+            setShowNewPasswordRequirements(false);
         }
-    }, [open]);
+    }, [open, initialOldLoginId]);
 
-    // Validate form on changes
+    // Validate form on changes - only validate fields that have been touched
     useEffect(() => {
-        validate();
-    }, [newPassword, confirmPassword, newPasswordTouched, confirmPasswordTouched]);
+        validate(false);
+    }, [oldLoginId, newLoginId, oldPassword, newPassword, confirmPassword, oldLoginIdTouched, newLoginIdTouched, oldPasswordTouched, newPasswordTouched, confirmPasswordTouched]);
 
-    // Show loading if policy is being loaded
     if (isPolicyLoading) {
         return (
             <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ maxWidth: 500, margin: "0 auto" }}>
@@ -239,7 +288,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" sx={{ maxWidth: 500, margin: "0 auto" }} disableEscapeKeyDown={isSubmitting}>
             <Box sx={{ px: 2 }}>
                 <DialogTitle sx={{ p: 0, pt: 2, fontWeight: 700 }}>
-                    {passwordResetInfo.title}
+                    Change ID and Password
                 </DialogTitle>
                 <Box sx={{ height: "1px", backgroundColor: "var(--G40, #BFBFBF)", width: "100%", mt: 1 }} />
             </Box>
@@ -278,24 +327,122 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                                 }}
                             />
                             <Typography sx={{ fontSize: '16px', fontWeight: 500, color: '#333' }}>
-                                Updating your password...
+                                Updating your information...
                             </Typography>
                         </Box>
                     </Box>
                 )}
 
-                {/* Password Reset Reason Message */}
+                {/* Error Alert */}
+                {submitError && (
+                    <Alert severity="error" sx={{ mb: 2 }} onClose={() => setSubmitError(null)}>
+                        {submitError}
+                    </Alert>
+                )}
+
+                {/* Message */}
                 <Alert
-                    severity={passwordResetInfo.severity}
+                    severity="info"
                     sx={{ mb: 2 }}
                     variant="outlined"
-                    icon={passwordResetInfo.icon}
+                    icon={<Shield sx={{ color: 'info.main' }} />}
                 >
-                    {passwordResetInfo.message}
+                    Welcome! For security reasons, please change your initial ID and password.
                 </Alert>
+
+                {/* Current Login ID */}
+                <TextField
+                    fullWidth
+                    label="Current ID *"
+                    variant="outlined"
+                    margin="normal"
+                    value={oldLoginId}
+                    error={!!errors.oldLoginId}
+                    helperText={errors.oldLoginId}
+                    disabled
+                    slotProps={{
+                        input: {
+                            sx: { backgroundColor: '#f5f5f5' }
+                        }
+                    }}
+                />
+
+                {/* New Login ID with Check Availability Button */}
+                <Box sx={{ display: "flex", gap: 1, alignItems: "flex-start", mt: 2 }}>
+                    <TextField
+                        fullWidth
+                        label="New ID *"
+                        variant="outlined"
+                        value={newLoginId}
+                        onChange={handleNewLoginIdChange}
+                        onBlur={() => setNewLoginIdTouched(true)}
+                        error={!!errors.newLoginId}
+                        helperText={errors.newLoginId}
+                        disabled={isSubmitting}
+                        sx={{ mt: 0 }}
+                    />
+                    <Button
+                        variant="outlined"
+                        onClick={checkIdUniqueness}
+                        disabled={isCheckingId || !newLoginId.trim() || isSubmitting}
+                        sx={{
+                            height: "56px",
+                            whiteSpace: "nowrap",
+                            flexShrink: 0,
+                            px: 2,
+                            mt: 0
+                        }}
+                    >
+                        {isCheckingId ? "Checking..." : "Check Availability"}
+                    </Button>
+                </Box>
+
+                {/* ID Check Message */}
+                {idCheckMessage && (
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            display: "block",
+                            mt: 0.5,
+                            mb: 1,
+                            color: isIdUnique ? "success.main" : "error.main",
+                            fontWeight: 500
+                        }}
+                    >
+                        {idCheckMessage}
+                    </Typography>
+                )}
+
+                {/* Current Password */}
+                <TextField
+                    fullWidth
+                    label="Current Password *"
+                    type={showOldPassword ? "text" : "password"}
+                    variant="outlined"
+                    margin="normal"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    onBlur={() => setOldPasswordTouched(true)}
+                    error={!!errors.oldPassword}
+                    helperText={errors.oldPassword}
+                    disabled={isSubmitting}
+                    InputProps={{
+                        endAdornment: (
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => setShowOldPassword(!showOldPassword)}
+                                edge="end"
+                                disabled={isSubmitting}
+                            >
+                                {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                        ),
+                    }}
+                />
+
                 {/* New Password */}
                 <TextField
-                    id="new-password-reset"
+                    id="new-password-change"
                     fullWidth
                     label="New Password *"
                     type={showNewPassword ? "text" : "password"}
@@ -303,7 +450,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                     margin="normal"
                     value={newPassword}
                     onChange={handleNewPasswordChange}
-                    onBlur={handleNewPasswordBlur}
+                    onBlur={() => setNewPasswordTouched(true)}
                     error={!!errors.newPassword}
                     helperText={errors.newPassword}
                     disabled={isSubmitting}
@@ -329,8 +476,8 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                             variant="text"
                             color="inherit"
                             startIcon={<Info fontSize="small" />}
-                            endIcon={showRequirements ? <ExpandLess /> : <ExpandMore />}
-                            onClick={() => setShowRequirements(!showRequirements)}
+                            endIcon={showNewPasswordRequirements ? <ExpandLess /> : <ExpandMore />}
+                            onClick={() => setShowNewPasswordRequirements(!showNewPasswordRequirements)}
                             disabled={isSubmitting}
                             sx={{
                                 textTransform: 'none',
@@ -344,7 +491,7 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                         </Button>
 
                         {/* Password Requirements List */}
-                        <Collapse in={showRequirements}>
+                        <Collapse in={showNewPasswordRequirements}>
                             <Box sx={{
                                 mt: 1,
                                 backgroundColor: 'rgba(0,0,0,0.02)',
@@ -395,8 +542,8 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                     variant="outlined"
                     margin="normal"
                     value={confirmPassword}
-                    onChange={handleChange(setConfirmPassword)}
-                    onBlur={handleConfirmPasswordBlur}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onBlur={() => setConfirmPasswordTouched(true)}
                     error={!!errors.confirmPassword}
                     helperText={errors.confirmPassword}
                     disabled={isSubmitting}
@@ -432,11 +579,11 @@ const PasswordResetDialog: React.FC<PasswordResetDialogProps> = ({
                     disabled={isButtonDisabled || isSubmitting}
                     sx={{ flexGrow: 1, height: "48px" }}
                 >
-                    {isSubmitting ? 'Updating...' : (passwordResetReason === 'FIRST_LOGIN' ? 'Set Password' : 'Reset Password')}
+                    {isSubmitting ? "Updating..." : "Change ID and Password"}
                 </Button>
             </DialogActions>
         </Dialog>
     );
 };
 
-export default PasswordResetDialog;
+export default ChangeIdAndPasswordDialog;
