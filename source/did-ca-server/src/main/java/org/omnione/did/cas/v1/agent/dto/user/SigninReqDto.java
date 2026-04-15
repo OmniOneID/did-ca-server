@@ -30,9 +30,6 @@ public class SigninReqDto {
     @NotBlank(message = "loginId is required")
     private String loginId;
 
-    @NotBlank(message = "password is required")
-    private String password;
-
     @NotBlank(message = "walletId is required")
     private String walletId;
 }

@@ -16,5 +16,6 @@
   <include file="set.4/alter-table_admin_add_password_fields.xml" relativeToChangelogFile="true"/>
   <include file="set.4/update-password_reset_reason_admin.xml" relativeToChangelogFile="true"/>
   <include file="set.5/create-table_user.xml" relativeToChangelogFile="true"/>
+  <include file="set.5/alter-table_user_drop_password.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

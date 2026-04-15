@@ -45,7 +45,4 @@ public class User extends BaseEntity implements Serializable {
 
     @Column(name = "wallet_id", nullable = false, length = 128)
     private String walletId;
-
-    @Column(name = "password", nullable = false, length = 256)
-    private String password;
 }

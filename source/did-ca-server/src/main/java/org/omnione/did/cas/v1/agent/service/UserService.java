@@ -32,7 +32,6 @@ import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusResDto;
 import org.omnione.did.cas.v1.agent.dto.user.SigninReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.SignupReqDto;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +50,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPiiRepository userPiiRepository;
-    private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final OpProviderProperty opProviderProperty;
 
@@ -138,11 +136,9 @@ public class UserService {
         }
 
         try {
-            String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
             User user = User.builder()
                     .userIdentifier(loginId)
                     .walletId(walletId)
-                    .password(encodedPassword)
                     .build();
             userRepository.save(user);
 
@@ -168,10 +164,9 @@ public class UserService {
      * Authenticates a user and issues a new OP token.
      * <p>
      * For OTHER_DEVICE status, the existing User record is deleted and re-created
-     * with the new walletId after password verification. UserPii is kept as-is
-     * since the loginId (and therefore pii) is unchanged.
+     * with the new walletId. UserPii is kept as-is since the loginId (and therefore pii) is unchanged.
      *
-     * @param reqDto signin request containing loginId, password, walletId
+     * @param reqDto signin request containing loginId, walletId
      * @return issued CasToken (access_token, refresh_token)
      */
     @Transactional
@@ -194,13 +189,6 @@ public class UserService {
         }
 
         try {
-            User user = userRepository.findByUserIdentifier(loginId)
-                    .orElseThrow(() -> new OpenDidException(ErrorCode.USER_NOT_FOUND));
-
-            if (!passwordEncoder.matches(reqDto.getPassword(), user.getPassword())) {
-                throw new OpenDidException(ErrorCode.USER_PASSWORD_MISMATCH);
-            }
-
             if (status == UserRegistrationStatus.OTHER_DEVICE) {
                 // Delete existing user record and re-register with new walletId.
                 // flush() is required to force Hibernate to execute the DELETE before the INSERT
@@ -210,7 +198,6 @@ public class UserService {
                 User newUser = User.builder()
                         .userIdentifier(loginId)
                         .walletId(walletId)
-                        .password(user.getPassword())
                         .build();
                 userRepository.save(newUser);
                 // UserPii is unchanged — loginId (and pii) is the same
