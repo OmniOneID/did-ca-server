@@ -29,12 +29,33 @@ public class UrlConstant {
         public static final String REQUEST_ATTESTED_APPINFO = "/request-attested-appinfo";
         public static final String SAVE_USER_INFO = "/save-user-info";
         public static final String RETRIEVE_PII = "/retrieve-pii";
+
+        // User endpoints
+        public static final String USER = "/user";
+        public static final String CHECK_REGISTRATION_STATUS = "/check-registration-status";
+        public static final String SIGNUP = "/signup";
+        public static final String SIGNIN = "/signin";
+        public static final String SIGNOUT = "/signout";
+        public static final String WITHDRAW = "/withdraw";
+
+        // JWT endpoints
+        public static final String JWT = "/jwt";
+        public static final String JWT_VERIFY = "/verify";
+        public static final String JWT_REFRESH = "/refresh";
     }
 
     public static class Tas {
         public static final String ADMIN_V1 = "/tas/admin/v1";
         public static final String REGISTER_DID_PUBLIC = "/entities/register-did/public";
         public static final String REQUEST_ENTITY_STATUS = "/entities/request-status";
+    }
+
+    public static class Op {
+        public static final String V1 = "/op/api/v1/jwt";
+        public static final String ISSUE = "/token";
+        public static final String REFRESH = "/refresh";
+        public static final String VALIDATE = "/validate";
+        public static final String REVOKE = "/revoke-by-subject";
     }
 
     public static class LSS {

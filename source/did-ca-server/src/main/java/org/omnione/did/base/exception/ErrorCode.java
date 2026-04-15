@@ -47,6 +47,15 @@ public enum ErrorCode {
     // User and Data Errors (400-499)
     USER_PII_NOT_FOUND("SCRVCFA00400", "User PII not found.", 400),
     CERTIFICATE_DATA_NOT_FOUND("SCRVCFA00401", "Tas Certificate VC data not found.", 500),
+    USER_NOT_FOUND("SCRVCFA00402", "User not found.", 400),
+    USER_ALREADY_EXISTS("SCRVCFA00403", "User already exists.", 400),
+    USER_WALLET_USED_BY_OTHER("SCRVCFA00404", "WalletId is already registered to another user.", 400),
+    USER_PASSWORD_MISMATCH("SCRVCFA00405", "Password does not match.", 401),
+    USER_REGISTRATION_STATUS_INVALID("SCRVCFA00406", "Invalid user registration status for this operation.", 400),
+    FAILED_TO_SIGNUP("SCRVCFA00407", "Failed to process signup.", 500),
+    FAILED_TO_SIGNIN("SCRVCFA00408", "Failed to process signin.", 500),
+    FAILED_TO_SIGNOUT("SCRVCFA00409", "Failed to process signout.", 500),
+    FAILED_TO_WITHDRAW("SCRVCFA00410", "Failed to process withdraw.", 500),
 
     // Wallet Errors (500-599)
     WALLET_CONNECTION_FAILED("SCRVCFA00500", "Failed to connect to wallet.", 500),
@@ -85,6 +94,14 @@ public enum ErrorCode {
     CAS_DID_DOCUMENT_ALREADY_REQUESTED("SCRVCFA01007", "Failed to register CAS DID Document: document is already requested.", 400),
     INVALID_CERTIFICATE_VC_JSON_FORMAT("SCRVCFA01008", "Failed to process certificate VC: invalid JSON format.", 500),
 
+
+    // Token errors (1200 ~ 1299)
+    TOKEN_SERVICE_CONNECT_FAIL("SCRVCFA01200", "Connection with token server failed.", 500),
+    TOKEN_GENERATE_FAIL("SCRVCFA01201", "An error occurred while issuing the token.", 500),
+    TOKEN_REVOKE_FAIL("SCRVCFA01202", "An error occurred while revoking the token.", 500),
+    TOKEN_VALIDATE_FAIL("SCRVCFA01203", "An error occurred while validating the token.", 401),
+    TOKEN_REFRESH_FAIL("SCRVCFA01204", "An error occurred while refreshing the token.", 401),
+    TOKEN_FORMAT_INVALID("SCRVCFA01205", "Token format is invalid and does not conform to the expected specification.", 400),
 
     // External server integration errors (1100 ~ 1199)
     URL_PING_ERROR("SCRVCFA01100", "Failed to ping the URL.", 400),

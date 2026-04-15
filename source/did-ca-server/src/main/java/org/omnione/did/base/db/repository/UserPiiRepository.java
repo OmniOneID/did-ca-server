@@ -39,4 +39,8 @@ public interface UserPiiRepository extends JpaRepository<UserPii, Long>, Queryds
      * @return An Optional containing the UserPii if found, or an empty Optional if not found.
      */
     Optional<UserPii> findByUserId(String userId);
+
+    Optional<UserPii> findByPii(String pii);
+
+    void deleteByUserId(String userId);
 }

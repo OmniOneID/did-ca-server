@@ -67,6 +67,25 @@ public class SessionService {
                 .build();
     }
 
+    public AdminDto requestAdminLoginById(Long adminId) {
+        Admin admin = adminQueryService.findById(adminId);
+        AdminDto dto = AdminDto.fromAdmin(admin);
+        return AdminDto.builder()
+                .id(dto.getId())
+                .loginId(dto.getLoginId())
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .emailVerified(dto.getEmailVerified())
+                .requirePasswordReset(dto.getRequirePasswordReset())
+                .role(dto.getRole())
+                .createdBy(dto.getCreatedBy())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
+                .passwordResetReason(dto.getPasswordResetReason())
+                .isPasswordExpired(false)
+                .build();
+    }
+
     private boolean checkPasswordExpired(Admin admin) {
         Optional<AdminPasswordPolicy> policyOpt = adminPasswordPolicyRepository.findTop1ByOrderByIdAsc();
         if (policyOpt.isEmpty()) {

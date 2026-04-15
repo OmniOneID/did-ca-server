@@ -29,6 +29,15 @@ server:
 tas:
   url: http://localhost:8090
 
+op-provider:
+  url: http://localhost:8096
+
+security:
+  jwt:
+    secret: "cas-admin-jwt-secret-key-must-be-at-least-32-chars"
+    access-ttl-seconds: 1800    # 30 minutes
+    refresh-ttl-seconds: 1209600 # 14 days
+
 management:
   endpoints:
     web:
