@@ -35,7 +35,7 @@ CAS API
     - [4.2. Get Certificate Vc](#42-get-certificate-vc)
     - [4.3. Request Wallet Tokendata](#43-request-wallet-tokendata)
     - [4.4. Request Attested App Info](#44-request-attested-app-info)
-    - [4.5. Save User Info](#45-save-user-info)
+    - [4.5. Signup](#45-signup)
     - [4.6. Retrieve PII](#46-retrieve-pii)
 
 <!-- /TOC -->
@@ -77,7 +77,7 @@ CA Service는 현재 특정 기능을 수행하기 위한 프로토콜이 정의
 | `get-certificate-vc`   | /api/v1/certificate-vc       | 가입증명서 조회       | N       |
 | `request-wallet-tokendata` | /api/v1/request-wallet-tokendata | 월렛 토큰 데이터 요청 | N       |
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | 서명된 앱 정보 요청   | N       |
-| `save-user-info`       | /api/v1/save-user-info       | 사용자 정보 저장      | N       |
+| `signup`               | /cas/api/v1/user/signup      | 회원가입              | N       |
 | `retrieve-pii`         | /api/v1/retrieve-pii         | 사용자 PII 조회       | N       |
 
 
@@ -95,7 +95,7 @@ CA Service가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 | `get-certificate-vc`   | /api/v1/certificate-vc       | 가입증명서 조회       | N       |
 | `request-wallet-tokendata` | /api/v1/request-wallet-tokendata | 월렛 토큰 데이터 요청 | N       |
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | 서명된 앱 정보 요청   | N       |
-| `save-user-info`       | /api/v1/save-user-info       | 사용자 정보 저장      | N       |
+| `signup`               | /cas/api/v1/user/signup      | 회원가입              | N       |
 | `retrieve-pii`         | /api/v1/retrieve-pii         | 사용자 PII 조회       | N       |
 
 ■ Authorization
@@ -577,18 +577,17 @@ Content-Type: application/json;charset=utf-8
 
 <div style="page-break-after: always; margin-top: 40px;"></div>
 
-### 4.5. Save User Info
+### 4.5. Signup
 
-사용자 정보를 저장한다.
+회원가입을 처리한다.
 
-인가앱 서버는 사용자의 정보를 보유하고 있어야 하는데, 이 API는 테스트 목적으로 사용자의 정보를 저장하기 위해 필요하다.
-요청 데이터에 PII가 포함되어 있지만, 테스트 목적의 API이므로 암복호화 처리를 하지 않는다.
+앱이 `UUID.randomUUID()`로 `userId`를 직접 생성한 뒤 이 API를 호출한다. 서버는 전달받은 `userId`를 사용자 식별자(`userIdentifier`)와 PII로 그대로 저장한다. 응답 바디는 비어 있으며, 앱은 직접 생성한 `userId`를 로컬에 보관한다.
 
-| Item          | Description              | Remarks |
-| ------------- | ------------------------ | ------- |
-| Method        | `POST`                   |         |
-| Path          | `/api/v1/save-user-info` |         |
-| Authorization | -                        |         |
+| Item          | Description                     | Remarks |
+| ------------- | ------------------------------- | ------- |
+| Method        | `POST`                          |         |
+| Path          | `/cas/api/v1/user/signup`       |         |
+| Authorization | -                               |         |
 
 #### 4.5.1. Request
 
@@ -603,10 +602,10 @@ N/A
 **■ HTTP Body**
 
 ```c#
-def object SaveUserInfo: "Save User Info 요청문"
-{   
-    + string "userId" : "인가앱이 보유하고 있는 사용자의 식별자"
-    + string "pii" : "사용자 PII"
+def object Signup: "Signup 요청문"
+{
+    + string "userId"   : "앱이 생성한 UUID (사용자 식별자 및 PII로 직접 사용)"
+    + string "walletId" : "CA 앱 기기 식별자"
 }
 ```
 
@@ -615,19 +614,29 @@ def object SaveUserInfo: "Save User Info 요청문"
 #### 4.5.2. Response
 
 **■ Process**
-1. userId와 pii 매핑 저장
+1. `userId`를 `userIdentifier` 및 `pii`로 저장
+2. `walletId`를 사용자와 연결하여 저장
 
 **■ Status 200 - Success**
-N/A
+
+```c#
+def object _Signup: "Signup 응답문"
+{
+    //no data
+}
+```
 
 **■ Status 400 - Client error**
-N/A
+
+| Code         | Description                              |
+| ------------ | ---------------------------------------- |
+| SCRVCFA00402 | "이미 등록된 사용자 식별자입니다."        |
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                       |
 | ------------ | ------------------------------------------------- |
-| SCRVCFA00802 | "'save-user-info'  API 요청 처리에 실패했습니다." |
+| SCRVCFA00806 | "'signup' API 요청 처리에 실패했습니다."           |
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
@@ -636,15 +645,15 @@ N/A
 **■ Request**
 
 ```shell
-curl -v -X POST "http://${Host}:${Port}/cas/api/v1/save-user-info" \
+curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/signup" \
 -H "Content-Type: application/json;charset=utf-8" \
 -d @"data.json"
 ```
 
 ```json
 {
-    "userId":"testUser123",
-    "pii":"2845bac0835ba292946e2476545dfec6cd82027ee91b1cfb5ae5b1edce9b9b74"
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
+    "walletId": "device-wallet-id-abc123"
 }
 ```
 
