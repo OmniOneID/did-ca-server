@@ -20,18 +20,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.base.exception.ErrorCode;
-import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.cas.v1.agent.dto.CasToken;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusResDto;
 import org.omnione.did.cas.v1.agent.dto.user.SigninReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.SignupReqDto;
-import org.omnione.did.cas.v1.agent.service.TokenService;
 import org.omnione.did.cas.v1.agent.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +43,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final TokenService tokenService;
 
     /**
      * Checks the user registration status for the given loginId + walletId combination.
@@ -61,13 +56,12 @@ public class UserController {
     }
 
     /**
-     * Registers a new user (status must be NEW).
-     * Returns issued OP JWT token pair.
+     * Registers a new user using the client-provided userId.
      */
     @PostMapping(value = UrlConstant.Cas.SIGNUP)
     @ResponseBody
-    public CasToken signup(@RequestBody @Valid SignupReqDto reqDto) {
-        return userService.signup(reqDto);
+    public void signup(@RequestBody @Valid SignupReqDto reqDto) {
+        userService.signup(reqDto);
     }
 
     /**
@@ -82,34 +76,10 @@ public class UserController {
     }
 
     /**
-     * Signs out the user by revoking their OP token.
-     * Requires a valid Bearer token in the Authorization header.
+     * Signs out the user. No-op: session state is managed client-side.
      */
     @PostMapping(value = UrlConstant.Cas.SIGNOUT)
-    public void signout(@RequestHeader("Authorization") String authorizationHeader) {
-        String pii = extractAndValidatePii(authorizationHeader);
-        userService.signout(pii);
-    }
-
-    /**
-     * Withdraws (deregisters) the user: deletes User and UserPii records, revokes OP token.
-     * Requires a valid Bearer token in the Authorization header.
-     */
-    @PostMapping(value = UrlConstant.Cas.WITHDRAW)
-    public void withdraw(@RequestHeader("Authorization") String authorizationHeader) {
-        String pii = extractAndValidatePii(authorizationHeader);
-        userService.withdraw(pii);
-    }
-
-    /**
-     * Extracts the Bearer token from the Authorization header, validates it via OP server,
-     * and returns the sub (pii = SHA-256(loginId)).
-     */
-    private String extractAndValidatePii(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new OpenDidException(ErrorCode.TOKEN_FORMAT_INVALID);
-        }
-        String accessToken = authorizationHeader.substring(7);
-        return tokenService.validateToken(accessToken);
+    public void signout() {
+        userService.signout();
     }
 }

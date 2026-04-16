@@ -27,8 +27,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupReqDto {
-    @NotBlank(message = "loginId is required")
-    private String loginId;
+    @NotBlank(message = "userId is required")
+    private String userId;
 
     @NotBlank(message = "walletId is required")
     private String walletId;

@@ -2,7 +2,7 @@ spring:
   application:
     name: cas
   profiles:
-    active: sample
+    active: dev, lss
     group:
         dev:
           - logging
