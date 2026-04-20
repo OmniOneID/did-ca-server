@@ -28,6 +28,7 @@ import org.omnione.did.base.datamodel.data.WalletTokenSeed;
 import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.datamodel.enums.ProofType;
 import org.omnione.did.base.db.domain.Cas;
+import org.omnione.did.cas.v1.agent.helper.PublishCertificateHelper;
 import org.omnione.did.base.db.domain.UserPii;
 import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.omnione.did.base.exception.ErrorCode;
@@ -246,7 +247,7 @@ public class CasServiceImpl implements CasService {
      */
     private Provider getProvider(Cas cas) {
         Provider provider = new Provider();
-        provider.setCertVcRef(cas.getCertificateUrl());
+        provider.setCertVcRef(PublishCertificateHelper.getCertificateVcURL(cas));
         provider.setDid(cas.getDid());
         return provider;
     }

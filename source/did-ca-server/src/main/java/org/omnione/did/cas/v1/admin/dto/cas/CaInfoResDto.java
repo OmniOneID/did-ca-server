@@ -28,6 +28,7 @@ import org.omnione.did.base.db.constant.CasStatus;
 import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
+import org.omnione.did.cas.v1.agent.helper.PublishCertificateHelper;
 import org.omnione.did.data.model.did.DidDocument;
 
 import java.time.Instant;
@@ -70,7 +71,7 @@ public class CaInfoResDto {
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
-                        .certificateUrl(t.getCertificateUrl())
+                        .certificateUrl(PublishCertificateHelper.getCertificateVcURL(t))
                         .createdAt(formatInstant(t.getCreatedAt()))
                         .updatedAt(formatInstant(t.getUpdatedAt()))
                         .build())
@@ -85,7 +86,7 @@ public class CaInfoResDto {
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
-                        .certificateUrl(t.getCertificateUrl())
+                        .certificateUrl(PublishCertificateHelper.getCertificateVcURL(t))
                         .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))
                         .updatedAt(formatInstant(t.getUpdatedAt()))
@@ -101,7 +102,7 @@ public class CaInfoResDto {
                         .name(t.getName())
                         .status(t.getStatus())
                         .serverUrl(t.getServerUrl())
-                        .certificateUrl(t.getCertificateUrl())
+                        .certificateUrl(PublishCertificateHelper.getCertificateVcURL(t))
                         .certificateVc(certificateVc)
                         .didDocument(parseDidDocToMap(didDocument.toJson()))
                         .createdAt(formatInstant(t.getCreatedAt()))

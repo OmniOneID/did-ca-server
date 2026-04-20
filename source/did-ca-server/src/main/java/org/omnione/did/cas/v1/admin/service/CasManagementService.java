@@ -37,6 +37,7 @@ import org.omnione.did.base.util.BaseCoreDidUtil;
 import org.omnione.did.base.util.BaseMultibaseUtil;
 import org.omnione.did.cas.v1.admin.constant.EntityStatus;
 import org.omnione.did.cas.v1.admin.dto.cas.CaInfoResDto;
+import org.omnione.did.cas.v1.agent.helper.PublishCertificateHelper;
 import org.omnione.did.cas.v1.admin.dto.cas.RegisterCaInfoReqDto;
 import org.omnione.did.cas.v1.admin.dto.cas.RegisterDidToTaReqDto;
 import org.omnione.did.cas.v1.admin.dto.cas.RequestEntityStatusResDto;
@@ -382,7 +383,7 @@ public class CasManagementService {
                 .didDoc(encodedDidDocument)
                 .name(cas.getName())
                 .serverUrl(cas.getServerUrl())
-                .certificateUrl(cas.getCertificateUrl())
+                .certificateUrl(PublishCertificateHelper.getCertificateVcURL(cas))
                 .role(RoleType.APP_PROVIDER)
                 .build();
         try {

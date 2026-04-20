@@ -61,4 +61,7 @@ public class Cas extends BaseEntity implements Serializable {
 
     @Column(name = "certificate_url")
     private String certificateUrl;
+
+    @Column(name = "published_certificate_url", length = 2000)
+    private String publishedCertificateUrl;
 }

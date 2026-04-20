@@ -129,6 +129,12 @@ public class EnrollEntityService {
             // Update CAS status.
             log.debug("\t\t--> Update CAS status");
             existedCas.setStatus(CasStatus.ACTIVATE);
+
+            if (enrollEntityResponse.getVcUrl() != null) {
+                log.debug("\t\t--> Update CAS VC URL to: {}", enrollEntityResponse.getVcUrl());
+                existedCas.setPublishedCertificateUrl(enrollEntityResponse.getVcUrl());
+            }
+
             casRepository.save(existedCas);
 
             log.debug("*** Finished enrollEntity ***");

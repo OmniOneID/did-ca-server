@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package org.omnione.did.cas.v1.agent.api.dto;
+package org.omnione.did.cas.v1.agent.helper;
 
-import lombok.*;
+import org.omnione.did.base.db.domain.Cas;
 
-/**
- * The RequestEnrollEntityApiResDto class is a data transfer object that represents the response to enrolling an entity.
- * It contains the transaction ID, the initialization vector, and the encrypted verifiable credential.
- */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class RequestEnrollEntityApiResDto {
-    private String txId;
-    private String iv;
-    private String encVc;
-    private String vcUrl;
+public class PublishCertificateHelper {
+
+    public static String getCertificateVcURL(Cas cas) {
+        return cas.getPublishedCertificateUrl() != null
+                ? cas.getPublishedCertificateUrl()
+                : cas.getCertificateUrl();
+    }
 }
