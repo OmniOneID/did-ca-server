@@ -1,6 +1,11 @@
 # Changelog
 
-## [Unreleased] (v2.0.0)
+## [Unreleased]
+
+### 🐛 Bug Fixes
+- Upgraded Node.js to 22.23.4 for the admin console build
+
+## [Released] (v2.0.0)
 
 ## v2.0.0 (2025-05-30)
 ### 🚀 New Features
