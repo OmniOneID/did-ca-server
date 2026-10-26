@@ -113,7 +113,7 @@ licenseReport {
 }
 
 node {
-    version = "22.9.0"
+    version = "22.23.4"
     download = true
     nodeProjectDir = file("${frontendResourceDir}")
     workDir = file("${projectDir}/.gradle/nodejs")
