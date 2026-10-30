@@ -24,6 +24,14 @@ export const getNavigationByStatus = (serverStatus: string | null): Navigation=>
       title: 'User Management',
     },
     {
+      segment: 'logs',
+      title: 'Log Management',
+      children: [
+        { segment: 'api', title: 'API Log' },
+        { segment: 'audit', title: 'Audit API Log' },
+      ],
+    },
+    {
       segment: 'server-configuration',
       title: 'Server Configuration',
     },

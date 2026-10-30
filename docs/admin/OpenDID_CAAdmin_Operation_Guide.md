@@ -18,8 +18,8 @@ puppeteer:
 Open DID CA Admin Operation Guide
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-30
+- Version: v3.0.0
 
 Revision History
 ==
@@ -28,6 +28,7 @@ Revision History
 | v1.0.0  | 2025-03-31 | Initial version                    |
 | v1.0.1  | 2025-04-24 | Added `3.1.1. CA Registration` chapter |
 | v2.0.0  | 2025-05-29 | Version update                     |
+| v3.0.0  | 2026-10-30 | Added API Log and Audit API Log guidance |
 
 Table of Contents
 ==
@@ -52,6 +53,9 @@ Table of Contents
   - [3.3. Admin Management](#33-admin-management)
     - [3.3.1 Admin List Inquiry](#331-admin-list-inquiry)
     - [3.3.2. Admin Registration](#332-admin-registration)
+  - [3.4. Log Management](#34-log-management)
+    - [3.4.1. API Log](#341-api-log)
+    - [3.4.2. Audit API Log](#342-audit-api-log)
 
 # 1. Introduction
 
@@ -70,6 +74,7 @@ The CA Admin Console provides the following main features:
 - CA basic information management
 - User information inquiry
 - Administrator account management
+- API call and administrator activity log lookup
 
 <br/>
 
@@ -99,7 +104,9 @@ To access the Admin Console, follow these steps:
 
 The main screen displayed after login consists of the following elements:
 
-<img src="./images/2.1.main_screen.png" width="800"/>
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> Screen rendered with example data.
 
 | Number | Area             | Description                                                                                                                     |
 | ------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -126,13 +133,13 @@ In the initial state where the CA server is not yet registered, only the `CA Reg
 
 Once CA registration is completed, all management functions are activated, and the sidebar menu is configured as follows:
 
-<img src="./images/2-3.side-menu-after-registration.png" width="200"/>
-
 | Number | Function Name | Function Description |
 |--------|---------------|---------------------|
 | 1 | **CA Management** | Menu to check and manage basic information of the CA server (DID, URL, etc.). |
 | 2 | **User Management** | Menu to inquire about user information registered in the system. You can check users' personally identifiable information (PII). |
-| 3 | **Admin Management** | Menu to manage administrator-related settings. You can adjust administrator accounts and permissions. |
+| 3 | **Log Management** | View Agent API calls in `API Log` and administrator API activity in `Audit API Log`. |
+| 4 | **Server Configuration** | Manage external server integration settings. |
+| 5 | **Admin Management** | Manage administrator accounts and password policy. |
 
 Detailed functions for each menu are explained in detail in the [3. Feature-specific Detailed Manual](#3-feature-specific-detailed-manual) section.
 
@@ -155,6 +162,8 @@ User password change can be performed through the following steps:
 <br/>
 
 # 3. Feature-specific Detailed Manual
+
+> Management screens after registration show the current sidebar with example data. Actual data varies by environment.
 
 This chapter guides you through the detailed usage methods for the main features of the Open DID CA Admin Console.
 
@@ -365,5 +374,35 @@ When you click the **REGISTER** button on the `Admin Management` screen, you wil
 | 6      | **REGISTER Button**         | Register administrator account based on entered information.        |
 | 7      | **RESET Button**            | Initialize all input values.                                        |
 | 8      | **CANCEL Button**           | Cancel registration and return to previous screen.                 |
+
+## 3.4. Log Management
+
+After CA registration, open `Log Management` in the sidebar to inspect API calls. Both screens show paginated records, with the newest first. Select a search field, enter a value, and search; use refresh to reload the list. Click `Called At` to open a record's detail dialog. Logs are read only.
+
+### 3.4.1. API Log
+
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> List screen rendered with example data. Actual logs and accounts depend on the environment.
+
+`Log Management > API Log` shows CA Agent API calls. The list displays call time (`Called At`), HTTP method, URI, status code, result (`SUCCESS` or `FAIL`), and requester ID. Search by `URI` or `Result`. The detail dialog also shows duration, client IP, user agent, and error message when recorded. The page path is `/logs/api`.
+
+<img src="./images/api-log-api-detail-example.png" width="800"/>
+
+> Example detail dialog opened by selecting the call time.
+
+### 3.4.2. Audit API Log
+
+<img src="./images/api-log-audit-example.png" width="800"/>
+
+> List screen rendered with example data. Actual logs and accounts depend on the environment.
+
+`Log Management > Audit API Log` shows administrator actions through Admin APIs. The list displays call time, requester ID, action type, target type and ID, and result. Search by `Action Type`, `Target Type`, `Result`, or `Requester ID`. Action types include `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, and `LOGOUT`. The detail dialog also shows the action description, client IP, user agent, and error message when recorded. The page path is `/logs/audit`.
+
+<img src="./images/api-log-audit-detail-example.png" width="800"/>
+
+> Example detail dialog opened by selecting the call time.
+
+> Records are created for API calls annotated with `@ArticleLog` on the server. For a `FAIL` result, inspect the API Log status code and the available detail message.
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md

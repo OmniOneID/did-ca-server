@@ -19,6 +19,9 @@ package org.omnione.did.cas.v1.agent.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.cas.v1.agent.dto.CasToken;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
@@ -50,6 +53,7 @@ public class UserController {
      */
     @PostMapping(value = UrlConstant.Cas.CHECK_REGISTRATION_STATUS)
     @ResponseBody
+    @ArticleLog(name = "[User] Check Registration Status", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.NONE)
     public CheckUserRegStatusResDto checkRegistrationStatus(
             @RequestBody @Valid CheckUserRegStatusReqDto reqDto) {
         return userService.checkRegistrationStatus(reqDto);
@@ -60,6 +64,7 @@ public class UserController {
      */
     @PostMapping(value = UrlConstant.Cas.SIGNUP)
     @ResponseBody
+    @ArticleLog(name = "[User] Sign Up", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.CREATE)
     public void signup(@RequestBody @Valid SignupReqDto reqDto) {
         userService.signup(reqDto);
     }
@@ -71,6 +76,7 @@ public class UserController {
      */
     @PostMapping(value = UrlConstant.Cas.SIGNIN)
     @ResponseBody
+    @ArticleLog(name = "[User] Sign In", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.LOGIN)
     public CasToken signin(@RequestBody @Valid SigninReqDto reqDto) {
         return userService.signin(reqDto);
     }
@@ -79,6 +85,7 @@ public class UserController {
      * Signs out the user. No-op: session state is managed client-side.
      */
     @PostMapping(value = UrlConstant.Cas.SIGNOUT)
+    @ArticleLog(name = "[User] Sign Out", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.LOGOUT)
     public void signout() {
         userService.signout();
     }

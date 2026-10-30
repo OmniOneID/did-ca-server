@@ -13,6 +13,8 @@ import AdminRegisterPage from './pages/admins/AdminRegisterPage';
 import UserManagementPage from './pages/users/UserManagementPage';
 import UserDetailPage from './pages/users/UserDetailPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import ApiLogManagementPage from './pages/log/ApiLogManagementPage';
+import AuditApiLogManagementPage from './pages/log/AuditApiLogManagementPage';
 import ServerConfigurationPage from './pages/server-configuration/ServerConfigurationPage';
 import PasswordPolicyManagementPage from './pages/admins/password-policy/PasswordPolicyManagementPage';
 
@@ -43,6 +45,14 @@ const router = createBrowserRouter([
           {
             path: '/user-management',
             Component: UserManagementPage,
+          },
+          {
+            path: '/logs/api',
+            Component: ApiLogManagementPage,
+          },
+          {
+            path: '/logs/audit',
+            Component: AuditApiLogManagementPage,
           },
           {
             path: 'server-configuration',

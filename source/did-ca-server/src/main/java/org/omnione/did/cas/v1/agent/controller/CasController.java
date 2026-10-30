@@ -16,6 +16,9 @@
 
 package org.omnione.did.cas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import jakarta.validation.Valid;
 import org.omnione.did.base.datamodel.data.*;
 import org.omnione.did.base.constants.UrlConstant;
@@ -44,6 +47,8 @@ public class CasController {
      */
     @PostMapping(value = UrlConstant.Cas.REQUEST_WALLET_TOKEN_DATA)
     @ResponseBody
+    @ArticleLog(name = "[Wallet Token] Request Wallet token",
+            targetType = "TOKEN", actionType = ActionType.CREATE, apiType = ApiType.AGENT)
     public WalletTokenData requestWalletToken(@RequestBody @Valid WalletTokenSeed walletTokenSeed) {
         return casService.requestWalletToken(walletTokenSeed);
     }
@@ -55,6 +60,8 @@ public class CasController {
      * @return the attested app information
      */
     @PostMapping(value = UrlConstant.Cas.REQUEST_ATTESTED_APPINFO)
+    @ArticleLog(name = "[APP] Request Attested App Info",
+            targetType = "APP", actionType = ActionType.CREATE, apiType = ApiType.AGENT)
     public AttestedAppInfo requestAttestedAppInfo(@RequestBody @Valid ReqAttestedAppInfo reqAttestedAppInfo){
         return casService.requestAttestedAppInfo(reqAttestedAppInfo);
     }
@@ -65,6 +72,8 @@ public class CasController {
      * @param saveUserInfoDto the user information to save
      */
     @PostMapping(value = UrlConstant.Cas.SAVE_USER_INFO)
+    @ArticleLog(name = "[User] Save User Info",
+            targetType = "USER", actionType = ActionType.CREATE, apiType = ApiType.AGENT)
     public void SaveUserInfo(@RequestBody SaveUserInfoDto saveUserInfoDto)  {
         casService.saveUserInfo(saveUserInfoDto);
     }
@@ -76,6 +85,8 @@ public class CasController {
      * @return the PII data
      */
     @PostMapping(value = UrlConstant.Cas.RETRIEVE_PII)
+    @ArticleLog(name = "[User] Retrieve PII",
+            targetType = "USER", actionType = ActionType.CREATE, apiType = ApiType.AGENT)
     public RetrievePiiResDto retrievePii(@RequestBody RetrievePiiReqDto retrievePiiReqDto) {
         return casService.retrievePii(retrievePiiReqDto);
     };

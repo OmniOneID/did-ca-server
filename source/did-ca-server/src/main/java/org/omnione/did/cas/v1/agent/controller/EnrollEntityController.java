@@ -16,6 +16,9 @@
 
 package org.omnione.did.cas.v1.agent.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
+import org.omnione.did.base.constants.ApiType;
 import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.cas.v1.agent.dto.EnrollEntityReqDto;
@@ -47,6 +50,8 @@ public class EnrollEntityController {
      * @return the response to enrolling an entity
      */
     @PostMapping("/certificate-vc")
+    @ArticleLog(name = "[Enroll Entity] Enroll Entity", description = "Enroll Entity",
+            targetType = "ENROLL", actionType = ActionType.CREATE, apiType = ApiType.AGENT)
     public EnrollEntityResDto enrollEntity(@RequestBody EnrollEntityReqDto request) {
         return enrollEntityService.enrollEntity();
     }

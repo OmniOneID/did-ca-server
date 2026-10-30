@@ -19,4 +19,5 @@
   <include file="set.5/alter-table_user_drop_password.xml" relativeToChangelogFile="true"/>
   <include file="set.6/add-publishedCertificateUrl-column_cas.xml" relativeToChangelogFile="true"/>
 
+  <include file="set.11/create-table_api_log.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

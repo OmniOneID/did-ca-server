@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="create-table-api_log" author="gwnam">
+        <createTable tableName="api_log">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="method" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="uri" type="VARCHAR(1048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="result" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="api_name" type="VARCHAR(255)"/>
+            <column name="api_description" type="VARCHAR(1000)"/>
+            <column name="requester_id" type="VARCHAR(128)"/>
+            <column name="duration_ms" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="client_ip" type="VARCHAR(64)"/>
+            <column name="error_code" type="VARCHAR(64)"/>
+            <column name="message" type="TEXT"/>
+            <column name="api_type" type="VARCHAR(20)"/>
+
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false" unique="false"/>
+            </column>
+            <column name="updated_at" type="timestamp">
+                <constraints nullable="true" unique="false"/>
+            </column>
+
+            <column name="target_type" type="VARCHAR(50)"/>
+            <column name="target_id" type="VARCHAR(128)"/>
+            <column name="user_agent" type="TEXT"/>
+            <column name="action_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>

@@ -21,6 +21,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import org.omnione.did.base.constants.UrlConstant;
 import org.omnione.did.cas.v1.admin.dto.admin.AdminDto;
 import org.omnione.did.cas.v1.admin.dto.admin.RequestAdminLoginReqDto;
@@ -49,6 +51,7 @@ public class SessionController {
      */
     @PostMapping(value = "/login")
     @ResponseBody
+    @ArticleLog(name = "[Admin] Login", actionType = ActionType.LOGIN)
     public LoginResDto requestAdminLogin(@Valid @RequestBody RequestAdminLoginReqDto requestAdminLoginReqDto) {
         AdminDto admin = sessionService.requestAdminLogin(requestAdminLoginReqDto);
         String accessToken = jwtService.createAccessToken(admin);
@@ -61,6 +64,7 @@ public class SessionController {
      */
     @PostMapping(value = "/refresh-token")
     @ResponseBody
+    @ArticleLog(name = "[Admin] Refresh Token")
     public TokenResDto refreshToken(@RequestBody RefreshReqDto req) {
         var jws = jwtService.parse(req.refreshToken());
         if (!jwtService.isRefreshToken(jws)) {

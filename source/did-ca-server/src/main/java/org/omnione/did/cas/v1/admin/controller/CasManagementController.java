@@ -16,6 +16,8 @@
 
 package org.omnione.did.cas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,26 +53,36 @@ public class CasManagementController {
     }
 
     @RequestMapping(value = "/certificate-vc", method = RequestMethod.POST)
+    @ArticleLog(name = "[CA Admin] Issue Certificate VC by TA", description = "Issue a certificate VC By TA.",
+            targetType = "CA")
     public EmptyResDto createCertificateVc(@RequestBody SendCertificateVcReqDto sendCertificateVcReqDto) {
         return casManagementService.createCertificateVc(sendCertificateVcReqDto);
     }
 
     @RequestMapping(value = "/entity-info", method = RequestMethod.POST)
+    @ArticleLog(name = "[CA Admin] Update Entity Info", description = "Updates the entity information related to the CA.",
+            targetType = "CA", targetId = "#sendEntityInfoReqDto.did")
     public EmptyResDto updateEntityInfo(@RequestBody SendEntityInfoReqDto sendEntityInfoReqDto) {
         return casManagementService.updateEntityInfo(sendEntityInfoReqDto);
     }
 
     @RequestMapping(value = "/ca/register-ca-info", method = RequestMethod.POST)
+    @ArticleLog(name = "[CA Admin] Register CA Info", description = "Registers CA information including credential authority data.",
+            targetType = "CA", actionType = ActionType.CREATE)
     public CaInfoResDto registerCaInfo(@RequestBody RegisterCaInfoReqDto registerCaInfoReqDto) {
         return casManagementService.registerCaInfo(registerCaInfoReqDto);
     }
 
     @RequestMapping(value = "/ca/generate-did-auto", method = RequestMethod.POST)
+    @ArticleLog(name = "[CA Admin] Generate CA DID Doc", description = "Automatically generates a DID document for the CA.",
+            targetType = "CA", actionType = ActionType.CREATE)
     public Map<String, Object> generateCaDidDocumentAuto() {
         return casManagementService.registerCaDidDocumentAuto();
     }
 
     @RequestMapping(value = "/ca/register-did", method = RequestMethod.POST)
+    @ArticleLog(name = "[CA Admin] Register DID", description = "Sends a request to register a new DID.",
+            targetType = "CA", actionType = ActionType.CREATE)
     public EmptyResDto requestRegisterDid(@RequestBody RequestRegisterDidReqDto requestRegisterDidReqDto) {
         return casManagementService.requestRegisterDid(requestRegisterDidReqDto);
     }
@@ -81,6 +93,8 @@ public class CasManagementController {
     }
 
     @PostMapping(value = "/ca/request-enroll-entity")
+    @ArticleLog(name = "[CA Admin] Request Enroll Entity", description = "Requests the enrollment of the CA entity.",
+            targetType = "CA", actionType = ActionType.CREATE)
     public Map<String, Object> requestEnrollEntity() {
         return casManagementService.enrollEntity();
     }

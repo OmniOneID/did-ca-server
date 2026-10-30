@@ -18,8 +18,8 @@ puppeteer:
 Open DID CA Admin Operation Guide
 ==
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-10-30
+- Version: v3.0.0
 
 개정 이력
 ==
@@ -28,6 +28,7 @@ Open DID CA Admin Operation Guide
 | v1.0.0 | 2025-03-31 | 최초 작성                  |
 | v1.0.1 | 2025-04-24 | `3.1.1. CA 등록` 장 추가 |
 | v2.0.0 | 2025-05-29 | 버전 업 |
+| v3.0.0 | 2026-10-30 | API Log 및 Audit API Log 메뉴와 조회 방법 추가 |
 
 목차
 ==
@@ -52,6 +53,9 @@ Open DID CA Admin Operation Guide
   - [3.3. Admin Management](#33-admin-management)
     - [3.3.1 Admin 목록 조회](#331-admin-목록-조회)
     - [3.3.2. Admin 등록](#332-admin-등록)
+  - [3.4. Log Management](#34-log-management)
+    - [3.4.1. API Log](#341-api-log)
+    - [3.4.2. Audit API Log](#342-audit-api-log)
 
 # 1. 소개
 
@@ -70,6 +74,7 @@ CA Admin Console은 다음과 같은 주요 기능을 제공합니다:
 - CA 기본 정보 관리
 - 사용자 정보 조회
 - 관리자 계정 관리
+- API 호출 및 관리자 작업 로그 조회
 
 <br/>
 
@@ -99,7 +104,9 @@ Admin Console에 접속하려면 다음 단계를 따르세요:
 
 로그인 후 표시되는 메인 화면은 다음과 같은 요소로 구성됩니다:
 
-<img src="./images/2.1.main_screen.png" width="800"/>
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 화면입니다.
 
 | 번호 | 영역             | 설명                                                                                                                                |
 | ---- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -126,13 +133,13 @@ CA 서버가 아직 등록되지 않은 초기 상태에서는 메뉴에 `CA Reg
 
 CA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 메뉴는 다음과 같이 구성됩니다:
 
-<img src="./images/2-3.side-menu-after-registration.png" width="200"/>
-
 | 번호 | 기능 명칭 | 기능 설명 |
 |------|-----------|-----------|
 | 1 | **CA Management** | CA 서버의 기본 정보(DID, URL 등)를 확인하고 관리하는 메뉴입니다. |
 | 2 | **User Management** | 시스템에 등록된 사용자 정보를 조회할 수 있는 메뉴입니다. 사용자의 개인 식별 정보(PII)를 확인할 수 있습니다. |
-| 3 | **Admin Management** | 관리자 관련 설정을 관리하는 메뉴입니다. 관리자의 계정 및 권한을 조정할 수 있습니다. |
+| 3 | **Log Management** | `API Log`에서 Agent API 호출을, `Audit API Log`에서 관리자 API 작업을 조회합니다. |
+| 4 | **Server Configuration** | 외부 서버 연동 설정을 관리합니다. |
+| 5 | **Admin Management** | 관리자 계정과 비밀번호 정책을 관리합니다. |
 
 각 메뉴에 대한 상세 기능은 [3. 기능별 상세 메뉴얼](#3-기능별-상세-메뉴얼) 섹션에서 자세히 설명합니다.
 
@@ -155,6 +162,8 @@ CA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
 <br/>
 
 # 3. 기능별 상세 메뉴얼
+
+> 등록 완료 후 관리 화면은 현재 사이드 메뉴와 예시 데이터로 캡처했습니다. 실제 데이터는 환경에 따라 달라집니다.
 
 이 장에서는 Open DID CA Admin Console의 주요 기능에 대한 상세 사용 방법을 안내합니다.
 
@@ -376,6 +385,36 @@ ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 �
 | 8    | **CANCEL 버튼**             | 등록을 취소하고 이전 화면으로 돌아갑니다.                           |
 
 
+
+## 3.4. Log Management
+
+CA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시되며, 검색 조건을 선택하고 값을 입력한 뒤 검색할 수 있습니다. 새로고침으로 목록을 다시 불러오고, `Called At`을 클릭하면 해당 기록의 상세 창이 열립니다. 로그는 조회 전용입니다.
+
+### 3.4.1. API Log
+
+<img src="./images/api-log-api-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
+
+`Log Management > API Log`는 CA의 Agent API 호출 기록을 보여줍니다. 목록에는 호출 시각(`Called At`), HTTP 메서드, URI, 상태 코드, 결과(`SUCCESS` 또는 `FAIL`), 요청자 ID가 표시됩니다. `URI` 또는 `Result`로 검색할 수 있습니다. 상세 창에서는 처리 시간, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/api`입니다.
+
+<img src="./images/api-log-api-detail-example.png" width="800"/>
+
+> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+
+### 3.4.2. Audit API Log
+
+<img src="./images/api-log-audit-example.png" width="800"/>
+
+> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
+
+`Log Management > Audit API Log`는 Admin API의 관리자 작업 기록을 보여줍니다. 목록에는 호출 시각, 요청자 ID, 작업 유형(`Action Type`), 대상 유형과 ID, 결과가 표시됩니다. `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색할 수 있습니다. `Action Type`에는 `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 등의 값이 사용됩니다. 상세 창에서는 작업 설명, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/audit`입니다.
+
+<img src="./images/api-log-audit-detail-example.png" width="800"/>
+
+> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+
+> 로그는 서버의 `@ArticleLog`가 적용된 API 호출에서 생성됩니다. 결과가 `FAIL`이면 API Log의 상태 코드와 해당 로그의 상세 메시지를 확인하세요.
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 

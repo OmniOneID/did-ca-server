@@ -15,6 +15,8 @@
  */
 package org.omnione.did.cas.v1.admin.controller;
 
+import org.omnione.did.base.annotation.ArticleLog;
+import org.omnione.did.base.constants.ActionType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,8 @@ public class AdminManagementController {
 
     @PostMapping(value = "/admins/reset-password")
     @ResponseBody
+    @ArticleLog(name = "[Admin Manage] Reset Password", description = "Reset admin password",
+            targetType = "ADMIN", targetId = "#resetPasswordReqDto.loginId")
     public AdminDto resetPassword(@Valid @RequestBody ResetPasswordReqDto resetPasswordReqDto) {
         return adminManagementService.resetPassword(resetPasswordReqDto);
     }
@@ -62,6 +66,8 @@ public class AdminManagementController {
     }
 
     @PostMapping(value = "/admins")
+    @ArticleLog(name = "[Admin Manage] Register Admin", description = "Register admin",
+            targetType = "ADMIN", targetId = "#registerAdminReqDto.loginId", actionType = ActionType.CREATE)
     public EmptyResDto registerAdmin(@RequestBody RegisterAdminReqDto registerAdminReqDto) {
         return adminManagementService.registerAdmin(registerAdminReqDto);
     }
@@ -72,18 +78,24 @@ public class AdminManagementController {
     }
 
     @RequestMapping(value = "/admins", method = RequestMethod.DELETE)
+    @ArticleLog(name = "[Admin Manage] Delete Admin", description = "Delete admin",
+            targetType = "ADMIN", targetId = "#id", actionType = ActionType.DELETE)
     public EmptyResDto deleteAdmin(@RequestParam Long id) {
         return adminManagementService.deleteAdmin(id);
     }
 
     @PostMapping(value = "/admins/root/reset-password")
     @ResponseBody
+    @ArticleLog(name = "[Admin Manage] Reset Password by Root", description = "Reset admin password by root admin",
+            targetType = "ADMIN", targetId = "#resetPasswordByRootReqDto.loginId", actionType = ActionType.UPDATE)
     public EmptyResDto resetPasswordByRoot(@RequestBody ResetPasswordByRootReqDto resetPasswordByRootReqDto) {
         return adminManagementService.resetPasswordByRoot(resetPasswordByRootReqDto);
     }
 
     @PostMapping(value = "/admins/change-id-and-password")
     @ResponseBody
+    @ArticleLog(name = "[Admin Manage] Change ID and Password", description = "Change admin ID and password",
+            targetType = "ADMIN", targetId = "#changeAdminIdAndPasswordReqDto.oldLoginId", actionType = ActionType.UPDATE)
     public EmptyResDto changeAdminIdAndPassword(@Valid @RequestBody ChangeAdminIdAndPasswordReqDto changeAdminIdAndPasswordReqDto) {
         return adminManagementService.changeAdminIdAndPassword(changeAdminIdAndPasswordReqDto);
     }
