@@ -24,8 +24,9 @@ import org.omnione.did.base.datamodel.enums.ProofPurpose;
 import org.omnione.did.base.db.domain.Cas;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCoreDidUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.common.util.JsonUtil;
 import org.omnione.did.data.model.did.DidDocument;
@@ -91,13 +92,23 @@ public class SignatureService {
      */
     private String signData(DidDocument casDidDocument, String signatureMessage, ProofPurpose proofPurpose) {
         // Get the key ID
-        VerificationMethod verificationMethod = BaseCoreDidUtil.getVerificationMethod(casDidDocument, proofPurpose.toKeyId());
-        String keyId = verificationMethod.getId();
+        // A missing key used to surface as a plain runtime error (null method); keep it out of the
+        // CommonSdkException path so callers' JSON error handling does not pick it up
+        final String keyId;
+        try {
+            keyId = BaseCoreDidUtil.getVerificationMethod(casDidDocument, proofPurpose.toKeyId()).getId();
+        } catch (CommonSdkException e) {
+            throw new IllegalStateException("Verification method not found: " + proofPurpose.toKeyId(), e);
+        }
 
         //  Sign the message.
         byte[] signature = fileWalletService.generateCompactSignature(keyId, signatureMessage);
 
-        return BaseMultibaseUtil.encode(signature);
+        try {
+            return BaseMultibaseUtil.encode(signature);
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        }
     }
 
     /**

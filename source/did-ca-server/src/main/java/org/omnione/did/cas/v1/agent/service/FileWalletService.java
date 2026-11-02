@@ -19,7 +19,8 @@ package org.omnione.did.cas.v1.agent.service;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.WalletProperty;
-import org.omnione.did.base.util.BaseWalletUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.wallet.BaseWalletUtil;
 import org.omnione.did.wallet.exception.WalletException;
 import org.omnione.did.wallet.key.WalletManagerInterface;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,11 @@ public class FileWalletService {
 
     public FileWalletService(WalletProperty walletProperty) {
         this.walletProperty = walletProperty;
-        this.walletManager = BaseWalletUtil.getFileWalletManager();
+        try {
+            this.walletManager = BaseWalletUtil.getFileWalletManager();
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.FAILED_TO_GET_FILE_WALLET_MANAGER);
+        }
     }
 
     /**
@@ -75,18 +80,34 @@ public class FileWalletService {
             return signature;
         } catch (OpenDidException e) {
             throw e;
+        } catch (CommonSdkException e) {
+            // The removed local util reported SIGNATURE_GENERATION_FAILED, not WALLET_SIGNATURE_GENERATION_FAILED
+            throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
         } catch (Exception e) {
             throw new OpenDidException(ErrorCode.WALLET_SIGNATURE_GENERATION_FAILED);
         }
     }
 
     public WalletManagerInterface initializeWalletWithKeys() {
-        WalletManagerInterface walletManager = BaseWalletUtil.initializeWalletWithKeys(
-                walletProperty.getFilePath(),
-                walletProperty.getPassword(),
-                "auth", "assert", "keyagree", "invoke"
-        );
-
-        return walletManager;
+        try {
+            return BaseWalletUtil.initializeWalletWithKeys(
+                    walletProperty.getFilePath(),
+                    walletProperty.getPassword(),
+                    "auth", "assert", "keyagree", "invoke"
+            );
+        } catch (CommonSdkException e) {
+            // Keep the error codes the wallet initialization returned before the Common SDK switch
+            org.omnione.did.common.exception.ErrorCode code = e.getErrorCode();
+            if (code == org.omnione.did.common.exception.ErrorCode.WALLET_ALREADY_EXISTS) {
+                throw new OpenDidException(ErrorCode.WALLET_ALREADY_EXISTS);
+            }
+            if (code == org.omnione.did.common.exception.ErrorCode.KEY_ALREADY_EXISTS) {
+                throw new OpenDidException(ErrorCode.KEY_ALREADY_EXISTS);
+            }
+            if (code == org.omnione.did.common.exception.ErrorCode.KEY_GENERATION_FAILED) {
+                throw new OpenDidException(ErrorCode.KEY_PAIR_GENERATION_FAILED);
+            }
+            throw new OpenDidException(ErrorCode.WALLET_CONNECTION_FAILED);
+        }
     }
 }

@@ -25,7 +25,8 @@ import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.omnione.did.base.db.repository.UserRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseDigestUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.digest.BaseDigestUtil;
 import org.omnione.did.cas.v1.agent.dto.CasToken;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusResDto;
@@ -54,7 +55,12 @@ public class UserService {
      * Computes pii = HexFormat(SHA-256(loginId)).
      */
     private String computePii(String loginId) {
-        byte[] hash = BaseDigestUtil.generateHash(loginId);
+        final byte[] hash;
+        try {
+            hash = BaseDigestUtil.generateHash(loginId);
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.HASH_GENERATION_FAILED);
+        }
         return HexFormat.of().formatHex(hash);
     }
 

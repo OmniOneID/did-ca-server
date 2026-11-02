@@ -20,7 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.WalletProperty;
-import org.omnione.did.base.util.BaseWalletUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.wallet.BaseWalletUtil;
 import org.omnione.did.wallet.exception.WalletException;
 import org.omnione.did.wallet.key.WalletManagerFactory;
 import org.omnione.did.wallet.key.WalletManagerInterface;
@@ -45,7 +46,11 @@ public class WalletConfig {
         if (!activeProfiles.contains("sample")) {
             try {
 
-                BaseWalletUtil.createFileWalletSafe(walletProperty.getFilePath(), walletProperty.getPassword());
+                try {
+                    BaseWalletUtil.createFileWalletSafe(walletProperty.getFilePath(), walletProperty.getPassword());
+                } catch (CommonSdkException e) {
+                    throw new OpenDidException(ErrorCode.WALLET_CONNECTION_FAILED);
+                }
 
                 WalletManagerInterface walletManager = WalletManagerFactory.getWalletManager(WalletManagerFactory.WalletManagerType.FILE, walletProperty.getFilePath());
                 walletManager.connect(walletProperty.getFilePath(), walletProperty.getPassword()

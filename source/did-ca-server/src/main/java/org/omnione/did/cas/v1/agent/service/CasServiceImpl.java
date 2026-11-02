@@ -33,8 +33,9 @@ import org.omnione.did.base.db.domain.UserPii;
 import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.base.util.BaseCryptoUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.crypto.BaseCryptoUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.cas.v1.admin.service.query.CasQueryService;
 import org.omnione.did.common.util.DateTimeUtil;
 import org.omnione.did.crypto.enums.DigestType;
@@ -234,6 +235,8 @@ public class CasServiceImpl implements CasService {
             }
             byte[] piiDigest = DigestUtils.getDigest(findUserPii.get().getPii().getBytes(), DigestType.SHA256);
             return BaseMultibaseUtil.encode(piiDigest, MultiBaseType.base58btc);
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
         } catch (CryptoException e) {
             log.error("CryptoException occurred while generating SHA-256 PII: {}", e.getMessage());
             throw new OpenDidException(ErrorCode.FAILED_TO_ENCRYPT_PII);
@@ -258,7 +261,18 @@ public class CasServiceImpl implements CasService {
      * @return the generated nonce
      */
     private String generateNonce() {
-        return BaseMultibaseUtil.encode(BaseCryptoUtil.generateNonce(16), MultiBaseType.base64);
+        final byte[] nonce;
+        try {
+            nonce = BaseCryptoUtil.generateNonce(16);
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.NONCE_GENERATION_FAILED);
+        }
+
+        try {
+            return BaseMultibaseUtil.encode(nonce, MultiBaseType.base64);
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        }
     }
 
     /**

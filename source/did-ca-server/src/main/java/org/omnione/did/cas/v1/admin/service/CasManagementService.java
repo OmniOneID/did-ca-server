@@ -33,8 +33,9 @@ import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
 import org.omnione.did.base.property.TasProperty;
 import org.omnione.did.base.response.ErrorResponse;
-import org.omnione.did.base.util.BaseCoreDidUtil;
-import org.omnione.did.base.util.BaseMultibaseUtil;
+import org.omnione.did.common.exception.CommonSdkException;
+import org.omnione.did.common.util.did.BaseCoreDidUtil;
+import org.omnione.did.common.util.multibase.BaseMultibaseUtil;
 import org.omnione.did.cas.v1.admin.constant.EntityStatus;
 import org.omnione.did.cas.v1.admin.dto.cas.CaInfoResDto;
 import org.omnione.did.cas.v1.agent.helper.PublishCertificateHelper;
@@ -135,7 +136,12 @@ public class CasManagementService {
         log.debug("=== Starting createCertificateVc ===");
 
         // Decode the Certificate VC
-        byte[] decodedVc = BaseMultibaseUtil.decode(sendCertificateVcReqDto.getCertificateVc());
+        final byte[] decodedVc;
+        try {
+            decodedVc = BaseMultibaseUtil.decode(sendCertificateVcReqDto.getCertificateVc());
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.DECODING_FAILED);
+        }
         log.debug("Decoded VC: {}", new String(decodedVc));
 
         // Save the Certificate VC to the database
@@ -303,16 +309,25 @@ public class CasManagementService {
     public DidDocument createDidDocumentAuto(WalletManagerInterface walletManager) {
         String did = "did:omn:cas";
 
-        Map<String, List<ProofPurpose>> purposes = BaseCoreDidUtil.createDefaultProofPurposes();
-        List<DidKeyInfo> keyInfos = BaseCoreDidUtil.getDidKeyInfosFromWallet(walletManager, did, purposes);
+        try {
+            Map<String, List<ProofPurpose>> purposes = BaseCoreDidUtil.createDefaultProofPurposes();
+            List<DidKeyInfo> keyInfos = BaseCoreDidUtil.getDidKeyInfosFromWallet(walletManager, did, purposes);
 
-        DidManager didManager = new DidManager();
-        DidDocument unsignedDoc = BaseCoreDidUtil.createDidDocument(didManager, did, did, keyInfos);
+            DidManager didManager = new DidManager();
+            BaseCoreDidUtil.createDidDocument(didManager, did, did, keyInfos);
 
-        List<String> signingKeys = BaseCoreDidUtil.getSigningKeyIds(purposes);
-        DidDocument signedDoc = BaseCoreDidUtil.signAndAddProof(didManager, walletManager, signingKeys);
-
-        return signedDoc;
+            List<String> signingKeys = BaseCoreDidUtil.getSigningKeyIds(purposes);
+            return BaseCoreDidUtil.signAndAddProof(didManager, walletManager, signingKeys);
+        } catch (CommonSdkException e) {
+            // Keep the error code each step returned before the Common SDK switch
+            if (e.getErrorCode() == org.omnione.did.common.exception.ErrorCode.FAILED_TO_LOAD_KEY_ELEMENT) {
+                throw new OpenDidException(ErrorCode.FAILED_TO_LOAD_KEY_ELEMENT);
+            }
+            if (e.getErrorCode() == org.omnione.did.common.exception.ErrorCode.INVALID_SIGNATURE) {
+                throw new OpenDidException(ErrorCode.SIGNATURE_GENERATION_FAILED);
+            }
+            throw new OpenDidException(ErrorCode.DIDDOC_GENERATION_FAILED);
+        }
     }
 
     /**
@@ -378,7 +393,12 @@ public class CasManagementService {
     private EmptyResDto sendRegisterDid(Cas cas, RequestRegisterDidReqDto requestRegisterDidReqDto) {
         String url = tasProperty.getUrl() + Tas.ADMIN_V1 + Tas.REGISTER_DID_PUBLIC;
 
-        String encodedDidDocument = BaseMultibaseUtil.encode(requestRegisterDidReqDto.getDidDocument().getBytes());
+        final String encodedDidDocument;
+        try {
+            encodedDidDocument = BaseMultibaseUtil.encode(requestRegisterDidReqDto.getDidDocument().getBytes());
+        } catch (CommonSdkException e) {
+            throw new OpenDidException(ErrorCode.ENCODING_FAILED);
+        }
         RegisterDidToTaReqDto registerDidToTaReqDto = RegisterDidToTaReqDto.builder()
                 .didDoc(encodedDidDocument)
                 .name(cas.getName())
