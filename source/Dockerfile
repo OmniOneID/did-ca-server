@@ -15,4 +15,4 @@ RUN chmod +x ./gradlew
 ENV GRADLE_OPTS="-Xmx2g -XX:MaxMetaspaceSize=512m"
 RUN ./gradlew bootJar --no-daemon --max-workers=1
 
-CMD ["java", "-jar", "/app/build/libs/did-ca-server-2.0.0.jar"]
+CMD ["java", "-jar", "/app/build/libs/did-ca-server-3.0.0.jar"]

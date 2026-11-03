@@ -56,6 +56,8 @@ Table of Contents
   - [3.4. Log Management](#34-log-management)
     - [3.4.1. API Log](#341-api-log)
     - [3.4.2. Audit API Log](#342-audit-api-log)
+  - [3.5. Server Configuration](#35-server-configuration)
+  - [3.6. Password Policy Settings](#36-password-policy-settings)
 
 # 1. Introduction
 
@@ -281,6 +283,7 @@ and CA Admin performs the registration procedure by calling the APIs of that pro
 | 5      | **Certificate URL** | URL address where you can check the CA's membership certificate.                                                             |
 | 6      | **Registered At** | Displays the date and time when the CA was registered.                                                                        |
 | 7      | **VIEW DID DOCUMENT** | Button to check the DID document. When clicked, DID document information registered on the blockchain is displayed in popup form. |
+| 8      | **VIEW**          | Button next to Certificate URL. When clicked, the membership certificate VC issued by the TA is displayed in popup form. |
 
 <br/>
 
@@ -404,5 +407,29 @@ After CA registration, open `Log Management` in the sidebar to inspect API calls
 > Example detail dialog opened by selecting the call time.
 
 > Records are created for API calls annotated with `@ArticleLog` on the server. For a `FAIL` result, inspect the API Log status code and the available detail message.
+
+## 3.5. Server Configuration
+
+`Server Configuration` manages settings for integration with external servers.
+
+<img src="./images/server-configuration.png" width="800"/>
+
+- **API Key Settings > Ledger Service Server**: Enter the API key issued by the LSS (Ledger Service Server) and save it. The value is stored as `API_KEY_LSS`, and the CA server sends it in the `X-API-Key` header when it calls LSS (`lss` profile).
+- If the key is not registered, LSS calls fail with `SCRVCFA01801`.
+
+## 3.6. Password Policy Settings
+
+`Admin Management > Password Policy Settings` sets the rules for administrator passwords. The rules apply when an account is registered and when a password is changed.
+
+<img src="./images/password-policy.png" width="800"/>
+
+| Item | Description | Range |
+| ---- | ----------- | ----- |
+| Minimum Length | Minimum number of characters | 6–20 |
+| Uppercase Letters (A-Z) | Require at least one uppercase letter | - |
+| Numbers (0-9) | Require at least one number | - |
+| Special Characters (!@#$%^&*) | Require at least one special character | - |
+| Password Expiration Period | Number of days a password is valid | 30–365 days (default 90) |
+
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0.md

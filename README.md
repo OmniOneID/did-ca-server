@@ -42,8 +42,8 @@ did-ca-server
 │       ├── CA_ErrorCode.md
 │       └── CA_ErrorCode_ko.md
 │   └── installation
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
+│       └── OpenDID_CAServer_Installation_Guide.md
+│       └── OpenDID_CAServer_Installation_Guide_ko.md
 │   └── db
 │       ├── OpenDID_TableDefinition_CAS.md
 │       └── OpenDID_TableDefinition_CAS_ko.md
@@ -85,12 +85,12 @@ For detailed instructions on installing the CA Server, please refer to the guide
 - [OpenDID CA Server Installation and Operation Guide](docs/installation/OpenDID_CAServer_Installation_Guide.md)  
 
 For detailed instructions on operating the CA Admin Console, please refer to the guide below:  
-- [OpenDID CA Admin Console Operation Guide](docs/admin/OpenDID_CAAdmin_Operation_Guide_ko.md)
+- [OpenDID CA Admin Console Operation Guide](docs/admin/OpenDID_CAAdmin_Operation_Guide.md)
 
 ## API Reference
 
 - **CAS API**: Detailed reference for the CA Server's API endpoints and usage.
-  - [CAS API Reference](docs/api/CAS_API_ko.md)
+  - [CAS API Reference](docs/api/CAS_API.md)
 
 ## Change Log
 

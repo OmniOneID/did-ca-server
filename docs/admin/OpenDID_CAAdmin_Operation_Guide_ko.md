@@ -56,6 +56,8 @@ Open DID CA Admin Operation Guide
   - [3.4. Log Management](#34-log-management)
     - [3.4.1. API Log](#341-api-log)
     - [3.4.2. Audit API Log](#342-audit-api-log)
+  - [3.5. Server Configuration](#35-server-configuration)
+  - [3.6. Password Policy Settings](#36-password-policy-settings)
 
 # 1. 소개
 
@@ -285,6 +287,7 @@ CA Admin이 해당 프로토콜의 API들을 호출하여 등록 절차를 수�
 | 5    | **Certificate URL**   | CA의 가입증명서를 확인할 수 있는 URL 주소입니다.                                                                                                       |
 | 6    | **Registered At**    | CA가 등록된 날짜와 시간을 표시합니다.                                                                                                                  |
 | 7    | **VIEW DID DOCUMENT** | DID 문서를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다.                                                |
+| 8    | **VIEW**          | Certificate URL 옆의 버튼입니다. 클릭 시 TA가 발급한 가입증명서 VC가 팝업 형태로 표시됩니다. |
 
 <br/>
 
@@ -415,6 +418,30 @@ CA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기�
 > 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
 
 > 로그는 서버의 `@ArticleLog`가 적용된 API 호출에서 생성됩니다. 결과가 `FAIL`이면 API Log의 상태 코드와 해당 로그의 상세 메시지를 확인하세요.
+
+## 3.5. Server Configuration
+
+`Server Configuration`에서 외부 서버와의 연동 설정을 관리합니다.
+
+<img src="./images/server-configuration.png" width="800"/>
+
+- **API Key Settings > Ledger Service Server**: LSS(Ledger Service Server)에서 발급한 API Key를 입력하고 저장합니다. 값은 `API_KEY_LSS`로 저장되며, CA 서버가 LSS를 호출할 때(`lss` 프로파일) `X-API-Key` 헤더로 보냅니다.
+- 키를 등록하지 않으면 LSS 호출이 `SCRVCFA01801`로 실패합니다.
+
+## 3.6. Password Policy Settings
+
+`Admin Management > Password Policy Settings`에서 관리자 비밀번호 규칙을 설정합니다. 규칙은 계정을 등록할 때와 비밀번호를 변경할 때 적용됩니다.
+
+<img src="./images/password-policy.png" width="800"/>
+
+| 항목 | 설명 | 범위 |
+| ---- | ---- | ---- |
+| Minimum Length | 최소 글자 수 | 6~20 |
+| Uppercase Letters (A-Z) | 대문자 1자 이상 포함 | - |
+| Numbers (0-9) | 숫자 1자 이상 포함 | - |
+| Special Characters (!@#$%^&*) | 특수문자 1자 이상 포함 | - |
+| Password Expiration Period | 비밀번호 유효 기간(일) | 30~365일(기본 90일) |
+
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 

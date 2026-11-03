@@ -1,9 +1,28 @@
 # Changelog
 
-## [Unreleased]
+## [Unreleased] (v3.0.0)
+
+### 🚀 New Features
+- User registration without a password or OTP: the app creates the user ID and calls `signup`
+- User APIs: `check-registration-status`, `signin`, `signout`
+- Stores the certificate VC URL published to the List Provider (TA enrollment response)
+- LSS API key authentication (`lss` profile)
+- Admin Console
+    - Server Configuration (LSS API key)
+    - Administrator password policy, admin ID change, and session management
+    - Certificate VC view on the server management page
+    - Search and refresh on list pages
+    - API call logs and audit logs
+
+### 🔧 Changes
+- Removed password, OTP, and OP token based user authentication
+- Replaced local utilities with did-common-sdk-server 3.0.0
+- Upgraded Node.js to 22.23.4 for the admin console build
+- Updated the Dockerfile Java image to eclipse-temurin 21 (jammy)
+- Server version 3.0.0 (`did-ca-server-3.0.0.jar`)
 
 ### 🐛 Bug Fixes
-- Upgraded Node.js to 22.23.4 for the admin console build
+- Fixed a typo in the SCRVCFA01006 error message
 
 ## [Released] (v2.0.0)
 

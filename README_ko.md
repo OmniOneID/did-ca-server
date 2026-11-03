@@ -31,8 +31,8 @@ did-ca-server
 │       ├── CA_ErrorCode.md
 │       └── CA_ErrorCode_ko.md
 │   └── installation
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
+│       └── OpenDID_CAServer_Installation_Guide.md
+│       └── OpenDID_CAServer_Installation_Guide_ko.md
 │   └── db
 │       ├── OpenDID_TableDefinition_CAS.md
 │       └── OpenDID_TableDefinition_CAS_ko.md
@@ -71,7 +71,7 @@ did-ca-server
 ## 설치 및 운영 가이드
 
 CA 서버의 설치에 대한 자세한 지침은 아래 가이드를 참조하십시오:
-- [OpenDID CA 서버 설치 가이드](docs/installation/OpenDID_CAServer_Installation_Guide.md)  
+- [OpenDID CA 서버 설치 가이드](docs/installation/OpenDID_CAServer_Installation_Guide_ko.md)  
 
 CA Admin Console의 운영에 대한 자세한 지침은 아래 가이드를 참조하십시오:
 - [OpenDID CA Admin Console 운영 가이드](docs/admin/OpenDID_CAAdmin_Operation_Guide_ko.md)  

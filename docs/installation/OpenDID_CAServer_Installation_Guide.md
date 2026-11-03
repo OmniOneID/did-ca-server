@@ -17,8 +17,8 @@ puppeteer:
 
 # Open DID CA Server Installation Guide
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-11-03
+- Version: v3.0.0
 
 ## Table of Contents
 
@@ -56,6 +56,7 @@ puppeteer:
     - [5.1.2. Jackson Basic Configuration](#512-jackson-basic-configuration)
     - [5.1.3. Server Configuration](#513-server-configuration)
     - [5.1.4. TA(Trust Agent) Configuration](#514-tatrust-agent-configuration)
+    - [5.1.5. Admin Authentication (JWT) Configuration](#515-admin-authentication-jwt-configuration)
   - [5.2. database.yml](#52-databaseyml)
     - [5.2.1. Spring Liquibase Configuration](#521-spring-liquibase-configuration)
     - [5.2.2. Datasource Configuration](#522-datasource-configuration)
@@ -64,15 +65,16 @@ puppeteer:
     - [5.3.1. Logging Configuration](#531-logging-configuration)
   - [5.4. application-spring-docs.yml](#54-application-spring-docsyml)
   - [5.5. application-wallet.yml](#55-application-walletyml)
-  - [5.6. application-cas.yml](#56-application-casyml)
+  - [5.6. application-lss.yml](#56-application-lssyml)
   - [5.7. blockchain.properties](#57-blockchainproperties)
     - [5.7.1. Blockchain Integration Configuration](#571-blockchain-integration-configuration)
       - [EVM Network Configuration](#evm-network-configuration)
       - [EVM Contract Configuration](#evm-contract-configuration)
 - [6. Profile Configuration and Usage](#6-profile-configuration-and-usage)
-  - [6.1. Profile Overview (`sample`, `dev`)](#61-profile-overview-sample-dev)
+  - [6.1. Profile Overview (`sample`, `dev`, `lss`)](#61-profile-overview-sample-dev-lss)
     - [6.1.1. `sample` Profile](#611-sample-profile)
     - [6.1.2. `dev` Profile](#612-dev-profile)
+    - [6.1.3. `lss` Profile](#613-lss-profile)
   - [6.2. Profile Configuration Method](#62-profile-configuration-method)
     - [6.2.1. When Running Server Using IDE](#621-when-running-server-using-ide)
     - [6.2.2. When Running Server Using Console Commands](#622-when-running-server-using-console-commands)
@@ -194,41 +196,45 @@ did-ca-server
 ├── CLA.md
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
-├── LICENSE
 ├── dependencies-license.md
+├── LICENSE
 ├── MAINTAINERS.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
-│   └── admin
-│       └── Open DID CA Admin Console Guide.md
-│       └── Open DID CA Admin Console Guide_ko.md
-│   └── api
-│       └── CAS_API_ko.md
-│   └── errorCode
-│       └── CA_ErrorCode.md
+│   ├── admin
+│   │   ├── OpenDID_CAAdmin_Operation_Guide.md
+│   │   └── OpenDID_CAAdmin_Operation_Guide_ko.md
+│   ├── api
+│   │   ├── CAS_API.md
+│   │   └── CAS_API_ko.md
+│   ├── db
+│   │   ├── OpenDID_TableDefinition_CAS.md
+│   │   └── OpenDID_TableDefinition_CAS_ko.md
+│   ├── errorCode
+│   │   ├── CA_ErrorCode.md
+│   │   └── CA_ErrorCode_ko.md
 │   └── installation
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
-│   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_CAServer_Installation_Guide.md
+│       └── OpenDID_CAServer_Installation_Guide_ko.md
 └── source
+    ├── Dockerfile
+    ├── did-ca-admin
     └── did-ca-server
+        ├── README.md
+        ├── build.gradle
         ├── gradle
         ├── libs
-            └── did-sdk-common-2.0.0.jar
-            └── did-blockchain-sdk-server-2.0.0.jar
-            └── did-core-sdk-server-2.0.0..jar
-            └── did-crypto-sdk-server-2.0.0.jar
-            └── did-datamodel-server-2.0.0.jar
-            └── did-wallet-sdk-server-2.0.0.jar
-            └── did-zkp-sdk-server-2.0.0.jar
-        ├── sample
+        │   ├── did-blockchain-sdk-server-2.0.0.jar
+        │   ├── did-common-sdk-server-3.0.0.jar
+        │   ├── did-core-sdk-server-2.0.0.jar
+        │   ├── did-crypto-sdk-server-2.0.0.jar
+        │   ├── did-datamodel-sdk-server-2.0.0.jar
+        │   ├── did-wallet-sdk-server-2.0.0.jar
+        │   └── did-zkp-sdk-server-2.0.0.jar
         └── src
-        └── build.gradle
-        └── README.md
-    └── did-ca-admin
 ```
 
 | Name                    | Description                              |
@@ -339,7 +345,7 @@ This section guides you through running the Open DID server using console comman
       cd build/libs
       ls
     ```
-- This command generates the `did-ca-server-2.0.0.jar` file.
+- This command generates the `did-ca-server-3.0.0.jar` file.
 
 <br/>
 
@@ -347,7 +353,7 @@ This section guides you through running the Open DID server using console comman
 Run the server using the built JAR file:
 
 ```bash
-java -jar did-ca-server-2.0.0.jar
+java -jar did-ca-server-3.0.0.jar
 ```
 
 - When the server runs normally, navigate to http://localhost:8094/swagger-ui/index.html in your browser to verify that the API documentation is properly displayed through Swagger UI.
@@ -441,7 +447,24 @@ Enter information for the TAS server that will communicate with the CAS server.
 
 * `tas.url`:  
     - URL of the TAS (Trust Agent Service) server. 
-    - Example: `http://127.0.0.1:8090/tas`
+    - Example: `http://127.0.0.1:8090`
+
+<br/>
+
+### 5.1.5. Admin Authentication (JWT) Configuration
+Configures the JWT used to sign in to the Admin Console.
+
+* `security.jwt.secret`:
+    - Key used to sign the JWT (at least 32 characters). The default value is a sample, so **replace it before operation**.
+    - Example: `your-admin-jwt-secret-of-at-least-32-characters`
+
+* `security.jwt.access-ttl-seconds`:
+    - Validity of the access token in seconds.
+    - Example: `1800` (30 minutes)
+
+* `security.jwt.refresh-ttl-seconds`:
+    - Validity of the refresh token in seconds.
+    - Example: `1209600` (14 days)
 
 <br/>
 
@@ -598,17 +621,15 @@ logging:
     - Password used for wallet access. Password used when accessing the wallet file. This is highly security-sensitive information.
     - Example: `your_secure_wallet_password`
 
-## 5.6. application-cas.yml
-This configuration file defines basic information for the CAS server, encryption settings, token expiration times, etc.
+## 5.6. application-lss.yml
+Configures integration with the LSS (Ledger Service Server). When the `lss` profile is active, the CA server reads DID Documents from LSS instead of the blockchain.
 
-* `cas.did`: 
-  - Sets the DID of the CAS server.
-  - Example: did:omn:cas
+* `lss.url`:
+    - LSS server address.
+    - Example: `http://127.0.0.1:8098`
 
-* `cas.certificate-vc`: 
-  - Sets the CAS server's certificate VC lookup API.
-  - Format: {CAS domain}/cas/api/v1/certificate-vc
-  - Example: http://127.0.0.1:8094/cas/api/v1/certificate-vc
+* LSS API Key:
+    - The CA server sends the LSS API key in the `X-API-Key` header. Register the key issued by LSS as `API_KEY_LSS` in Server Configuration of the Admin Console. If it is not registered, LSS calls fail with `SCRVCFA01801`.
 
 <br/>
 
@@ -655,7 +676,7 @@ This configuration file defines basic information for the CAS server, encryption
 
 # 6. Profile Configuration and Usage
 
-## 6.1. Profile Overview (`sample`, `dev`)
+## 6.1. Profile Overview (`sample`, `dev`, `lss`)
 The CAS server supports two profiles, `dev` and `sample`, to run in various environments.
 
 Each profile is designed to apply configurations appropriate for the corresponding environment. By default, the CAS server is set to the `sample` profile, which is designed to run the server independently without integration with external services such as databases or blockchains. The `sample` profile is suitable for API call testing, allowing developers to quickly verify the basic operation of the application. This profile returns fixed response data for all API calls, making it useful in initial development environments.
@@ -671,6 +692,9 @@ The `sample` profile is designed to run the server independently without integra
 ### 6.1.2. `dev` Profile
 The `dev` profile includes configurations suitable for development environments and is used on development servers. To use this profile, configuration for development environment databases and blockchain nodes is required.
 
+### 6.1.3. `lss` Profile
+The `lss` profile is used together with `dev` (for example, `dev,lss`). The CA server reads DID Documents from LSS instead of the blockchain, so blockchain configuration is not required. Set `lss.url` (5.6) and register `API_KEY_LSS` in the Admin Console.
+
 ## 6.2. Profile Configuration Method
 This section explains how to change profiles for each operation method.
 
@@ -684,7 +708,7 @@ This section explains how to change profiles for each operation method.
 - **Profile Specification:** Add the `--spring.profiles.active={profile}` option to the server startup command to activate the desired profile.
   
   ```bash
-  java -jar build/libs/did-ca-server-2.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-ca-server-3.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **Configuration Application:** The corresponding configuration file is applied according to the activated profile.

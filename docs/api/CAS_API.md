@@ -17,8 +17,15 @@ puppeteer:
 
 # CAS API
 
-* Date: 2024-08-19
-* Version: v1.0.0
+* Date: 2026-11-03
+* Version: v3.0.0
+
+## Revision History
+
+| Version | Date       | Changes |
+| ------- | ---------- | ------- |
+| v1.0.0  | 2024-08-19 | Initial version |
+| v3.0.0  | 2026-11-03 | [4.5. Signup] changed to app-generated userId; [4.7]–[4.10] added |
 
 ## Table of Contents
 
@@ -36,6 +43,10 @@ puppeteer:
   * [4.4. Request Attested App Info](#44-request-attested-app-info)
   * [4.5. Signup](#45-signup)
   * [4.6. Retrieve PII](#46-retrieve-pii)
+  * [4.7. Check Registration Status](#47-check-registration-status)
+  * [4.8. Signin](#48-signin)
+  * [4.9. Signout](#49-signout)
+  * [4.10. Save User Info](#410-save-user-info)
 
 <!-- /TOC -->
 
@@ -81,8 +92,12 @@ Currently, the CA Service does not define any protocols, and therefore, no seque
 | `get-certificate-vc`       | /api/v1/certificate-vc           | Retrieve Certificate VC     | N            |
 | `request-wallet-tokendata` | /api/v1/request-wallet-tokendata | Request wallet token data   | N            |
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | Request signed app info     | N            |
-| `signup`                   | /cas/api/v1/user/signup          | User registration           | N            |
+| `signup`                   | /api/v1/user/signup              | User registration           | N            |
 | `retrieve-pii`             | /api/v1/retrieve-pii             | Retrieve user PII           | N            |
+| `check-registration-status` | /api/v1/user/check-registration-status | Check user registration status | N            |
+| `signin`                   | /api/v1/user/signin              | User sign-in                | N            |
+| `signout`                  | /api/v1/user/signout             | User sign-out               | N            |
+| `save-user-info`           | /api/v1/save-user-info           | Save user PII               | N            |
 
 <div style="page-break-after: always; margin-top: 50px;"></div>
 
@@ -98,8 +113,12 @@ The CA Service’s provided single call APIs are as follows:
 | `get-certificate-vc`       | /api/v1/certificate-vc           | Retrieve Certificate VC     | N            |
 | `request-wallet-tokendata` | /api/v1/request-wallet-tokendata | Request wallet token data   | N            |
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | Request signed app info     | N            |
-| `signup`                   | /cas/api/v1/user/signup          | User registration           | N            |
+| `signup`                   | /api/v1/user/signup              | User registration           | N            |
 | `retrieve-pii`             | /api/v1/retrieve-pii             | Retrieve user PII           | N            |
+| `check-registration-status` | /api/v1/user/check-registration-status | Check user registration status | N            |
+| `signin`                   | /api/v1/user/signin              | User sign-in                | N            |
+| `signout`                  | /api/v1/user/signout             | User sign-out               | N            |
+| `save-user-info`           | /api/v1/save-user-info           | Save user PII               | N            |
 
 ■ Authorization
 
@@ -115,9 +134,6 @@ Although the above single call APIs do not currently define authorization, the f
   * Attach the app provider–issued token in the header for each single API call.
   * Requires the app provider to implement token issuance and verification.
 
-좋아요! 이어서 나머지 API 상세 번역을 아래에 정리합니다:
-
----
 
 ### 4.1. Issue Certificate VC
 
@@ -404,7 +420,7 @@ The app generates a UUID as the userId locally and calls this API. The server st
 | Item          | Description                     | Remarks |
 | ------------- | ------------------------------- | ------- |
 | Method        | `POST`                          |         |
-| Path          | `/cas/api/v1/user/signup`       |         |
+| Path          | `/api/v1/user/signup`           |         |
 | Authorization | -                               |         |
 
 #### 4.5.1. Request
@@ -445,15 +461,13 @@ def object _Signup: "Signup Response"
 
 **■ Status 400 - Client error**
 
-| Code         | Description                          |
-| ------------ | ------------------------------------ |
-| SCRVCFA00402 | "User identifier already registered." |
+N/A
 
 **■ Status 500 - Server error**
 
 | Code         | Description                                   |
 | ------------ | --------------------------------------------- |
-| SCRVCFA00806 | "Failed to process ‘signup’ API request."     |
+| SCRVCFA00407 | "Failed to process signup." |
 
 ---
 
@@ -539,3 +553,348 @@ def object _RetrievePii: "Retrieve PII Response"
 ---
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
+
+### 4.7. Check Registration Status
+
+Checks whether the user ID and the wallet ID are registered.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST`      |         |
+| Path          | `/api/v1/user/check-registration-status` |         |
+| Authorization | -           |         |
+
+#### 4.7.1. Request
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object CheckUserRegStatus: "Check registration status request"
+{
+    + string "loginId"  : "user ID (userId generated by the app)"
+    + string "walletId" : "CA app device identifier"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.7.2. Response
+
+**■ Process**
+1. Check whether `loginId` and `walletId` are registered
+2. Return the registration status
+
+**■ Status 200 - Success**
+
+```c#
+def object _CheckUserRegStatus: "Check registration status response"
+{
+    + string "userRegistrationStatus": "registration status", value(NEW, CURRENT, OTHER_DEVICE, USED_BY_OTHER)
+    // NEW: neither is registered
+    // CURRENT: this pair is registered
+    // OTHER_DEVICE: loginId is registered with a different walletId
+    // USED_BY_OTHER: walletId is registered to a different loginId
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.7.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/check-registration-status" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d @"data.json"
+```
+
+```json
+{
+    "loginId": "550e8400-e29b-41d4-a716-446655440000",
+    "walletId": "device-wallet-id-abc123"
+}
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+    "userRegistrationStatus": "CURRENT"
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 4.8. Signin
+
+Signs in a registered user and returns the user ID.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST`      |         |
+| Path          | `/api/v1/user/signin` |         |
+| Authorization | -           |         |
+
+#### 4.8.1. Request
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object Signin: "Signin request"
+{
+    + string "loginId"  : "user ID"
+    + string "walletId" : "CA app device identifier"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.8.2. Response
+
+**■ Process**
+1. Check the registration status (same as `check-registration-status`)
+2. If the status is `NEW` or `USED_BY_OTHER`, return an error
+3. If the status is `OTHER_DEVICE`, re-register the user with the new `walletId`
+4. Find the user PII by SHA-256(`loginId`) and return the user ID
+
+**■ Status 200 - Success**
+
+```c#
+def object _Signin: "Signin response"
+{
+    + string "userId": "user ID"
+}
+```
+
+**■ Status 400 - Client error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SCRVCFA00400 | "User PII not found." |
+| SCRVCFA00406 | "Invalid user registration status for this operation." |
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SCRVCFA00208 | "Failed to generate hash value." |
+| SCRVCFA00408 | "Failed to process signin." |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.8.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/signin" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d @"data.json"
+```
+
+```json
+{
+    "loginId": "550e8400-e29b-41d4-a716-446655440000",
+    "walletId": "device-wallet-id-abc123"
+}
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+    "userId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 4.9. Signout
+
+Signs out the user. The user record is kept, and the server does no further processing.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST`      |         |
+| Path          | `/api/v1/user/signout` |         |
+| Authorization | -           |         |
+
+#### 4.9.1. Request
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.9.2. Response
+
+**■ Process**
+1. No processing (the user record is kept)
+
+**■ Status 200 - Success**
+
+```c#
+def object _Signout: "Signout response"
+{
+    // no data
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+N/A
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.9.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/signout"
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+    // no data
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>
+
+### 4.10. Save User Info
+
+Saves the PII of a user.
+
+| Item          | Description | Remarks |
+| ------------- | ----------- | ------- |
+| Method        | `POST`      |         |
+| Path          | `/api/v1/save-user-info` |         |
+| Authorization | -           |         |
+
+#### 4.10.1. Request
+
+**■ Path Parameters**
+
+N/A
+
+**■ Query Parameters**
+
+N/A
+
+**■ HTTP Body**
+
+```c#
+def object SaveUserInfo: "Save user info request"
+{
+    + string "userId" : "user ID"
+    + string "pii"    : "user PII"
+}
+```
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.10.2. Response
+
+**■ Process**
+1. Save `pii` with `userId`
+
+**■ Status 200 - Success**
+
+```c#
+def object _SaveUserInfo: "Save user info response"
+{
+    // no data
+}
+```
+
+**■ Status 400 - Client error**
+
+N/A
+
+**■ Status 500 - Server error**
+
+| Code         | Description |
+| ------------ | ----------- |
+| SCRVCFA00802 | "Failed to process the 'save-user-info' API request." |
+
+<div style="page-break-after: always; margin-top: 30px;"></div>
+
+#### 4.10.3. Example
+
+**■ Request**
+
+```shell
+curl -v -X POST "http://${Host}:${Port}/cas/api/v1/save-user-info" \
+-H "Content-Type: application/json;charset=utf-8" \
+-d @"data.json"
+```
+
+```json
+{
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
+    "pii": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**■ Response**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+
+{
+    // no data
+}
+```
+
+<div style="page-break-after: always; margin-top: 40px;"></div>

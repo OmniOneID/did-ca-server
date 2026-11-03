@@ -17,8 +17,8 @@ puppeteer:
 
 # Open DID CA Server Installation Guide
 
-- Date: 2025-05-29
-- Version: v2.0.0
+- Date: 2026-11-03
+- Version: v3.0.0
 
 ## 목차
 
@@ -56,6 +56,7 @@ puppeteer:
     - [5.1.2. Jackson 기본 설정](#512-jackson-기본-설정)
     - [5.1.3. 서버 설정](#513-서버-설정)
     - [5.1.4. TA(Trust Agent) 설정](#514-tatrust-agent-설정)
+    - [5.1.5. 관리자 인증(JWT) 설정](#515-관리자-인증jwt-설정)
   - [5.2. database.yml](#52-databaseyml)
     - [5.2.1. Spring Liquibase 설정](#521-spring-liquibase-설정)
     - [5.2.2. 데이터소스 설정](#522-데이터소스-설정)
@@ -63,16 +64,17 @@ puppeteer:
   - [5.3. application-logging.yml](#53-application-loggingyml)
     - [5.3.1. 로깅 설정](#531-로깅-설정)
   - [5.4. application-spring-docs.yml](#54-application-spring-docsyml)
-  - [5.5. applicaiton-wallet.yml](#55-applicaiton-walletyml)
-  - [5.6. applicaiton-cas.yml](#56-applicaiton-casyml)
+  - [5.5. application-wallet.yml](#55-application-walletyml)
+  - [5.6. application-lss.yml](#56-application-lssyml)
   - [5.7. blockchain.properties](#57-blockchainproperties)
     - [5.7.1. 블록체인 연동 설정](#571-블록체인-연동-설정)
       - [EVM Network Configuration](#evm-network-configuration)
       - [EVM Contract Configuration](#evm-contract-configuration)
 - [6. 프로파일 설정 및 사용](#6-프로파일-설정-및-사용)
-  - [6.1. 프로파일 개요 (`sample`, `dev`)](#61-프로파일-개요-sample-dev)
+  - [6.1. 프로파일 개요 (`sample`, `dev`, `lss`)](#61-프로파일-개요-sample-dev-lss)
     - [6.1.1. `sample` 프로파일](#611-sample-프로파일)
     - [6.1.2. `dev` 프로파일](#612-dev-프로파일)
+    - [6.1.3. `lss` 프로파일](#613-lss-프로파일)
   - [6.2. 프로파일 설정 방법](#62-프로파일-설정-방법)
     - [6.2.1. IDE를 사용한 서버 구동 시](#621-ide를-사용한-서버-구동-시)
     - [6.2.2. 콘솔 명령어를 사용한 서버 구동 시](#622-콘솔-명령어를-사용한-서버-구동-시)
@@ -194,41 +196,45 @@ did-ca-server
 ├── CLA.md
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
-├── LICENSE
 ├── dependencies-license.md
+├── LICENSE
 ├── MAINTAINERS.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── SECURITY.md
 ├── docs
-│   └── admin
-│       └── Open DID CA Admin Console Guide.md
-│       └── Open DID CA Admin Console Guide_ko.md
-│   └── api
-│       └── CAS_API_ko.md
-│   └── errorCode
-│       └── CA_ErrorCode.md
+│   ├── admin
+│   │   ├── OpenDID_CAAdmin_Operation_Guide.md
+│   │   └── OpenDID_CAAdmin_Operation_Guide_ko.md
+│   ├── api
+│   │   ├── CAS_API.md
+│   │   └── CAS_API_ko.md
+│   ├── db
+│   │   ├── OpenDID_TableDefinition_CAS.md
+│   │   └── OpenDID_TableDefinition_CAS_ko.md
+│   ├── errorCode
+│   │   ├── CA_ErrorCode.md
+│   │   └── CA_ErrorCode_ko.md
 │   └── installation
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide.md
-│       └── OpenDID_CAServer_InstallationAndOperation_Guide_ko.md
-│   └── db
-│       └── OpenDID_TableDefinition_CAS.md
+│       ├── OpenDID_CAServer_Installation_Guide.md
+│       └── OpenDID_CAServer_Installation_Guide_ko.md
 └── source
+    ├── Dockerfile
+    ├── did-ca-admin
     └── did-ca-server
+        ├── README.md
+        ├── build.gradle
         ├── gradle
         ├── libs
-            └── did-sdk-common-2.0.0.jar
-            └── did-blockchain-sdk-server-2.0.0.jar
-            └── did-core-sdk-server-2.0.0..jar
-            └── did-crypto-sdk-server-2.0.0.jar
-            └── did-datamodel-server-2.0.0.jar
-            └── did-wallet-sdk-server-2.0.0.jar
-            └── did-zkp-sdk-server-2.0.0.jar
-        ├── sample
+        │   ├── did-blockchain-sdk-server-2.0.0.jar
+        │   ├── did-common-sdk-server-3.0.0.jar
+        │   ├── did-core-sdk-server-2.0.0.jar
+        │   ├── did-crypto-sdk-server-2.0.0.jar
+        │   ├── did-datamodel-sdk-server-2.0.0.jar
+        │   ├── did-wallet-sdk-server-2.0.0.jar
+        │   └── did-zkp-sdk-server-2.0.0.jar
         └── src
-        └── build.gradle
-        └── README.md
-    └── did-ca-admin
 ```
 
 | Name                    | Description                              |
@@ -339,7 +345,7 @@ IntelliJ IDEA는 Java 개발에 널리 사용되는 IDE로, Gradle 기반 프로
       cd build/libs
       ls
     ```
-- 이 명령어는 `did-ca-server-2.0.0.jar` 파일을 생성합니다.
+- 이 명령어는 `did-ca-server-3.0.0.jar` 파일을 생성합니다.
 
 <br/>
 
@@ -347,7 +353,7 @@ IntelliJ IDEA는 Java 개발에 널리 사용되는 IDE로, Gradle 기반 프로
 빌드된 JAR 파일을 사용하여 서버를 구동합니다:
 
 ```bash
-java -jar did-ca-server-2.0.0.jar
+java -jar did-ca-server-3.0.0.jar
 ```
 
 - 서버가 정상적으로 구동되면, 브라우저에서 http://localhost:8094/swagger-ui/index.html 주소로 이동하여 Swagger UI를 통해 API 문서가 제대로 표시되는지 확인합니다.
@@ -441,7 +447,24 @@ CAS 서버와 통신할 TAS 서버의 정보를 입력합니다.
 
 * `tas.url`:  
     - TAS(Trust Agent Service) 서버의 URL입니다. 
-    - 예시: `http://127.0.0.1:8090/tas`
+    - 예시: `http://127.0.0.1:8090`
+
+<br/>
+
+### 5.1.5. 관리자 인증(JWT) 설정
+관리자 콘솔 로그인에 쓰는 JWT를 설정합니다.
+
+* `security.jwt.secret`:
+    - JWT 서명에 쓰는 키입니다(32자 이상). 기본값은 예시 값이므로 **운영 전에 반드시 교체하세요.**
+    - 예시: `your-admin-jwt-secret-of-at-least-32-characters`
+
+* `security.jwt.access-ttl-seconds`:
+    - access token 유효 시간(초)입니다.
+    - 예시: `1800` (30분)
+
+* `security.jwt.refresh-ttl-seconds`:
+    - refresh token 유효 시간(초)입니다.
+    - 예시: `1209600` (14일)
 
 <br/>
 
@@ -584,7 +607,7 @@ logging:
 
 <br/>
 
-## 5.5. applicaiton-wallet.yml
+## 5.5. application-wallet.yml
 
 - 역할: 서버에서 사용하는 월렛 파일 정보를 설정합니다.
 
@@ -598,17 +621,15 @@ logging:
     - 월렛 접근에 사용되는 비밀번호입니다. 월렛 파일의 접근시 사용되는 비밀번호입니다. 높은 보안이 요구되는 정보입니다.
     - 예시: `your_secure_wallet_password`
 
-## 5.6. applicaiton-cas.yml
-이 설정 파일은 CAS 서버의 기본 정보와 암호화 설정, 토큰 만료 시간 등을 정의합니다. 
+## 5.6. application-lss.yml
+LSS(Ledger Service Server) 연동을 설정합니다. `lss` 프로파일을 켜면 CA 서버는 블록체인 대신 LSS에서 DID Document를 조회합니다.
 
-* `cas.did`: 
-  - CAS 서버의 DID를 설정합니다.
-  - 예시: did:omn:cas
+* `lss.url`:
+    - LSS 서버 주소입니다.
+    - 예시: `http://127.0.0.1:8098`
 
-* `cas.certificate-vc`: 
-  - CAS 서버의 가입증명서 VC 조회 API를 설정합니다. 
-  - 포맷: {CAS 도메인}/cas/api/v1/certificate-vc
-  - 예시: http://127.0.0.1:8094/cas/api/v1/certificate-vc
+* LSS API Key:
+    - CA 서버는 LSS API Key를 `X-API-Key` 헤더로 보냅니다. LSS에서 발급한 키를 관리자 콘솔의 Server Configuration에 `API_KEY_LSS`로 등록하세요. 등록하지 않으면 LSS 호출이 `SCRVCFA01801`로 실패합니다.
 
 <br/>
 
@@ -622,23 +643,23 @@ logging:
 #### EVM Network Configuration
 
 - `evm.network.url:`:
-  - EVM Network 주소, 클라이언트와 동일한 로컬에 Besu를 구동하는 경우 해당 값은 고정 사용합니다. (Defalt Port : 8545)
+  - EVM Network 주소, 클라이언트와 동일한 로컬에 Besu를 구동하는 경우 해당 값은 고정 사용합니다. (Default Port : 8545)
   - 예시: http://localhost:8545
 
 - `evm.chainId:`:
-  - Chain ID 식별자입니다. 현재는 1337의 고정값을 사용중입니다.(Defalt Value : 1337)
+  - Chain ID 식별자입니다. 현재는 1337의 고정값을 사용중입니다.(Default Value : 1337)
   - 예시: 1337
 
 - `evm.gas.limit:`:
-  - Hyperledger Besu EVM 트랜잭션에서 최대로 허용되는 가스 한도, 현재는 Free Gas로서 고정으로 사용합니다. (Defalt Value : 100000000)
+  - Hyperledger Besu EVM 트랜잭션에서 최대로 허용되는 가스 한도, 현재는 Free Gas로서 고정으로 사용합니다. (Default Value : 100000000)
   - 예시: 100000000
 
 - `evm.gas.price :`:
-  - 유닛 단위 가스 가격, 현재는 Free Gas로서 0으로  고정으로 사용합니다.(Defalt Value : 0)
+  - 유닛 단위 가스 가격, 현재는 Free Gas로서 0으로  고정으로 사용합니다.(Default Value : 0)
   - 예시: 0
 
 - `evm.connection.timeout:`: 
-  - 네트워크 커넥션 타임아웃 값(milliseconds), 현재는 권장 값인 10000으로 고정 사용합니다. (Defalt Value : 10000)
+  - 네트워크 커넥션 타임아웃 값(milliseconds), 현재는 권장 값인 10000으로 고정 사용합니다. (Default Value : 10000)
   - 예시: 10000
 
 #### EVM Contract Configuration
@@ -655,7 +676,7 @@ logging:
 
 # 6. 프로파일 설정 및 사용
 
-## 6.1. 프로파일 개요 (`sample`, `dev`)
+## 6.1. 프로파일 개요 (`sample`, `dev`, `lss`)
 CAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` 두 가지 프로파일을 지원합니다.
 
 각 프로파일은 해당 환경에 맞는 설정을 적용하도록 설계되었습니다. 기본적으로 CAS 서버는 `sample` 프로파일로 설정되어 있으며, 이 프로파일은 데이터베이스나 블록체인과 같은 외부 서비스와의 연동 없이 서버를 독립적으로 구동할 수 있도록 설계되었습니다. `sample` 프로파일은 API 호출 테스트에 적합하여, 개발자가 애플리케이션의 기본 동작을 빠르게 확인할 수 있도록 지원합니다. 이 프로파일은 모든 API 호출에 대해 고정된 응답 데이터를 반환하므로, 초기 개발환경에서 유용합니다.
@@ -672,6 +693,9 @@ CAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 `dev` 프로파일은 개발 환경에 적합한 설정을 포함하며, 개발 서버에서 사용됩니다. 이 프로파일을 사용하려면 개발 환경의 데이터베이스와 블록체인 노드에 대한 설정이 필요합니다.
 
 
+### 6.1.3. `lss` 프로파일
+`lss` 프로파일은 `dev`와 함께 사용합니다(예: `dev,lss`). CA 서버가 블록체인 대신 LSS에서 DID Document를 조회하므로 블록체인 설정이 필요 없습니다. `lss.url`(5.6)을 설정하고 관리자 콘솔에 `API_KEY_LSS`를 등록하세요.
+
 ## 6.2. 프로파일 설정 방법
 각 구동 방법별로 프로파일을 변경하는 방법을 설명합니다.
 
@@ -685,7 +709,7 @@ CAS 서버는 다양한 환경에서 실행될 수 있도록 `dev`와 `sample` �
 - **프로파일 지정:** 서버 구동 명령어에 `--spring.profiles.active={profile}` 옵션을 추가하여 원하는 프로파일을 활성화합니다.
   
   ```bash
-  java -jar build/libs/did-ca-server-2.0.0.jar --spring.profiles.active={profile}
+  java -jar build/libs/did-ca-server-3.0.0.jar --spring.profiles.active={profile}
   ```
 
 - **설정 적용:** 활성화된 프로파일에 따라 해당 설정 파일이 적용됩니다.
