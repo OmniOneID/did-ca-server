@@ -26,7 +26,7 @@ CAS API
 | 버전   | 일자       | 변경 내용 |
 | ------ | ---------- | --------- |
 | v1.0.0 | 2024-08-19 | 최초 작성 |
-| v3.0.0 | 2026-11-03 | [4.5. Signup] 앱이 만든 userId로 가입하도록 변경, [4.7]~[4.10] 추가 |
+| v3.0.0 | 2026-11-03 | [4.5. Signup] 앱이 만든 userId로 가입하도록 변경, [4.7] 추가 |
   
 목차
 ---
@@ -44,10 +44,7 @@ CAS API
     - [4.4. Request Attested App Info](#44-request-attested-app-info)
     - [4.5. Signup](#45-signup)
     - [4.6. Retrieve PII](#46-retrieve-pii)
-    - [4.7. Check Registration Status](#47-check-registration-status)
-    - [4.8. Signin](#48-signin)
-    - [4.9. Signout](#49-signout)
-    - [4.10. Save User Info](#410-save-user-info)
+    - [4.7. Save User Info](#47-save-user-info)
 
 <!-- /TOC -->
 
@@ -90,9 +87,6 @@ CA Service는 현재 특정 기능을 수행하기 위한 프로토콜이 정의
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | 서명된 앱 정보 요청   | N       |
 | `signup`               | /api/v1/user/signup          | 회원가입              | N       |
 | `retrieve-pii`         | /api/v1/retrieve-pii         | 사용자 PII 조회       | N       |
-| `check-registration-status` | /api/v1/user/check-registration-status | 사용자 등록 상태 확인 | N       |
-| `signin`               | /api/v1/user/signin          | 로그인                | N       |
-| `signout`              | /api/v1/user/signout         | 로그아웃              | N       |
 | `save-user-info`       | /api/v1/save-user-info       | 사용자 PII 저장       | N       |
 
 
@@ -112,9 +106,6 @@ CA Service가 제공하는 단일 호출 API 목록은 아래 표와 같다.
 | `request-attested-appinfo` | /api/v1/request-attested-appinfo | 서명된 앱 정보 요청   | N       |
 | `signup`               | /api/v1/user/signup          | 회원가입              | N       |
 | `retrieve-pii`         | /api/v1/retrieve-pii         | 사용자 PII 조회       | N       |
-| `check-registration-status` | /api/v1/user/check-registration-status | 사용자 등록 상태 확인 | N       |
-| `signin`               | /api/v1/user/signin          | 로그인                | N       |
-| `signout`              | /api/v1/user/signout         | 로그아웃              | N       |
 | `save-user-info`       | /api/v1/save-user-info       | 사용자 PII 저장       | N       |
 
 ■ Authorization
@@ -748,264 +739,7 @@ def object _RetrievePii: "Retrieve PII 응답문"
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
-### 4.7. Check Registration Status
-
-사용자 아이디와 지갑 아이디의 등록 상태를 확인한다.
-
-| Item          | Description | Remarks |
-| ------------- | ----------- | ------- |
-| Method        | `POST`      |         |
-| Path          | `/api/v1/user/check-registration-status` |         |
-| Authorization | -           |         |
-
-#### 4.7.1. Request
-
-**■ Path Parameters**
-
-N/A
-
-**■ Query Parameters**
-
-N/A
-
-**■ HTTP Body**
-
-```c#
-def object CheckUserRegStatus: "등록 상태 확인 요청문"
-{
-    + string "loginId"  : "사용자 아이디(앱이 생성한 userId)"
-    + string "walletId" : "CA 앱 기기 식별자"
-}
-```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.7.2. Response
-
-**■ Process**
-1. `loginId`와 `walletId`의 등록 여부 확인
-2. 등록 상태 응답
-
-**■ Status 200 - Success**
-
-```c#
-def object _CheckUserRegStatus: "등록 상태 확인 응답문"
-{
-    + string "userRegistrationStatus": "등록 상태", value(NEW, CURRENT, OTHER_DEVICE, USED_BY_OTHER)
-    // NEW: 둘 다 등록되지 않음
-    // CURRENT: 이 조합으로 등록됨
-    // OTHER_DEVICE: loginId가 다른 walletId로 등록됨
-    // USED_BY_OTHER: walletId가 다른 loginId에 등록됨
-}
-```
-
-**■ Status 400 - Client error**
-
-N/A
-
-**■ Status 500 - Server error**
-
-N/A
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.7.3. Example
-
-**■ Request**
-
-```shell
-curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/check-registration-status" \
--H "Content-Type: application/json;charset=utf-8" \
--d @"data.json"
-```
-
-```json
-{
-    "loginId": "550e8400-e29b-41d4-a716-446655440000",
-    "walletId": "device-wallet-id-abc123"
-}
-```
-
-**■ Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-
-{
-    "userRegistrationStatus": "CURRENT"
-}
-```
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
-### 4.8. Signin
-
-등록된 사용자를 로그인 처리하고 사용자 아이디를 돌려준다.
-
-| Item          | Description | Remarks |
-| ------------- | ----------- | ------- |
-| Method        | `POST`      |         |
-| Path          | `/api/v1/user/signin` |         |
-| Authorization | -           |         |
-
-#### 4.8.1. Request
-
-**■ Path Parameters**
-
-N/A
-
-**■ Query Parameters**
-
-N/A
-
-**■ HTTP Body**
-
-```c#
-def object Signin: "로그인 요청문"
-{
-    + string "loginId"  : "사용자 아이디"
-    + string "walletId" : "CA 앱 기기 식별자"
-}
-```
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.8.2. Response
-
-**■ Process**
-1. 등록 상태 확인(`check-registration-status`와 같음)
-2. 상태가 `NEW` 또는 `USED_BY_OTHER`이면 에러
-3. 상태가 `OTHER_DEVICE`이면 새 `walletId`로 사용자 재등록
-4. SHA-256(`loginId`)로 사용자 PII를 찾아 사용자 아이디 응답
-
-**■ Status 200 - Success**
-
-```c#
-def object _Signin: "로그인 응답문"
-{
-    + string "userId": "사용자 아이디"
-}
-```
-
-**■ Status 400 - Client error**
-
-| Code         | Description |
-| ------------ | ----------- |
-| SCRVCFA00400 | "사용자 PII를 찾을 수 없습니다." |
-| SCRVCFA00406 | "이 작업을 할 수 없는 사용자 등록 상태입니다." |
-
-**■ Status 500 - Server error**
-
-| Code         | Description |
-| ------------ | ----------- |
-| SCRVCFA00208 | "해시 값 생성에 실패했습니다." |
-| SCRVCFA00408 | "로그인 처리에 실패했습니다." |
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.8.3. Example
-
-**■ Request**
-
-```shell
-curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/signin" \
--H "Content-Type: application/json;charset=utf-8" \
--d @"data.json"
-```
-
-```json
-{
-    "loginId": "550e8400-e29b-41d4-a716-446655440000",
-    "walletId": "device-wallet-id-abc123"
-}
-```
-
-**■ Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-
-{
-    "userId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
-### 4.9. Signout
-
-사용자를 로그아웃 처리한다. 사용자 정보는 그대로 두며 서버는 별도 처리를 하지 않는다.
-
-| Item          | Description | Remarks |
-| ------------- | ----------- | ------- |
-| Method        | `POST`      |         |
-| Path          | `/api/v1/user/signout` |         |
-| Authorization | -           |         |
-
-#### 4.9.1. Request
-
-**■ Path Parameters**
-
-N/A
-
-**■ Query Parameters**
-
-N/A
-
-**■ HTTP Body**
-
-N/A
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.9.2. Response
-
-**■ Process**
-1. 별도 처리 없음(사용자 정보 유지)
-
-**■ Status 200 - Success**
-
-```c#
-def object _Signout: "로그아웃 응답문"
-{
-    //no data
-}
-```
-
-**■ Status 400 - Client error**
-
-N/A
-
-**■ Status 500 - Server error**
-
-N/A
-
-<div style="page-break-after: always; margin-top: 30px;"></div>
-
-#### 4.9.3. Example
-
-**■ Request**
-
-```shell
-curl -v -X POST "http://${Host}:${Port}/cas/api/v1/user/signout"
-```
-
-**■ Response**
-
-```http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=utf-8
-
-{
-    //no data
-}
-```
-
-<div style="page-break-after: always; margin-top: 40px;"></div>
-
-### 4.10. Save User Info
+### 4.7. Save User Info
 
 사용자 PII를 저장한다.
 
@@ -1015,7 +749,7 @@ Content-Type: application/json;charset=utf-8
 | Path          | `/api/v1/save-user-info` |         |
 | Authorization | -           |         |
 
-#### 4.10.1. Request
+#### 4.7.1. Request
 
 **■ Path Parameters**
 
@@ -1037,7 +771,7 @@ def object SaveUserInfo: "사용자 정보 저장 요청문"
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
-#### 4.10.2. Response
+#### 4.7.2. Response
 
 **■ Process**
 1. `userId`와 `pii` 저장
@@ -1063,7 +797,7 @@ N/A
 
 <div style="page-break-after: always; margin-top: 30px;"></div>
 
-#### 4.10.3. Example
+#### 4.7.3. Example
 
 **■ Request**
 

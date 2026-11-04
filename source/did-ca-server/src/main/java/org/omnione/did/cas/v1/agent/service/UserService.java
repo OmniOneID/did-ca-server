@@ -18,30 +18,20 @@ package org.omnione.did.cas.v1.agent.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.omnione.did.base.datamodel.enums.UserRegistrationStatus;
 import org.omnione.did.base.db.domain.User;
 import org.omnione.did.base.db.domain.UserPii;
 import org.omnione.did.base.db.repository.UserPiiRepository;
 import org.omnione.did.base.db.repository.UserRepository;
 import org.omnione.did.base.exception.ErrorCode;
 import org.omnione.did.base.exception.OpenDidException;
-import org.omnione.did.common.exception.CommonSdkException;
-import org.omnione.did.common.util.digest.BaseDigestUtil;
-import org.omnione.did.cas.v1.agent.dto.CasToken;
-import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
-import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusResDto;
-import org.omnione.did.cas.v1.agent.dto.user.SigninReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.SignupReqDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HexFormat;
-
 /**
- * Service handling user registration, authentication, signout, and withdrawal.
+ * Service handling user registration.
  * <p>
  * At signup, the client-provided userId is used directly as both the userIdentifier and pii.
- * At signin, pii = HexFormat(SHA-256(loginId)) is used to look up the user.
  */
 @Service
 @Slf4j
@@ -50,65 +40,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPiiRepository userPiiRepository;
-
-    /**
-     * Computes pii = HexFormat(SHA-256(loginId)).
-     */
-    private String computePii(String loginId) {
-        final byte[] hash;
-        try {
-            hash = BaseDigestUtil.generateHash(loginId);
-        } catch (CommonSdkException e) {
-            throw new OpenDidException(ErrorCode.HASH_GENERATION_FAILED);
-        }
-        return HexFormat.of().formatHex(hash);
-    }
-
-    /**
-     * Checks the registration status for a given loginId + walletId combination.
-     * <p>
-     * Priority order (highest first):
-     * <ol>
-     *   <li>USED_BY_OTHER — walletId is registered to a different loginId (this device used by another user)</li>
-     *   <li>OTHER_DEVICE  — loginId is registered to a different walletId (this account is on another device)</li>
-     *   <li>CURRENT       — loginId and walletId are both registered together</li>
-     *   <li>NEW           — neither loginId nor walletId is registered</li>
-     * </ol>
-     * When USED_BY_OTHER and OTHER_DEVICE conditions both apply simultaneously,
-     * USED_BY_OTHER takes precedence for security reasons.
-     *
-     * @param reqDto loginId and walletId to check
-     * @return CheckUserRegStatusResDto containing the resolved UserRegistrationStatus
-     */
-    public CheckUserRegStatusResDto checkRegistrationStatus(CheckUserRegStatusReqDto reqDto) {
-        log.debug("=== Starting checkRegistrationStatus: loginId={}", reqDto.getLoginId());
-
-        String loginId = reqDto.getLoginId();
-        String walletId = reqDto.getWalletId();
-
-        boolean loginIdExists = userRepository.existsByUserIdentifier(loginId);
-        boolean walletIdExists = userRepository.existsByWalletId(walletId);
-        boolean exactPairExists = userRepository.existsByUserIdentifierAndWalletId(loginId, walletId);
-
-        UserRegistrationStatus status;
-
-        if (walletIdExists && !exactPairExists) {
-            // walletId belongs to a different loginId — this device is in use by another user
-            status = UserRegistrationStatus.USED_BY_OTHER;
-        } else if (loginIdExists && !exactPairExists) {
-            // loginId belongs to a different walletId — this account is registered on another device
-            status = UserRegistrationStatus.OTHER_DEVICE;
-        } else if (exactPairExists) {
-            status = UserRegistrationStatus.CURRENT;
-        } else {
-            status = UserRegistrationStatus.NEW;
-        }
-
-        log.debug("*** Finished checkRegistrationStatus: status={}", status);
-        return CheckUserRegStatusResDto.builder()
-                .userRegistrationStatus(status)
-                .build();
-    }
 
     /**
      * Registers a new user with the given userId and walletId.
@@ -145,96 +76,6 @@ public class UserService {
         } catch (Exception e) {
             log.error("Failed to process signup: {}", e.getMessage(), e);
             throw new OpenDidException(ErrorCode.FAILED_TO_SIGNUP);
-        }
-    }
-
-    /**
-     * Authenticates a user and returns the userId.
-     * <p>
-     * For OTHER_DEVICE status, the existing User record is deleted and re-created
-     * with the new walletId. UserPii is kept as-is since the loginId (and therefore pii) is unchanged.
-     *
-     * @param reqDto signin request containing loginId, walletId
-     * @return CasToken containing userId
-     */
-    @Transactional
-    public CasToken signin(SigninReqDto reqDto) {
-        log.debug("=== Starting signin: loginId={}", reqDto.getLoginId());
-
-        String loginId = reqDto.getLoginId();
-        String walletId = reqDto.getWalletId();
-
-        UserRegistrationStatus status = checkRegistrationStatus(
-                CheckUserRegStatusReqDto.builder()
-                        .loginId(loginId)
-                        .walletId(walletId)
-                        .build()
-        ).getUserRegistrationStatus();
-
-        if (status == UserRegistrationStatus.NEW || status == UserRegistrationStatus.USED_BY_OTHER) {
-            log.error("Signin rejected: status={}", status);
-            throw new OpenDidException(ErrorCode.USER_REGISTRATION_STATUS_INVALID);
-        }
-
-        try {
-            if (status == UserRegistrationStatus.OTHER_DEVICE) {
-                // Delete existing user record and re-register with new walletId.
-                // flush() is required to force Hibernate to execute the DELETE before the INSERT
-                // within the same transaction, avoiding a unique constraint violation on user_identifier.
-                userRepository.deleteByUserIdentifier(loginId);
-                userRepository.flush();
-                User newUser = User.builder()
-                        .userIdentifier(loginId)
-                        .walletId(walletId)
-                        .build();
-                userRepository.save(newUser);
-                // UserPii is unchanged — loginId (and pii) is the same
-            }
-
-            String pii = computePii(loginId);
-            UserPii userPii = userPiiRepository.findByPii(pii)
-                    .orElseThrow(() -> new OpenDidException(ErrorCode.USER_PII_NOT_FOUND));
-            log.debug("*** Finished signin ***");
-            return CasToken.builder().userId(userPii.getUserId()).build();
-        } catch (OpenDidException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to process signin: {}", e.getMessage(), e);
-            throw new OpenDidException(ErrorCode.FAILED_TO_SIGNIN);
-        }
-    }
-
-    /**
-     * Signs out the user. The user record is kept.
-     */
-    public void signout() {
-        log.debug("=== Starting signout ===");
-        log.debug("*** Finished signout ***");
-    }
-
-    /**
-     * Withdraws (deregisters) the user: deletes User and UserPii records.
-     *
-     * @param pii SHA-256(loginId) used to look up the user record
-     */
-    @Transactional
-    public void withdraw(String pii) {
-        log.debug("=== Starting withdraw ===");
-        try {
-            UserPii userPii = userPiiRepository.findByPii(pii)
-                    .orElseThrow(() -> new OpenDidException(ErrorCode.USER_PII_NOT_FOUND));
-
-            String loginId = userPii.getUserId();
-
-            userRepository.deleteByUserIdentifier(loginId);
-            userPiiRepository.deleteByUserId(loginId);
-
-            log.debug("*** Finished withdraw ***");
-        } catch (OpenDidException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to process withdraw: {}", e.getMessage(), e);
-            throw new OpenDidException(ErrorCode.FAILED_TO_WITHDRAW);
         }
     }
 }

@@ -114,15 +114,7 @@ public class ErrorResponse {
 |--------------|------------------------------------------------|-------------|------------------------------------------------|
 | SCRVCFA00400 | User PII not found.                            | -           | Check user data and retrieval process.         |
 | SCRVCFA00401 | Tas Certificate VC data not found.             | -           | Verify certificate data and storage.           |
-| SCRVCFA00402 | User not found. | - | Check that the user is registered. |
-| SCRVCFA00403 | User already exists. | - | Use the existing user or another user ID. |
-| SCRVCFA00404 | WalletId is already registered to another user. | - | Check the wallet ID. It is already linked to another user. |
-| SCRVCFA00405 | Password does not match. | - | Check the password. |
-| SCRVCFA00406 | Invalid user registration status for this operation. | - | Check the user registration status before calling the API. |
 | SCRVCFA00407 | Failed to process signup. | - | Check the signup request and the server logs. |
-| SCRVCFA00408 | Failed to process signin. | - | Check the signin request and the server logs. |
-| SCRVCFA00409 | Failed to process signout. | - | Check the signout request and the server logs. |
-| SCRVCFA00410 | Failed to process withdraw. | - | Check the withdraw request and the server logs. |
 
 <br>
 

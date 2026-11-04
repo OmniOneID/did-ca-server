@@ -23,10 +23,6 @@ import org.omnione.did.base.annotation.ArticleLog;
 import org.omnione.did.base.constants.ActionType;
 import org.omnione.did.base.constants.ApiType;
 import org.omnione.did.base.constants.UrlConstant;
-import org.omnione.did.cas.v1.agent.dto.CasToken;
-import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusReqDto;
-import org.omnione.did.cas.v1.agent.dto.user.CheckUserRegStatusResDto;
-import org.omnione.did.cas.v1.agent.dto.user.SigninReqDto;
 import org.omnione.did.cas.v1.agent.dto.user.SignupReqDto;
 import org.omnione.did.cas.v1.agent.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller handling user registration and authentication endpoints.
+ * Controller handling user registration endpoints.
  * Base path: /cas/api/v1/user
  */
 @Slf4j
@@ -48,18 +44,6 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Checks the user registration status for the given loginId + walletId combination.
-     * Returns one of: NEW, CURRENT, OTHER_DEVICE, USED_BY_OTHER
-     */
-    @PostMapping(value = UrlConstant.Cas.CHECK_REGISTRATION_STATUS)
-    @ResponseBody
-    @ArticleLog(name = "[User] Check Registration Status", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.NONE)
-    public CheckUserRegStatusResDto checkRegistrationStatus(
-            @RequestBody @Valid CheckUserRegStatusReqDto reqDto) {
-        return userService.checkRegistrationStatus(reqDto);
-    }
-
-    /**
      * Registers a new user using the client-provided userId.
      */
     @PostMapping(value = UrlConstant.Cas.SIGNUP)
@@ -67,26 +51,5 @@ public class UserController {
     @ArticleLog(name = "[User] Sign Up", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.CREATE)
     public void signup(@RequestBody @Valid SignupReqDto reqDto) {
         userService.signup(reqDto);
-    }
-
-    /**
-     * Authenticates an existing user (status must be CURRENT or OTHER_DEVICE).
-     * For OTHER_DEVICE, the existing device record is replaced after password verification.
-     * Returns issued OP JWT token pair.
-     */
-    @PostMapping(value = UrlConstant.Cas.SIGNIN)
-    @ResponseBody
-    @ArticleLog(name = "[User] Sign In", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.LOGIN)
-    public CasToken signin(@RequestBody @Valid SigninReqDto reqDto) {
-        return userService.signin(reqDto);
-    }
-
-    /**
-     * Signs out the user. No-op: session state is managed client-side.
-     */
-    @PostMapping(value = UrlConstant.Cas.SIGNOUT)
-    @ArticleLog(name = "[User] Sign Out", apiType = ApiType.AGENT, targetType = "USER", actionType = ActionType.LOGOUT)
-    public void signout() {
-        userService.signout();
     }
 }

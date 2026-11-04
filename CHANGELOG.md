@@ -4,7 +4,6 @@
 
 ### 🚀 New Features
 - User registration without a password or OTP: the app creates the user ID and calls `signup`
-- User APIs: `check-registration-status`, `signin`, `signout`
 - Stores the certificate VC URL published to the List Provider (TA enrollment response)
 - LSS API key authentication (`lss` profile)
 - Admin Console

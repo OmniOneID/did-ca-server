@@ -20,21 +20,9 @@ import org.omnione.did.base.db.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
  * Repository interface for User entity operations.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    boolean existsByUserIdentifierAndWalletId(String userIdentifier, String walletId);
-
-    boolean existsByWalletId(String walletId);
-
-    boolean existsByUserIdentifier(String userIdentifier);
-
-    Optional<User> findByUserIdentifier(String userIdentifier);
-
-    void deleteByUserIdentifier(String userIdentifier);
 }

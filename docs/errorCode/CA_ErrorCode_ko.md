@@ -114,15 +114,7 @@ public class ErrorResponse {
 |--------------|------------------------------------------------|------|------------------------------------------|
 | SCRVCFA00400 | User PII not found.                            | -    | 사용자 데이터와 검색 프로세스를 확인하세요.         |
 | SCRVCFA00401 | Tas Certificate VC data not found.             | -    | 인증서 데이터와 저장소를 확인하세요.           |
-| SCRVCFA00402 | User not found. | - | 사용자가 등록되어 있는지 확인하세요. |
-| SCRVCFA00403 | User already exists. | - | 기존 사용자를 쓰거나 다른 사용자 아이디를 쓰세요. |
-| SCRVCFA00404 | WalletId is already registered to another user. | - | 지갑 아이디를 확인하세요. 다른 사용자에게 이미 연결되어 있습니다. |
-| SCRVCFA00405 | Password does not match. | - | 비밀번호를 확인하세요. |
-| SCRVCFA00406 | Invalid user registration status for this operation. | - | API를 호출하기 전에 사용자 등록 상태를 확인하세요. |
 | SCRVCFA00407 | Failed to process signup. | - | 가입 요청과 서버 로그를 확인하세요. |
-| SCRVCFA00408 | Failed to process signin. | - | 로그인 요청과 서버 로그를 확인하세요. |
-| SCRVCFA00409 | Failed to process signout. | - | 로그아웃 요청과 서버 로그를 확인하세요. |
-| SCRVCFA00410 | Failed to process withdraw. | - | 탈퇴 요청과 서버 로그를 확인하세요. |
 
 <br>
 
