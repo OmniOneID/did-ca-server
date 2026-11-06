@@ -18,7 +18,7 @@ puppeteer:
 Open DID CA Admin Operation Guide
 ==
 
-- Date: 2026-10-30
+- Date: 2026-11-06
 - Version: v3.0.0
 
 개정 이력
@@ -28,7 +28,7 @@ Open DID CA Admin Operation Guide
 | v1.0.0 | 2025-03-31 | 최초 작성                  |
 | v1.0.1 | 2025-04-24 | `3.1.1. CA 등록` 장 추가 |
 | v2.0.0 | 2025-05-29 | 버전 업 |
-| v3.0.0 | 2026-10-30 | API Log 및 Audit API Log 메뉴와 조회 방법 추가 |
+| v3.0.0 | 2026-11-06 | API Log 및 Audit API Log 메뉴와 조회 방법 추가, 화면 예시 재촬영, 3장을 항목 표로 보강하고 화면과 일치시킴 |
 
 목차
 ==
@@ -51,7 +51,7 @@ Open DID CA Admin Operation Guide
     - [3.2.1. 사용자 목록 조회](#321-사용자-목록-조회)
     - [3.2.2. 사용자 상세 정보 조회](#322-사용자-상세-정보-조회)
   - [3.3. Admin Management](#33-admin-management)
-    - [3.3.1 Admin 목록 조회](#331-admin-목록-조회)
+    - [3.3.1. Admin 목록 조회](#331-admin-목록-조회)
     - [3.3.2. Admin 등록](#332-admin-등록)
   - [3.4. Log Management](#34-log-management)
     - [3.4.1. API Log](#341-api-log)
@@ -69,7 +69,7 @@ OpenDID의 전체 설치에 대한 가이드는 [Open DID Installation Guide]를
 
 ## 1.2. Admin Console 정의
 
-CA Admin Console은 Open DID 시스템에서 인증서 발급, 사용자 관리, 관리자 권한 제어 등 CA 서버의 핵심 기능을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 시스템의 전반적인 상태를 모니터링하고, 필요한 설정 및 작업을 수행할 수 있습니다.
+CA Admin Console은 Open DID 시스템에서 CA(Client Application) 서버의 등록 정보, 사용자 정보, 관리자 계정을 관리하기 위한 웹 기반 관리 도구입니다. 관리자는 이 콘솔을 통해 서버 상태를 확인하고 필요한 설정을 수행할 수 있습니다.
 
 CA Admin Console은 다음과 같은 주요 기능을 제공합니다:
 
@@ -77,6 +77,8 @@ CA Admin Console은 다음과 같은 주요 기능을 제공합니다:
 - 사용자 정보 조회
 - 관리자 계정 관리
 - API 호출 및 관리자 작업 로그 조회
+- 외부 서버 연동용 API 키 설정
+- 관리자 비밀번호 정책 설정
 
 <br/>
 
@@ -94,11 +96,13 @@ Admin Console에 접속하려면 다음 단계를 따르세요:
 
 2. 로그인 화면에서 관리자 계정의 이메일과 비밀번호를 입력합니다.
    - 기본 관리자 계정: <admin@opendid.omnione.net>
-   - 초기 비밀번호: password (최초 로그인 시 변경 필요)
+   - 초기 비밀번호: password (최초 로그인 시 ID와 비밀번호 변경 필요)
 
 3. '로그인' 버튼을 클릭합니다.
 
-> **참고**: 보안상의 이유로 최초 로그인 시에는 비밀번호 변경이 필요합니다.
+<img src="./images/sign-in.png" width="600"/>
+
+> **참고**: 보안상의 이유로 기본 관리자 계정은 최초 로그인 시 ID와 비밀번호를 변경해야 합니다.
 
 <br/>
 
@@ -129,7 +133,7 @@ CA Admin Console의 사이드바 메뉴는 **CA 등록 상태에 따라 화면 �
 
 CA 서버가 아직 등록되지 않은 초기 상태에서는 메뉴에 `CA Registration` 항목만 단독으로 표시됩니다.
 
-<img src="./images/2-2.side-menu-before-registration.png" width="200"/>
+<img src="./images/2-2.side-menu-before-registration.png" width="300"/>
 
 ### 2.3.2. CA 등록 상태
 
@@ -141,7 +145,7 @@ CA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
 | 2 | **User Management** | 시스템에 등록된 사용자 정보를 조회할 수 있는 메뉴입니다. 사용자의 개인 식별 정보(PII)를 확인할 수 있습니다. |
 | 3 | **Log Management** | `API Log`에서 Agent API 호출을, `Audit API Log`에서 관리자 API 작업을 조회합니다. |
 | 4 | **Server Configuration** | 외부 서버 연동 설정을 관리합니다. |
-| 5 | **Admin Management** | 관리자 계정과 비밀번호 정책을 관리합니다. |
+| 5 | **Admin Management** | 관리자 설정 상위 메뉴입니다. 하위에 `Admin Management`(관리자 계정)와 `Password Policy Settings`(비밀번호 정책)가 있습니다. |
 
 각 메뉴에 대한 상세 기능은 [3. 기능별 상세 메뉴얼](#3-기능별-상세-메뉴얼) 섹션에서 자세히 설명합니다.
 
@@ -159,23 +163,21 @@ CA 등록이 완료되면 전체 관리 기능이 활성화되며, 사이드바 
    - 새 비밀번호 확인 입력
 4. '저장' 버튼을 클릭하여 변경 사항을 적용합니다.
 
-> **참고**: 비밀번호는 8자 이상, 64자 이하입니다.
+> **참고**: 적용되는 최소 길이, 만료 기간, 문자 구성 규칙은 [비밀번호 정책 설정](#36-password-policy-settings)에서 확인합니다.
 
 <br/>
 
 # 3. 기능별 상세 메뉴얼
 
-> 등록 완료 후 관리 화면은 현재 사이드 메뉴와 예시 데이터로 캡처했습니다. 실제 데이터는 환경에 따라 달라집니다.
+> 화면은 예시 데이터로 캡처했습니다. 실제 데이터는 환경에 따라 달라집니다.
 
 이 장에서는 Open DID CA Admin Console의 주요 기능에 대한 상세 사용 방법을 안내합니다.
 
 ## 3.1. CA Management
 
-CA Management는 CA 서버의 등록 및 상태 관리를 위한 기능입니다.  
+CA Management는 CA 서버의 등록 및 상태 관리를 위한 기능입니다.
 
-
-CA 서버는 Open DID 시스템에서 사용자의 Client Application을 보증하는 역할을 수행합니다.    
-Client Application은 CA 서버를 통해 인증된 후 Wallet을 사용하여 DID 생성, VC 발급 등의 주요 기능을 사용할 수 있습니다.
+CA 서버는 Open DID 시스템에서 사용자의 Client Application을 보증하는 역할을 수행합니다. Client Application은 CA 서버를 통해 인증된 후 Wallet을 사용하여 DID 생성, VC 발급 등의 주요 기능을 사용할 수 있습니다.
 
 CA 등록은 최초 1회만 수행되며, 이후에는 관리 화면에서 등록된 상태를 확인할 수 있습니다.
 
@@ -183,250 +185,255 @@ CA 등록은 최초 1회만 수행되며, 이후에는 관리 화면에서 등�
 
 ### 3.1.1. CA 등록
 
-CA 서버가 아직 Open DID 시스템에 등록되지 않은 초기 상태에서는,  
-CA Admin Console 좌측 메뉴에 `CA Registration` 항목만 표시됩니다.  
-
-CA 등록은 총 3단계의 스텝을 통해 순차적으로 진행됩니다.
-
+CA 서버가 아직 등록되지 않은 초기 상태에서는 좌측 메뉴에 `CA Registration` 항목만 표시됩니다. CA 등록은 3단계로 진행합니다.
 
 <br/>
 
-**Step 1 - Enter CA Info**
+**Step 1 – Enter CA Info**
 
-CA의 정보를 입력하는 단계입니다.
+CA의 이름과 서버 URL을 입력합니다.
 
-<img src="./images/3-1-1.ca-registration.png" width="600"/>
+<img src="./images/3-1-1.ca-registration.png" width="800"/>
 
-| 항목              | 설명                                                                 |
-| ----------------- | -------------------------------------------------------------------- |
-| **Name**          | CA 서버의 이름을 입력합니다. 예: `cas`                              |
-| **CA URL**        | CA 서버의 호출 URL을 입력합니다. `http://<IP>:8094/cas` 형식 사용   |
-| **Test Connection 버튼** | 입력한 URL로 실제 연결이 가능한지 확인합니다.                 |
-| **NEXT 버튼**     | 다음 단계로 이동합니다.                                              |
-
-<br/>
-
-**Step 2 - Register DID Document**
-
-이 단계에서는 CA의 DID Document를 생성하고 TA Admin에 등록을 요청합니다.   
-한 번 등록된 DID Document는 **변경하거나 재등록할 수 없습니다.**
-
-▶ **Step 2-1: Generate DID Document**
-
-CA의 DID Document를 생성합니다.  
-
-<img src="./images/3-1-2.ca-registration.png" width="600"/>
-
-| 항목               | 설명                                                               |
-| ------------------ | ------------------------------------------------------------------ |
-| **GENERATE 버튼**  | CA 서버의 DID Document를 생성합니다. 생성 후 하단 영역에 결과 표시 |
-| **요청 상태 표시** | 요청 성공 시 초록색 메시지로 확인 가능합니다.                      |
-
-DID Document가 성공적으로 생성되면, **Step 2-2 영역이 화면에 자동으로 표시됩니다.**
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Name*** | CA 서버의 이름입니다. 영문 3~20자로 입력합니다. 예: `CaService` |
+| 2 | **CA URL*** | CA 서버의 호출 URL입니다(200자 이내). 형식: `http://<IP>:8094/cas`, 화면 예시: `https://cas.example.org/cas` |
+| 3 | **TEST CONNECTION 버튼** | 입력한 URL로 연결을 테스트합니다. |
+| 4 | **NEXT 버튼** | 입력한 정보를 저장하고 다음 단계로 이동합니다. |
 
 <br/>
 
-▶ **Step 2-2 - Submit Registeration Request**
+**Step 2 – Register DID Document**
 
-생성된 DID Document를 TA Admin에 등록 요청합니다.
+CA의 DID Document를 생성해 TA에 등록을 요청하고, TA 관리자의 승인을 확인합니다. 한 번 등록된 DID Document는 **변경하거나 재등록할 수 없습니다.**
 
-<img src="./images/3-1-3.ca-registration.png" width="600"/>
-<img src="./images/3-1-4.ca-registration.png" width="600"/>
+▶ **Generate DID Document**
 
-| 항목              | 설명                                                                 |
-| ----------------- | -------------------------------------------------------------------- |
-| **REQUEST 버튼**  | 생성한 DID Document에 대한 등록 요청을 TA Admin에 보냅니다.        |
-| **요청 상태 표시** | 요청 성공 시 초록색 메시지로 확인 가능합니다.                        |
+<img src="./images/3-1-2.ca-registration.png" width="800"/>
 
-DID Document가 성공적으로 생성되면, **Step 2-3 영역이 화면에 자동으로 표시됩니다.**
+<img src="./images/3-1-3.ca-registration.png" width="800"/>
 
-<br/>
+`GENERATE` 버튼을 누르면 DID Document가 생성되어 화면에 JSON으로 표시됩니다. 완료 메시지는 `DID Document has been successfully created.`입니다.
 
-▶ **Step 2-3 - Check Approval Status**
+▶ **Submit Registration Request**
 
-TA 관리자가 DID Document 등록 요청을 승인했는지 확인합니다.
+<img src="./images/3-1-4.ca-registration.png" width="800"/>
 
-<img src="./images/3-1-5.ca-registration.png" width="600"/>
+`REQUEST` 버튼을 누르면 TA에 DID Document 등록을 요청합니다. 완료 메시지는 `Registration request has been submitted.`입니다. TA 관리자는 TA Admin Console의 Entity 상세 화면에서 요청을 승인합니다.
 
-| 항목              | 설명                                                                 |
-| ----------------- | -------------------------------------------------------------------- |
-| **CHECK 버튼**    | TA 관리자가 등록 요청을 승인했는지 확인합니다.                      |
-| **승인 상태 표시** | 승인 완료 시 초록색 메시지와 함께 다음 단계로 이동할 수 있습니다.     |
+▶ **Check Approval Status**
 
-<br/>
+<img src="./images/3-1-5.ca-registration.png" width="800"/>
 
+`CHECK` 버튼으로 승인 여부를 확인합니다.
 
-**Step 3 - Enroll Entity**
-
-TA 서버에 CA를 Entity로 등록 요청하고, 가입증명서(Certificate VC)를 발급받는 단계입니다. 
-
-이때 등록 요청은 TA 프로토콜 중 사용자 등록 프로토콜(P132)의 흐름을 따르며,  
-CA Admin이 해당 프로토콜의 API들을 호출하여 등록 절차를 수행합니다.
-
-<img src="./images/3-1-6.ca-registration.png" width="600"/>
-<img src="./images/3-1-7.ca-registration.png" width="600"/>
-
-| 항목        | 설명                                       |
-| ----------- | ------------------------------------------ |
-| **REQUEST** | TA 서버에 Entity 등록 요청을 보냅니다.     |
-| **FINISH**  | 등록을 마치고 최종 완료 상태로 이동합니다. |
+| 상태 | 표시되는 메시지 | 동작 |
+| --- | --- | --- |
+| 승인 대기 | `The DID Document registration request is still pending approval.` | 승인 후 다시 확인합니다. |
+| 승인됨 | `Approval confirmed. You can proceed.` | `NEXT` 버튼으로 다음 단계로 이동합니다. |
+| 거절됨 | `The DID Document registration request has been rejected.` | 처음 화면으로 돌아갑니다. |
 
 <br/>
 
+**Step 3 – Register Entity and Issue Certificate VC**
+
+TA에 CA를 Entity로 등록하고 가입증명서(Certificate VC)를 발급받습니다. CA Admin이 TA의 Entity 등록 프로토콜(P120)을 수행합니다.
+
+<img src="./images/3-1-6.ca-registration.png" width="800"/>
+
+<img src="./images/3-1-7.ca-registration.png" width="800"/>
+
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **REQUEST 버튼** | TA에 Entity 등록을 요청합니다. 완료되면 `Entity registration completed and Certificate VC issued.`가 표시됩니다. |
+| 2 | **BACK 버튼** | 이전 단계로 이동합니다. |
+| 3 | **FINISH 버튼** | 등록을 마치고 완료 화면으로 이동합니다. |
+
+<br/>
 
 ### 3.1.2. 등록된 CA 관리
 
 <img src="./images/3.2.ca_management.png" width="800"/>
 
-| 번호 | 항목              | 설명                                                                                                                                                   |
-| ---- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1    | **DID**               | CA의 고유 식별자입니다. 형식은 'did:omn:ca'와 같은 형태로 표시됩니다.                                                                                  |
-| 2    | **Name**              | CA의 이름입니다. VC 발급 시 표시되는 이름입니다.                                                                                                       |
-| 3    | **Status**            | CA의 활성화 상태를 나타냅니다. ACTIVATE 또는 DEACTIVATE 상태가 표시됩니다.                                                                             |
-| 4    | **URL**               | CA 서비스의 기본 URL 주소입니다.                                                                                                                       |
-| 5    | **Certificate URL**   | CA의 가입증명서를 확인할 수 있는 URL 주소입니다.                                                                                                       |
-| 6    | **Registered At**    | CA가 등록된 날짜와 시간을 표시합니다.                                                                                                                  |
-| 7    | **VIEW DID DOCUMENT** | DID 문서를 확인할 수 있는 버튼입니다. 클릭 시 팝업 형태로 블록체인에 등록된 DID 문서 정보가 표시됩니다.                                                |
-| 8    | **VIEW**          | Certificate URL 옆의 버튼입니다. 클릭 시 TA가 발급한 가입증명서 VC가 팝업 형태로 표시됩니다. |
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **DID** | CA의 고유 식별자입니다. |
+| 2 | **VIEW DID DOCUMENT 버튼** | DID Document를 팝업으로 표시합니다. |
+| 3 | **Name** | CA의 이름입니다. |
+| 4 | **Status** | 등록 상태입니다.<br/>- `DID_DOCUMENT_REQUIRED`: DID Document 등록 전<br/>- `DID_DOCUMENT_REQUESTED`: 등록 요청 후 승인 대기<br/>- `CERTIFICATE_VC_REQUIRED`: 승인 후 가입증명서 발급 전<br/>- `ACTIVATE`: 등록 완료<br/>- `DEACTIVATE`: 비활성 |
+| 5 | **URL** | CA 서비스의 기본 URL입니다. |
+| 6 | **Certificate URL** | 가입증명서를 확인할 수 있는 URL입니다. |
+| 7 | **VIEW 버튼** | Certificate URL 옆의 버튼입니다. TA가 발급한 가입증명서 VC를 팝업으로 표시합니다. |
+| 8 | **Registered At** | CA가 등록된 일시입니다. |
 
 <br/>
 
 ## 3.2. User Management
 
-User Management 메뉴는 시스템에 등록된 사용자 정보를 조회하는 기능을 제공합니다. 이 기능을 통해 관리자는
-사용자의 개인 식별 정보(PII)를 확인할 수 있습니다.
+시스템에 등록된 사용자 정보를 조회하는 메뉴입니다. 조회 전용이며 사용자 정보를 추가, 수정, 삭제하는 기능은 없습니다.
+
+<br/>
 
 ### 3.2.1. 사용자 목록 조회
 
 <img src="./images/3.3.user_management.jpg" width="800"/>
 
-User Management 화면은 다음과 같은 주요 정보를 표시합니다:
-
 | 번호 | 항목 | 설명 |
-|------|------|------|
-| 1 | ID | 사용자의 고유 식별자입니다. 클릭하면 상세 정보를 볼 수 있습니다. |
-| 2 | PII | 사용자의 개인 식별 정보입니다. |
-| 3 | Registered At | 사용자가 등록된 날짜와 시간을 표시합니다. |
-| 4 | Updated At | 사용자 정보가 마지막으로 업데이트된 날짜와 시간을 표시합니다. |
-| 5 | 페이지네이션 | 사용자 목록의 페이지를 관리합니다. 한 페이지당 표시할 행 수와 현재 페이지 정보를 확인할 수 있습니다. |
-
-> **참고**: 사용자 목록 화면에서는 읽기만 가능하며, 사용자 정보의 추가, 수정, 삭제 기능은 제공되지 않습니다.
+| --- | --- | --- |
+| 1 | **검색** | ID 또는 PII로 검색합니다. |
+| 2 | **ID** | 사용자의 고유 식별자입니다. 클릭하면 상세 화면으로 이동합니다. |
+| 3 | **PII** | 사용자의 개인 식별 정보입니다. |
+| 4 | **Registered At** | 사용자가 등록된 일시입니다. |
+| 5 | **Updated At** | 사용자 정보가 마지막으로 수정된 일시입니다. |
 
 <br/>
 
 ### 3.2.2. 사용자 상세 정보 조회
 
-사용자 목록에서 사용자 ID를 클릭하면 해당 사용자의 상세 정보를 조회할 수 있습니다.
-
 <img src="./images/3.4.user_detail.png" width="800"/>
 
-사용자 상세 정보 화면에는 다음과 같은 정보가 표시됩니다:
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **ID** | 사용자의 고유 식별자입니다. |
+| 2 | **PII** | 사용자의 개인 식별 정보입니다. |
+| 3 | **Registered At** | 사용자가 등록된 일시입니다. |
+| 4 | **Updated At** | 사용자 정보가 마지막으로 수정된 일시입니다. |
+| 5 | **BACK 버튼** | 목록 화면으로 돌아갑니다. |
 
-| 섹션 | 포함 정보 |
-|------|-----------|
-| **기본 정보** | - ID<br>- PII<br>- Registered At<br>- Updated At |
-
-> **중요**: 개인 식별 정보(PII)는 현재 시스템상 Demo Server를 통해 입력받은 임의의 값입니다. CA서버는 사용자 정보를 갖고 있는 설정을 위해 해당 조회 기능을 제공합니다.
-
-을 적용합니다.
+> **중요**: 개인 식별 정보(PII)는 현재 시스템상 Demo Server를 통해 입력받은 임의의 값입니다. CA 서버는 사용자 정보를 갖고 있는 설정을 위해 해당 조회 기능을 제공합니다.
 
 <br/>
 
 ## 3.3. Admin Management
 
-`Admin Management` 메뉴는 CA Admin Console에 접근할 수 있는 관리자 계정을 관리하는 기능입니다.  
+`Admin Management` 메뉴는 CA Admin Console에 접근할 수 있는 관리자 계정을 관리하는 기능입니다.
 
-CA 서버를 설치하면 기본적으로 `admin@opendid.omnione.net` 계정이 ROOT 권한으로 자동 생성됩니다.  
-이 계정은 시스템 내 유일한 ROOT 계정이며, 삭제할 수 없습니다.
+CA 서버를 설치하면 기본적으로 `admin@opendid.omnione.net` 계정이 ROOT 권한으로 자동 생성됩니다. 이 계정은 시스템 내 유일한 ROOT 계정이며, 삭제할 수 없습니다.
 
-관리자 계정은 **ROOT**와 **Normal Admin** 두 가지 권한 유형으로 구분됩니다.  
-ROOT 계정은 `Admin Management` 메뉴에서 모든 기능을 수행할 수 있으며, Normal Admin은 일반적인 조회 기능만 가능합니다.
+관리자 계정은 **ROOT**와 **Normal Admin** 두 가지 권한 유형으로 구분됩니다.
 
----
-> **참고:** 현재는 ROOT 계정과 Normal Admin 계정 간의 권한 차이는  
-> `Admin Management` 메뉴에서 표시되는 버튼의 차이(Root만 REGISTER / DELETE / CHANGE PASSWORD 가능) 외에는 없습니다.  
-> 그 외 시스템의 다른 메뉴에 대한 접근 권한이나 기능 제한은 아직 적용되어 있지 않습니다.
----
+> **참고**: 현재 ROOT와 Normal Admin의 차이는 `Admin Management` 메뉴에 표시되는 버튼뿐입니다(ROOT만 `REGISTER`, `DELETE`, `CHANGE PASSWORD` 가능). 다른 메뉴의 접근 권한이나 기능 제한은 아직 적용되어 있지 않습니다.
 
 <br/>
 
-### 3.3.1 Admin 목록 조회
+### 3.3.1. Admin 목록 조회
 
-
-`Admin Management` 메뉴에 진입하면 등록된 관리자 계정들의 목록이 테이블 형태로 표시됩니다.
+`Admin Management` 메뉴에 진입하면 등록된 관리자 계정 목록이 표시됩니다.
 
 <img src="./images/3.5.admin-management.png" width="800"/>
 
-
-| 번호 | 항목                    | 설명                                                             |
-| ---- | ----------------------- | ---------------------------------------------------------------- |
-| 1    | **REGISTER 버튼**       | 새로운 관리자 계정을 등록할 수 있는 등록 페이지로 이동합니다.       |
-| 2    | **DELETE 버튼**         | 선택한 관리자 계정을 삭제합니다. (ROOT 관리자만 가능)              |
-| 3    | **CHANGE PASSWORD 버튼** | 선택한 관리자 계정의 비밀번호를 변경할 수 있습니다.                |
-| 4    | **ID**                  | 등록된 관리자 계정의 이메일 ID입니다.                              |
-| 5    | **Role**                | 해당 관리자 계정의 역할(Role)입니다. (예: ROOT, Normal Admin 등)   |
-| 6    | **Registered At**       | 해당 계정이 최초 등록된 일시입니다.                               |
-| 7    | **Updated At**          | 마지막으로 수정된 일시입니다.     
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | ID 또는 Role(Root, Normal)로 검색합니다. |
+| 2 | **REGISTER 버튼** | 새 관리자 계정을 등록하는 화면으로 이동합니다. |
+| 3 | **DELETE 버튼** | 선택한 관리자 계정을 삭제합니다. ROOT 관리자만 할 수 있습니다. |
+| 4 | **CHANGE PASSWORD 버튼** | 선택한 관리자 계정의 비밀번호를 변경합니다. |
+| 5 | **ID** | 관리자 계정의 이메일 ID입니다. |
+| 6 | **Role** | 관리자 계정의 권한입니다. |
+| 7 | **Registered At** | 계정이 등록된 일시입니다. |
+| 8 | **Updated At** | 마지막으로 수정된 일시입니다. |
 
 <br/>
 
 ### 3.3.2. Admin 등록
 
-`Admin Management` 화면에서 **REGISTER** 버튼을 클릭하면, 아래와 같은 등록 화면으로 이동합니다.
+`REGISTER` 버튼을 클릭하면 등록 화면으로 이동합니다.
 
-<img src="./images/3.6.admin-registration.png" width="600"/>
+<img src="./images/3.6.admin-registration.png" width="800"/>
 
-| 번호 | 항목                        | 설명                                                                |
-| ---- | --------------------------- | ------------------------------------------------------------------- |
-| 1    | **ID**                      | 등록할 관리자 계정의 ID입니다. 이메일 형식을 사용해야 합니다.         |
-| 2    | **Check Availability 버튼** | 입력한 ID가 중복되지 않는지 확인합니다.                             |
-| 3    | **Role**                    | 등록할 관리자 계정의 권한을 선택합니다. (예: Normal Admin)           |
-| 4    | **Password**                | 로그인 시 사용할 비밀번호를 입력합니다.                              |
-| 5    | **Re-enter Password**       | 비밀번호를 한 번 더 입력하여 일치 여부를 확인합니다.                |
-| 6    | **REGISTER 버튼**           | 입력한 정보를 바탕으로 관리자 계정을 등록합니다.                    |
-| 7    | **RESET 버튼**              | 모든 입력값을 초기화합니다.                                         |
-| 8    | **CANCEL 버튼**             | 등록을 취소하고 이전 화면으로 돌아갑니다.                           |
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **ID*** | 관리자 계정의 ID입니다. 이메일 형식 3~30자를 사용합니다. 예: `operator@example.org` |
+| 2 | **Check Availability 버튼** | 입력한 ID가 중복되지 않는지 확인합니다. 등록하려면 확인을 통과해야 합니다. |
+| 3 | **Role** | 관리자 계정의 권한을 선택합니다. 예: `Normal Admin` |
+| 4 | **Password*** | 로그인에 사용할 비밀번호입니다(8~30자). 비밀번호 정책이 켜져 있으면 해당 규칙도 적용됩니다. |
+| 5 | **Re-enter Password*** | 비밀번호를 한 번 더 입력합니다. |
+| 6 | **REGISTER 버튼** | 입력한 정보로 관리자 계정을 등록합니다. |
+| 7 | **RESET 버튼** | 입력값을 초기화합니다. |
+| 8 | **CANCEL 버튼** | 등록을 취소하고 이전 화면으로 돌아갑니다. |
 
-
+<br/>
 
 ## 3.4. Log Management
 
-CA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시되며, 검색 조건을 선택하고 값을 입력한 뒤 검색할 수 있습니다. 새로고침으로 목록을 다시 불러오고, `Called At`을 클릭하면 해당 기록의 상세 창이 열립니다. 로그는 조회 전용입니다.
+CA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기록을 조회할 수 있습니다. 두 화면 모두 최신 기록부터 페이지별로 표시하고, 새로고침 버튼으로 목록을 다시 불러옵니다. `Called At`을 클릭하면 상세 창이 열립니다. 로그는 조회 전용입니다.
+
+<br/>
 
 ### 3.4.1. API Log
 
+`Log Management > API Log`(`/logs/api`)는 CA Agent API 호출 기록을 보여줍니다.
+
 <img src="./images/api-log-api-example.png" width="800"/>
 
-> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
-
-`Log Management > API Log`는 CA의 Agent API 호출 기록을 보여줍니다. 목록에는 호출 시각(`Called At`), HTTP 메서드, URI, 상태 코드, 결과(`SUCCESS` 또는 `FAIL`), 요청자 ID가 표시됩니다. `URI` 또는 `Result`로 검색할 수 있습니다. 상세 창에서는 처리 시간, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/api`입니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | `URI` 또는 `Result`(`SUCCESS`, `FAIL`)로 검색합니다. |
+| 2 | **Called At** | 호출 일시입니다. 클릭하면 상세 창이 열립니다. |
+| 3 | **Method** | HTTP 메서드입니다. |
+| 4 | **URI** | 호출한 URI입니다. |
+| 5 | **Status** | HTTP 상태 코드입니다. |
+| 6 | **Result** | `SUCCESS` 또는 `FAIL`입니다. |
+| 7 | **Requester ID** | 요청자 ID입니다. |
 
 <img src="./images/api-log-api-detail-example.png" width="800"/>
 
-> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+상세 창은 목록 항목에 더해 다음을 표시합니다.
+
+| 항목 | 설명 |
+| --- | --- |
+| **Duration Ms** | 처리 시간(밀리초)입니다. |
+| **Client IP** | 클라이언트 IP입니다. |
+| **User Agent** | 요청의 User Agent입니다. |
+| **Message** | 오류 메시지가 기록된 경우 표시합니다. |
+
+<br/>
 
 ### 3.4.2. Audit API Log
 
+`Log Management > Audit API Log`(`/logs/audit`)는 Admin API의 관리자 작업 기록을 보여줍니다.
+
 <img src="./images/api-log-audit-example.png" width="800"/>
 
-> 예시 데이터로 렌더링한 목록 화면입니다. 실제 로그와 계정 정보는 환경에 따라 다릅니다.
-
-`Log Management > Audit API Log`는 Admin API의 관리자 작업 기록을 보여줍니다. 목록에는 호출 시각, 요청자 ID, 작업 유형(`Action Type`), 대상 유형과 ID, 결과가 표시됩니다. `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색할 수 있습니다. `Action Type`에는 `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 등의 값이 사용됩니다. 상세 창에서는 작업 설명, 클라이언트 IP, User Agent, 오류 메시지가 기록된 경우 함께 확인할 수 있습니다. 화면 경로는 `/logs/audit`입니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **검색** | `Action Type`, `Target Type`, `Result`, `Requester ID`로 검색합니다. `Action Type`은 `NONE`, `CREATE`, `UPDATE`, `DELETE`, `LOGIN`, `LOGOUT` 중에서 선택합니다. |
+| 2 | **Called At** | 호출 일시입니다. 클릭하면 상세 창이 열립니다. |
+| 3 | **Requester ID** | 작업한 관리자 ID입니다. |
+| 4 | **Action Type** | 작업 유형입니다. |
+| 5 | **Target Type** | 작업 대상의 유형입니다. |
+| 6 | **Target ID** | 작업 대상의 ID입니다. |
+| 7 | **Result** | `SUCCESS` 또는 `FAIL`입니다. |
 
 <img src="./images/api-log-audit-detail-example.png" width="800"/>
 
-> 호출 시각을 선택했을 때 표시되는 상세 창의 예시입니다.
+상세 창은 목록 항목에 더해 다음을 표시합니다.
+
+| 항목 | 설명 |
+| --- | --- |
+| **Client IP** | 클라이언트 IP입니다. |
+| **Description** | 작업 설명입니다. |
+| **User Agent** | 요청의 User Agent입니다. |
+| **Message** | 오류 메시지가 기록된 경우 표시합니다. |
 
 > 로그는 서버의 `@ArticleLog`가 적용된 API 호출에서 생성됩니다. 결과가 `FAIL`이면 API Log의 상태 코드와 해당 로그의 상세 메시지를 확인하세요.
 
 ## 3.5. Server Configuration
 
-`Server Configuration`에서 외부 서버와의 연동 설정을 관리합니다.
+`Server Configuration`에서 외부 서버 연동용 API 키를 설정합니다.
 
 <img src="./images/server-configuration.png" width="800"/>
 
-- **API Key Settings > Ledger Service Server**: LSS(Ledger Service Server)에서 발급한 API Key를 입력하고 저장합니다. 값은 `API_KEY_LSS`로 저장되며, CA 서버가 LSS를 호출할 때(`lss` 프로파일) `X-API-Key` 헤더로 보냅니다.
-- 키를 등록하지 않으면 LSS 호출이 `SCRVCFA01801`로 실패합니다.
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Ledger Service Server** | LSS에서 발급한 API Key를 입력합니다. `API_KEY_LSS`로 저장되며, CA 서버가 LSS를 호출할 때(`lss` 프로파일) `X-API-Key` 헤더로 보냅니다. |
+| 2 | **UPDATE 버튼** | 입력한 값을 저장합니다. |
+| 3 | **RESET 버튼** | 저장 전 입력값을 초기화합니다. |
+
+키를 등록하지 않으면 LSS 호출이 `SCRVCFA01801`로 실패합니다.
+
+> **주의**: API 키 값은 화면 캡처, 문서, 예시 설정에 포함하지 마세요.
 
 ## 3.6. Password Policy Settings
 
@@ -434,14 +441,15 @@ CA 등록이 완료되면 사이드바의 `Log Management`에서 API 호출 기�
 
 <img src="./images/password-policy.png" width="800"/>
 
-| 항목 | 설명 | 범위 |
-| ---- | ---- | ---- |
-| Minimum Length | 최소 글자 수 | 6~20 |
-| Uppercase Letters (A-Z) | 대문자 1자 이상 포함 | - |
-| Numbers (0-9) | 숫자 1자 이상 포함 | - |
-| Special Characters (!@#$%^&*) | 특수문자 1자 이상 포함 | - |
-| Password Expiration Period | 비밀번호 유효 기간(일) | 30~365일(기본 90일) |
-
+| 번호 | 항목 | 설명 |
+| --- | --- | --- |
+| 1 | **Minimum Length** | 비밀번호 최소 길이입니다. 6~20자로 설정합니다. 기본값은 8입니다. |
+| 2 | **Password Expiration Period** | 비밀번호 만료 기간입니다. 30~365일로 설정합니다. 기본값은 365입니다. |
+| 3 | **Uppercase Letters (A-Z)** | 대문자를 1자 이상 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 4 | **Numbers (0-9)** | 숫자를 1자 이상 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 5 | **Special Characters (!@#$%^&*)** | 특수문자를 1자 이상 포함하게 합니다. 기본값은 꺼짐입니다. |
+| 6 | **UPDATE 버튼** | 정책을 저장합니다. 아직 등록하지 않았다면 버튼 이름은 `REGISTER`입니다. |
+| 7 | **RESET 버튼** | 변경 전 입력 상태로 되돌립니다. |
 
 [Open DID Installation Guide]: https://github.com/OmniOneID/did-release/blob/main/release-V2.0.0.0/OpenDID_Installation_Guide-V2.0.0.0_ko.md
 

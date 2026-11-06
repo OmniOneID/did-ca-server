@@ -19,6 +19,7 @@
 - Upgraded Node.js to 22.23.4 for the admin console build
 - Updated the Dockerfile Java image to eclipse-temurin 21 (jammy)
 - Server version 3.0.0 (`did-ca-server-3.0.0.jar`)
+- Expanded the admin guide with item tables and example screens aligned with the admin console
 
 ### 🐛 Bug Fixes
 - Fixed a typo in the SCRVCFA01006 error message

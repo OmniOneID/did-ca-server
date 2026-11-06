@@ -572,7 +572,7 @@ Content-Type: application/json;charset=utf-8
     "appId": "com.opendid.did",
     "provider": {
         "did": "did:raon:entity",
-        "certVcRef": "http://192.168.3.130:8090/tas/download/vc?name=tas"
+        "certVcRef": "https://tas.example.org/tas/download/vc?name=tas"
     },
     "nonce": "zNgLzfu8edopNmKhmuGMv32",
     "proof": {
