@@ -123,7 +123,7 @@ const AdminRegisterPage = (props: Props) => {
                     message: 'Admin registration completed.',
                     isModal: true,
                 },{
-                    onClose: async (result) =>  navigate('/admin-management'),
+                    onClose: async (result) =>  navigate('/admins/admin-management'),
                 });
     
             }).catch((error) => {
@@ -186,7 +186,7 @@ const AdminRegisterPage = (props: Props) => {
         });
 
         if (result) {
-            navigate('/admin-management');
+            navigate('/admins/admin-management');
         }
     };
 

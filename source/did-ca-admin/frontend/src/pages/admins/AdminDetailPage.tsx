@@ -138,7 +138,7 @@ const AdminDetailPage = (props: Props) => {
                     )}
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
-                        <Button variant="outlined" color="primary" onClick={() => navigate('/admin-management')}>
+                        <Button variant="outlined" color="primary" onClick={() => navigate('/admins/admin-management')}>
                             Back
                         </Button>
                         {/* <Button variant="contained" color="primary" onClick={() => navigate('/list-settings/vc-schema/vc-shema-edit/' + numericId)}>
