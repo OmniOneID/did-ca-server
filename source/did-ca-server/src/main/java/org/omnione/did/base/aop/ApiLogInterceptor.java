@@ -31,6 +31,9 @@ public class ApiLogInterceptor implements HandlerInterceptor {
                 req.setAttribute("apiLogType", anno.apiType());
                 req.setAttribute("startAtNs", System.nanoTime());
                 req.setAttribute("actionType", anno.actionType());
+                if (!anno.targetType().isBlank()) {
+                    req.setAttribute("targetType", anno.targetType());
+                }
             }
         }
         return true;

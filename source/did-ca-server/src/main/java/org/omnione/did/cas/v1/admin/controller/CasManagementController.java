@@ -54,14 +54,14 @@ public class CasManagementController {
 
     @RequestMapping(value = "/certificate-vc", method = RequestMethod.POST)
     @ArticleLog(name = "[CA Admin] Issue Certificate VC by TA", description = "Issue a certificate VC By TA.",
-            targetType = "CA")
+            targetType = "CA", actionType = ActionType.CREATE)
     public EmptyResDto createCertificateVc(@RequestBody SendCertificateVcReqDto sendCertificateVcReqDto) {
         return casManagementService.createCertificateVc(sendCertificateVcReqDto);
     }
 
     @RequestMapping(value = "/entity-info", method = RequestMethod.POST)
     @ArticleLog(name = "[CA Admin] Update Entity Info", description = "Updates the entity information related to the CA.",
-            targetType = "CA", targetId = "#sendEntityInfoReqDto.did")
+            targetType = "CA", targetId = "#sendEntityInfoReqDto.did", actionType = ActionType.UPDATE)
     public EmptyResDto updateEntityInfo(@RequestBody SendEntityInfoReqDto sendEntityInfoReqDto) {
         return casManagementService.updateEntityInfo(sendEntityInfoReqDto);
     }

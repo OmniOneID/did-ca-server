@@ -97,10 +97,10 @@ public class AdminManagementService {
                 .build();
     }
 
-    public EmptyResDto deleteAdmin(Long id) {
-        adminQueryService.findById(id);
+    public String deleteAdmin(Long id) {
+        Admin admin = adminQueryService.findById(id);
         adminRepository.deleteById(id);
-        return new EmptyResDto();
+        return admin.getLoginId();
     }
 
     public EmptyResDto resetPasswordByRoot(ResetPasswordByRootReqDto resetPasswordByRootReqDto) {

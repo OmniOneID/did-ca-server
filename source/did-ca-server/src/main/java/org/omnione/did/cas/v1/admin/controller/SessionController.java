@@ -53,7 +53,8 @@ public class SessionController {
      */
     @PostMapping(value = "/login")
     @ResponseBody
-    @ArticleLog(name = "[Admin] Login", actionType = ActionType.LOGIN)
+    @ArticleLog(name = "[Admin] Login", description = "Login", targetType = "ADMIN",
+            targetId = "#requestAdminLoginReqDto.loginId", actionType = ActionType.LOGIN)
     public LoginResDto requestAdminLogin(@Valid @RequestBody RequestAdminLoginReqDto requestAdminLoginReqDto) {
         AdminDto admin = sessionService.requestAdminLogin(requestAdminLoginReqDto);
         String accessToken = jwtService.createAccessToken(admin);
@@ -66,8 +67,8 @@ public class SessionController {
      */
     @PostMapping(value = "/refresh-token")
     @ResponseBody
-    @ArticleLog(name = "[Admin] Refresh Token")
-    public TokenResDto refreshToken(@RequestBody RefreshReqDto req) {
+    @ArticleLog(name = "[Admin] Refresh Token", targetType = "ADMIN")
+    public TokenResDto refreshToken(@RequestBody RefreshReqDto req, jakarta.servlet.http.HttpServletRequest request) {
         try {
             var jws = jwtService.parse(req.refreshToken());
             if (!jwtService.isRefreshToken(jws) || !jwtService.isCurrentSession(jws)) {
@@ -75,6 +76,8 @@ public class SessionController {
             }
             Long adminId = Long.valueOf(jws.getPayload().getSubject());
             AdminDto admin = sessionService.requestAdminLoginById(adminId);
+            request.setAttribute("targetId", admin.getLoginId());
+            request.setAttribute("requesterId", admin.getLoginId());
             String newAccessToken = jwtService.createAccessToken(admin);
             return new TokenResDto(newAccessToken);
         } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
