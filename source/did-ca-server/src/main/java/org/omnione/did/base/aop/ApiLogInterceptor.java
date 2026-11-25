@@ -49,7 +49,8 @@ public class ApiLogInterceptor implements HandlerInterceptor {
                 .uri(req.getRequestURI())
                 .apiName((String) req.getAttribute("articleLogName"))
                 .apiDescription((String) req.getAttribute("articleLogDesc"))
-                .requesterId(resolveRequesterId())
+                .requesterId(req.getAttribute("requesterId") != null
+                        ? (String) req.getAttribute("requesterId") : resolveRequesterId())
                 .status(res.getStatus())
                 .result(res.getStatus() < 400 ? "SUCCESS" : "FAIL")
                 .durationMs(durationMs)

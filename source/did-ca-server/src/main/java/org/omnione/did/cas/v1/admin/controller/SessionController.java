@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.omnione.did.base.annotation.ArticleLog;
@@ -86,13 +88,16 @@ public class SessionController {
     public void logout(@RequestBody RefreshReqDto req, jakarta.servlet.http.HttpServletRequest request) {
         try {
             var token = jwtService.parse(req.refreshToken());
-            if (!jwtService.isRefreshToken(token) || !jwtService.isCurrentSession(token)) {
+            if (!jwtService.isRefreshToken(token)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
             }
             Long adminId = Long.valueOf(token.getPayload().getSubject());
-            request.setAttribute("targetId", adminId.toString());
-            request.setAttribute("requesterId", adminId.toString());
-            jwtService.revokeAllSessions(adminId);
+            String loginId = sessionService.requestAdminLoginById(adminId).getLoginId();
+            request.setAttribute("targetId", loginId);
+            request.setAttribute("requesterId", loginId);
+            if (jwtService.isCurrentSession(token)) {
+                jwtService.revokeAllSessions(adminId);
+            }
         } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token", e);
         }
@@ -107,7 +112,17 @@ public class SessionController {
         private final String refreshToken;
     }
 
-    public record RefreshReqDto(String refreshToken) {}
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RefreshReqDto {
+        private String refreshToken;
+
+        public String refreshToken() {
+            return refreshToken;
+        }
+    }
 
     @Getter
     @AllArgsConstructor
