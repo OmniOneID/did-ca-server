@@ -20,11 +20,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * The SecurityConfig class provides methods for configuring security settings.
@@ -36,8 +41,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new DelegatingPasswordEncoder("bcrypt", java.util.Map.of("bcrypt", new BCryptPasswordEncoder(12)));
+    }
+
     static {
     }
+    private final JwtAuthenticationFilter jwtFilter;
 
     /**
      * Configures the security filter chain that applies to all HTTP requests.
@@ -57,7 +68,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                        (req, res, error) -> res.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED)))
                 .authorizeHttpRequests(this::authorizeHttpRequestsCustomizer)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -70,7 +85,11 @@ public class SecurityConfig {
     private void authorizeHttpRequestsCustomizer(AuthorizeHttpRequestsConfigurer<HttpSecurity>
                                                          .AuthorizationManagerRequestMatcherRegistry configurer) {
         allowedUrlsConfigurer(configurer);
-        configurer.anyRequest().permitAll();
+        configurer.requestMatchers(org.springframework.http.HttpMethod.POST,
+                        "/cas/admin/v1/login", "/cas/admin/v1/refresh-token", "/cas/admin/v1/logout",
+                        "/cas/admin/v1/password-reset/send-otp", "/cas/admin/v1/password-reset/verify-otp").permitAll()
+                .requestMatchers("/cas/admin/v1/**").hasAnyRole("NORMAL", "ROOT")
+                .anyRequest().permitAll();
     }
 
     /**
