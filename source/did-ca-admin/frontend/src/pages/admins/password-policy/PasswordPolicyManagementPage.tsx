@@ -93,14 +93,20 @@ const PasswordPolicyManagementPage = (props: Props) => {
 
     const validateMinLength = (minLength?: number): string | undefined => {
         if (!minLength) return 'Please enter minimum length.';
+        if (!Number.isInteger(minLength)) return 'Minimum length must be a whole number.';
         if (minLength < 6 || minLength > 20) return 'Minimum length must be between 6 and 20 characters.';
         return undefined;
     };
 
     const validatePasswordExpiryDays = (passwordExpiryDays?: number): string | undefined => {
         if (!passwordExpiryDays) return 'Please enter password expiration period.';
+        if (!Number.isInteger(passwordExpiryDays)) return 'Password expiration period must be a whole number.';
         if (passwordExpiryDays < 30 || passwordExpiryDays > 365) return 'Password expiration period must be between 30 and 365 days.';
         return undefined;
+    };
+
+    const blockNonIntegerKeys = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (['.', 'e', 'E', '+', '-'].includes(event.key)) event.preventDefault();
     };
 
     const validateRequireUppercase = (requireUppercase?: boolean): string | undefined => {
@@ -252,9 +258,10 @@ const PasswordPolicyManagementPage = (props: Props) => {
                     type="number"
                     value={formData.minLength || ''}
                     onChange={handleChange('minLength')}
+                    onKeyDown={blockNonIntegerKeys}
                     error={!!errors.minLength}
                     helperText={errors.minLength || "Password minimum length must be set (6-20 characters)"}
-                    inputProps={{ min: 6, max: 20 }}
+                    inputProps={{ min: 6, max: 20, step: 1 }}
                 />
 
                 <TextField
@@ -265,9 +272,10 @@ const PasswordPolicyManagementPage = (props: Props) => {
                     type="number"
                     value={formData.passwordExpiryDays || ''}
                     onChange={handleChange('passwordExpiryDays')}
+                    onKeyDown={blockNonIntegerKeys}
                     error={!!errors.passwordExpiryDays}
                     helperText={errors.passwordExpiryDays || "Password expiration period must be set in days (30-365 days)"}
-                    inputProps={{ min: 30, max: 365 }}
+                    inputProps={{ min: 30, max: 365, step: 1 }}
                 />
 
                 {/* Password Composition Rules Section */}
