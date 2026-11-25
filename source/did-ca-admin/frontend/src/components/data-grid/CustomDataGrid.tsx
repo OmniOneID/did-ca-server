@@ -130,7 +130,6 @@ export default function CustomDataGrid({
             columns={columns}
             pageSizeOptions={[10, 20, 50]}
             disableColumnResize
-            density="compact"
             paginationMode={paginationMode}
             rowCount={paginationMode === 'server' ? totalRows : undefined}
             paginationModel={paginationModel}
@@ -143,7 +142,8 @@ export default function CustomDataGrid({
               toolbar: toolbarProps,
             }}
             onRowSelectionModelChange={handleRowSelectionModelChange}
-            getRowHeight={() => 45}
+            rowHeight={45}
+            columnHeaderHeight={39}
         />
       </div>
   );
