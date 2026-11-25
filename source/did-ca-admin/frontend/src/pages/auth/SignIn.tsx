@@ -1,14 +1,15 @@
 import { AuthProvider, AuthResponse, SignInPage } from '@toolpad/core/SignInPage';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { requestLogin, requestPasswordReset, changeAdminIdAndPassword } from '../../apis/admin-api';
 import { useSession } from '../../context/SessionContext';
 import { sha256Hash } from '../../utils/sha256-hash';
+import { tokenStore } from '../../utils/authTokens';
 import PasswordResetDialog from './PasswordResetDialog';
 import ChangeIdAndPasswordDialog from './ChangeIdAndPasswordDialog';
 
 export default function SignIn() {
-  const { setSession } = useSession();
+  const { session, setSession } = useSession();
   const navigate = useNavigate();
   const [requirePasswordReset, setRequirePasswordReset] = useState(false);
   const [loginData, setLoginData] = useState<{ email: string; hashedPassword: string } | null>(null);
@@ -28,6 +29,7 @@ export default function SignIn() {
       const password = formData?.get('password') as string;
       const hashedPassword = await sha256Hash(password);
 
+      localStorage.setItem('rememberMe', rememberMe.toString());
       const { data } = await requestLogin({
         loginId: email,
         loginPassword: hashedPassword,
@@ -49,7 +51,7 @@ export default function SignIn() {
 
       const session = {
         user: {
-          id: data.loginId,
+          id: data.loginId || email,
           role: data.role,
         },
       };
@@ -84,6 +86,7 @@ export default function SignIn() {
         oldPassword: oldHashedPassword,
         newPassword: newHashedPassword,
       });
+      localStorage.setItem('rememberMe', rememberMe.toString());
       const { data } = await requestLogin({
         loginId: newLoginId,
         loginPassword: newHashedPassword,
@@ -112,11 +115,12 @@ export default function SignIn() {
         newPassword: newHashedPassword,
       });
 
+      localStorage.setItem('rememberMe', rememberMe.toString());
       const { data } = await requestLogin({
         loginId: loginData.email,
         loginPassword: newHashedPassword,
       });
-      const session = { user: { id: data.loginId, role: data.role } };
+      const session = { user: { id: data.loginId || loginData.email, role: data.role } };
       setSession(session);
 
       navigate('/ca-management', { replace: true });
@@ -130,6 +134,8 @@ export default function SignIn() {
 
   const Title = () => <p style={{ fontWeight: 700, fontSize: '32px', lineHeight: '150%', margin: 0 }}>CA Admin Login</p>;
   const SubTitle = () => <p style={{ fontSize: '14px', marginBottom: 16, marginTop: 8 }}>Welcome, please sign in to continue</p>;
+
+  if (session && !tokenStore.isPendingLogout()) return <Navigate to="/" replace />;
 
   return (
     <>
@@ -161,9 +167,9 @@ export default function SignIn() {
           },
         }}
         sx={{
-          '& .MuiContainer-root': { maxWidth: 'none', width: 540, height: 500 },
+          '& .MuiContainer-root': { maxWidth: 'none', width: 540, minHeight: 500 },
           '& .MuiContainer-root > .MuiBox-root:first-of-type': {
-            height: 410,
+            minHeight: 410,
             borderRadius: '4px',
             boxShadow: 'none',
             backgroundColor: 'white',
