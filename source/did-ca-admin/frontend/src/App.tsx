@@ -4,6 +4,10 @@ import { DialogsProvider } from '@toolpad/core/useDialogs';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PasswordPolicyProvider } from './context/PasswordPolicyContext';
 import { Outlet, useNavigate } from 'react-router';
+import { tokenStore } from './utils/authTokens';
+import { restoreSessionFromToken } from './utils/authSync';
+import { ADMIN_LOGOUT_EVENT, logoutAdmin } from './utils/logout';
+import { useIdleLogout } from './hooks/useIdleLogout';
 import { ExtendedSession, SessionContext } from './context/SessionContext';
 import { ServerStatusProvider, useServerStatus } from './context/ServerStatusContext';
 import { getCaInfo } from './apis/ca-api';
@@ -20,9 +24,10 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [session, setSessionState] = useState<ExtendedSession | null>(() => {
-    const storedSession = sessionStorage.getItem('session');
-    return storedSession ? JSON.parse(storedSession) : null;
+    const storedSession = sessionStorage.getItem('session') ?? localStorage.getItem('session');
+    return storedSession && tokenStore.getRefresh() ? JSON.parse(storedSession) : null;
   });
+  const [isRestoring, setIsRestoring] = useState(() => !session && !!tokenStore.getRefresh());
 
   const [navigation, setNavigation] = useState<Navigation>(getNavigationByStatus(null));
 
@@ -30,22 +35,51 @@ function AppContent() {
     setSessionState(newSession);
     if (newSession) {
       sessionStorage.setItem('session', JSON.stringify(newSession));
+      localStorage.setItem('session', JSON.stringify(newSession));
     } else {
       sessionStorage.removeItem('session');
+      localStorage.removeItem('session');
     }
-    localStorage.removeItem('session');
+  }, []);
+
+  useEffect(() => {
+    if (session || !tokenStore.getRefresh()) return;
+    void restoreSessionFromToken('/cas/admin/v1')
+      .then((restored) => { if (restored) setSession(restored); })
+      .finally(() => setIsRestoring(false));
   }, []);
 
   const signIn = React.useCallback(() => {
     navigate('/sign-in');
   }, [navigate]);
 
-  const signOut = React.useCallback(() => {
+  const signOut = React.useCallback(async () => {
+    if (tokenStore.isPendingLogout()) {
+      sessionStorage.removeItem('session');
+      sessionStorage.removeItem('activeSession');
+      window.location.replace('/sign-in');
+      return;
+    }
+    await logoutAdmin('/cas/admin/v1');
     setSession(null);
     navigate('/sign-in');
-  }, [navigate]);
+  }, [navigate, setSession]);
 
   useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === ADMIN_LOGOUT_EVENT && event.newValue) {
+        tokenStore.markRemoteLogout(event.newValue);
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [navigate, setSession]);
+
+  useEffect(() => {
+    if (!session) {
+      setIsLoading(false);
+      return;
+    }
     const fetchTaInfo = () => {
       setIsLoading(true);
       getCaInfo()
@@ -71,7 +105,7 @@ function AppContent() {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [session, navigate]);
 
   useEffect(() => {
     if (serverStatus !== null) {
@@ -79,9 +113,20 @@ function AppContent() {
     }
   }, [serverStatus]);
 
+  useIdleLogout(session !== null, signOut);
+
+  const displaySession = useMemo(() => session ? {
+    ...session,
+    user: {
+      ...session.user,
+      name: session.user?.name || session.user?.id || 'Admin',
+      email: session.user?.email || session.user?.id || undefined,
+    },
+  } : null, [session]);
+
   const sessionContextValue = useMemo(() => ({ session, setSession }), [session, setSession]);
 
-  if (isLoading) {
+  if (isLoading || isRestoring) {
     return <LoadingOverlay />;
   }
 
@@ -90,7 +135,7 @@ function AppContent() {
       <DialogsProvider>
         <ReactRouterAppProvider
           navigation={navigation}
-          session={session}
+          session={displaySession}
           authentication={{ signIn, signOut }}
           theme={customTheme}
         >
