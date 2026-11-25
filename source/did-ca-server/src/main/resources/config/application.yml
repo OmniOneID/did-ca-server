@@ -34,7 +34,7 @@ op-provider:
 
 security:
   jwt:
-    secret: "cas-admin-jwt-secret-key-must-be-at-least-32-chars"
+    secret: ${ADMIN_JWT_SECRET:opendidAdminJWTsecretPasswordSample}
     access-ttl-seconds: 1800    # 30 minutes
     refresh-ttl-seconds: 1209600 # 14 days
 

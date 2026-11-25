@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,10 +36,27 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminQueryService {
     private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public Admin findByLoginIdAndLoginPassword(String loginId, String loginPassword) {
-        return adminRepository.findByLoginIdAndLoginPassword(loginId, loginPassword)
+        Admin admin = adminRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new OpenDidException(ErrorCode.ADMIN_INFO_NOT_FOUND));
+        String stored = admin.getLoginPassword();
+        if ("sha256".equalsIgnoreCase(admin.getPasswordAlgo())
+                && stored != null && stored.matches("(?i)[0-9a-f]{64}")) {
+            if (!stored.equalsIgnoreCase(loginPassword)) {
+                throw new OpenDidException(ErrorCode.ADMIN_INFO_NOT_FOUND);
+            }
+            admin.setLoginPassword(passwordEncoder.encode(loginPassword));
+            admin.setPasswordAlgo("bcrypt");
+            return adminRepository.save(admin);
+        }
+        if (!"bcrypt".equalsIgnoreCase(admin.getPasswordAlgo())
+                || stored == null || !stored.startsWith("{bcrypt}")
+                || !passwordEncoder.matches(loginPassword, stored)) {
+            throw new OpenDidException(ErrorCode.ADMIN_INFO_NOT_FOUND);
+        }
+        return admin;
     }
 
     public Page<AdminDto> searchAdminList(String searchKey, String searchValue, Pageable pageable) {

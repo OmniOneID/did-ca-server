@@ -17,6 +17,10 @@ package org.omnione.did.base.db.repository;
 
 import org.omnione.did.base.db.domain.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +31,9 @@ public interface AdminRepository extends JpaRepository<Admin, Long>, QuerydslPre
     Optional<Admin> findByLoginIdAndLoginPassword(String loginId, String loginPassword);
     Optional<Admin> findByLoginId(String loginId);
     long countByLoginId(String loginId);
+
+    @Modifying
+    @Transactional
+    @Query("update Admin a set a.sessionVersion = a.sessionVersion + 1 where a.id = :id")
+    int revokeSessions(@Param("id") Long id);
 }
