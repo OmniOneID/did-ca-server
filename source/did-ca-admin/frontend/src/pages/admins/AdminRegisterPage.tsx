@@ -1,7 +1,8 @@
 import { useDialogs } from '@toolpad/core';
 import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import FullscreenLoader from '../../components/loading/FullscreenLoader';
+import { useSession } from '../../context/SessionContext';
 import { Box, Button, FormControl, FormHelperText, IconButton, InputLabel, Paper, Select, SelectChangeEvent, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,6 +31,7 @@ interface ErrorState {
 const AdminRegisterPage = (props: Props) => {
     const navigate = useNavigate();
     const dialogs = useDialogs();
+    const { session } = useSession();
 
     const [formData, setFormData] = useState<AdminFormData>({
         loginId: '',
@@ -225,6 +227,10 @@ const AdminRegisterPage = (props: Props) => {
     const StyledInputArea = useMemo(() => styled(Box)(({ theme }) => ({
         marginTop: theme.spacing(2),
     })), []);
+
+    if (session?.user?.role !== 'ROOT') {
+        return <Navigate to="/admins/admin-management" replace />;
+    }
 
     return (
         <>
