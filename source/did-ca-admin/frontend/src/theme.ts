@@ -236,6 +236,48 @@ const customTheme: ThemeOptions & {
         },
       },
     },
+    // Read-only fields only display values: keep the default cursor and hide the caret and focus highlight.
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          "&.Mui-readOnly, &.Mui-readOnly .MuiInputBase-input": {
+            cursor: "default",
+            caretColor: "transparent",
+          },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          "&.Mui-readOnly:hover .MuiOutlinedInput-notchedOutline, &.Mui-readOnly.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgba(0, 0, 0, 0.23)",
+            borderWidth: 1,
+          },
+        },
+      },
+    },
+    MuiInput: {
+      styleOverrides: {
+        root: {
+          "&.Mui-readOnly:hover:not(.Mui-disabled, .Mui-error)::before": {
+            borderBottom: "1px solid rgba(0, 0, 0, 0.42)",
+          },
+          "&.Mui-readOnly::after": {
+            display: "none",
+          },
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          "&:has(.Mui-readOnly) .MuiFormLabel-root.Mui-focused": {
+            color: "rgba(0, 0, 0, 0.6)",
+          },
+        },
+      },
+    },
   },
 };
 
